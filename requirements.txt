@@ -3,6 +3,7 @@ astroid==2.4.2
 attrs==20.3.0
 autobahn==21.2.1
 Automat==20.2.0
+channels==3.0.3
 cffi==1.14.5
 constantly==15.1.0
 cryptography==3.4.6
