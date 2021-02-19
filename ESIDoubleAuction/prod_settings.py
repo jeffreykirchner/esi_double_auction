@@ -39,7 +39,6 @@ CHANNEL_LAYERS = {
     },
 }
 
-
 #logging, log both to console and to file log at the INFO level
 LOGGING = {
     'version': 1,

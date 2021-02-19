@@ -70,7 +70,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'ESIDoubleAuction.wsgi.application'
+#WSGI_APPLICATION = 'ESIDoubleAuction.wsgi.application'
 ASGI_APPLICATION = 'ESIDoubleAuction.asgi.application'
 
 # Password validation
