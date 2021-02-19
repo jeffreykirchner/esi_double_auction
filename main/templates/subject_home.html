@@ -1,1 +1,23 @@
-subject home
+{%extends "base.html"%}
+{% load crispy_forms_tags %}
+
+{%block head%}
+<script type="text/javascript">
+
+    $(document).ready(function(){
+        {%include "subject_home.vue"%}
+    });
+
+</script>
+
+<style>
+    [v-cloak] {
+    display: none;
+    }
+</style>
+
+{%endblock head%}
+
+{% block content %}
+<button v-on:click="sendMessage('1','test')">Test Message</button>
+{% endblock %}

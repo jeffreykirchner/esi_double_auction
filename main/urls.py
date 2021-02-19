@@ -4,7 +4,7 @@ URL Patterns
 
 from django.views.generic.base import RedirectView
 
-from django.urls import path,include
+from django.urls import path
 from main import views
 
 urlpatterns = [
