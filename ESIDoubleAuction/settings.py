@@ -71,7 +71,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'ESIDoubleAuction.wsgi.application'
-ASGI_APPLICATION = "ESIDoubleAuction.asgi.application"
+ASGI_APPLICATION = 'ESIDoubleAuction.asgi.application'
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
