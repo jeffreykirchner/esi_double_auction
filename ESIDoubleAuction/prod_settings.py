@@ -30,6 +30,15 @@ DATABASES = {
     },
 }
 
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [(os.environ['REDIS'])],
+        },
+    },
+}
+
 
 #logging, log both to console and to file log at the INFO level
 LOGGING = {
