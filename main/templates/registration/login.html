@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{%block head%}
+<script type="text/javascript">
+  $(document).ready(function(){  
+      axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
+      axios.defaults.xsrfCookieName = "csrftoken";
+
+      var app = new Vue({
+      
+          delimiters: ['[[', ']]'],
+          el: '#root',        
+          data:{
+              loginButtonText : 'Submit <i class="fas fa-sign-in-alt"></i>',
+              loginErrorText : "",
+              form_ids : {{form_ids|safe}},                          
+          },
+
+          methods:{
+              //get current, last or next month
+
+              login:function(){
+                  app.$data.loginButtonText = '<i class="fas fa-spinner fa-spin"></i>';
+                  app.$data.loginErrorText = "";
+
+                  axios.post('/accounts/login/', {
+                          action :"login",
+                          formData : $("#login_form").serializeArray(), 
+                                                      
+                      })
+                      .then(function (response) {     
+                          
+                        status=response.data.status;                               
+
+                        app.clearMainFormErrors();
+
+                        if(status == "validation")
+                        {              
+                          //form validation error           
+                          app.displayErrors(response.data.errors);
+                        }
+                        else if(status == "error")
+                        {
+                          app.$data.loginErrorText = "Username or Password is incorrect."
+                        }
+                        else
+                        {
+                          window.location = response.data.redirect_path;
+                        }
+
+                        app.$data.loginButtonText = 'Submit <i class="fas fa-sign-in-alt"></i>';
+
+                      })
+                      .catch(function (error) {
+                          console.log(error);                            
+                      });                        
+                  },
+
+                  clearMainFormErrors:function(){
+
+                        s = app.$data.form_ids;                    
+                        for(var i in s)
+                        {
+                            $("#id_" + s[i]).attr("class","form-control");
+                            $("#id_errors_" + s[i]).remove();
+                        }
+
+                    },
+              
+                //display form errors
+                displayErrors:function(errors){
+                      for(var e in errors)
+                      {
+                          $("#id_" + e).attr("class","form-control is-invalid")
+                          var str='<span id=id_errors_'+ e +' class="text-danger">';
+                          
+                          for(var i in errors[e])
+                          {
+                              str +=errors[e][i] + '<br>';
+                          }
+
+                          str+='</span>';
+                          $("#div_id_" + e).append(str); 
+
+                      }
+                  },
+
+              
+          },            
+
+          mounted: function(){
+                                      
+          },
+      });
+  });
+
+</script>
+{%endblock head%}
+
+{% block content %}
+
+{%for i in fpn_list%}
+<!-- notification cards -->
+<div class="row justify-content-center mb-4"> 
+  <div class="col col-sm-6">
+
+    <div class="card mx-auto">
+      <div class="card-header">
+        <h5>{{i.subject_text}}</h5>
+      </div>
+
+      <div class="card-body">
+        {{i.body_text | safe}}
+      </div>
+      
+    </div>
+  </div>
+
+</div>
+{%endfor%}
+
+<!-- login card -->
+<div class="row justify-content-center"> 
+  <div class="col col-sm-6">
+
+    <div class="card">
+      
+      <div class="card-header">
+        <h5>Log In</h5>
+      </div>
+
+      <div class="card-body">
+
+        <form id="login_form">
+          {% csrf_token %}        
+          <div class="row">
+            <div class = "col col-sm-8 offset-sm-2">  
+              {{form.username|as_crispy_field}}          
+            </div>            
+          </div>  
+
+          <div class="row">
+            <div class = "col col-sm-8 offset-sm-2">
+              {{form.password|as_crispy_field}}
+            </div>
+          </div>            
+        </form>
+
+        <div class="row mt-3">
+            <div class="col col-sm-8 offset-sm-2">
+                <button type="button" v-on:click='login()' class="btn btn-outline-primary">
+                  <span v-html ="loginButtonText"></span>
+                </button> 
+
+                <span style="color: red;" v-html="loginErrorText">
+                </span>
+            </div>
+        </div>
+        
+        <div class="row mt-2">
+            <div class="col col-sm-8 offset-sm-2">
+                <a href="{% url 'passwordReset' %}">Lost password?</a>
+            </div>
+        </div>
+            
+      </div>
+
+      <div class="card-footer" style="text-align: center;">
+        Need Help? <a href = 'mailto:{{labManager.email}}'>{{labManager.email}}</a>
+      </div>
+
+    </div>
+      
+  </div>
+
+</div>
+
+{% endblock %}

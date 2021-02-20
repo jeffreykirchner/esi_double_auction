@@ -1,1 +1,17 @@
-staff home
+{%extends "base.html"%}
+{% load crispy_forms_tags %}
+
+{%block head%}
+<script type="text/javascript">
+
+    $(document).ready(function(){
+        {%include "staff_home.vue"%}
+    });
+
+</script>
+
+{%endblock head%}
+
+{% block content %}
+<button v-on:click="sendMessage('1','test')">Test Message</button>
+{% endblock %}

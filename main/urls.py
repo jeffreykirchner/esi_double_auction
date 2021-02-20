@@ -3,13 +3,18 @@ URL Patterns
 '''
 
 from django.views.generic.base import RedirectView
+from django.contrib.auth.decorators import login_required
 
 from django.urls import path
+from django.urls import re_path
 from main import views
 
 urlpatterns = [
 
-    path('', views.StaffView.as_view()),
+    re_path(r'^admin/login/$', views.login_view),
+    path('accounts/login/', views.login_view, name="login"),
+
+    path('', login_required(views.StaffHomeView.as_view())),
     path('subject', views.SubjectView.as_view()),
 
     #txt
