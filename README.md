@@ -8,3 +8,6 @@ https://kbroman.org/github_tutorial/pages/init.html
 
 Channels Setup Guide:
 https://channels.readthedocs.io/en/stable/
+
+Load site parameters:
+python manage.py loaddata Parameters.json
