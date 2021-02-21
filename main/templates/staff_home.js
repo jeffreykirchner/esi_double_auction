@@ -9,6 +9,7 @@ var app = Vue.createApp({
     data() {return {chatSocket : "",
                     testMessage : "test",
                     reconnecting : true,
+                    working : false,
                     sessions : [],
                     createSessionButtonText : 'Create Session <i class="fas fa-plus"></i>',
                     dateSortButtonText: 'Date <i class="fas fa-sort"></i>',
@@ -23,15 +24,17 @@ var app = Vue.createApp({
            messageType = data.message.messageType;
            messageData = data.message.messageData;
 
-           switch(messageType) {
-            case "create_session":
-                app.takeCreateSession(messageData);
-                break;
-            case "get_sessions":
-                app.takeGetSessions(messageData);
-                break;
-            
-          }
+            switch(messageType) {
+                case "create_session":
+                    app.takeCreateSession(messageData);
+                    break;
+                case "get_sessions":
+                    app.takeGetSessions(messageData);
+                    break;
+    
+            }
+
+            app.working = false;
         },
 
         sendMessage(messageType,messageText) {
@@ -65,6 +68,17 @@ var app = Vue.createApp({
 
             app.sessions = messageData.sessions;
         },
+
+        sendDeleteSession(id){
+            //delete specified session
+            app.working = true;
+            app.sendMessage("delete_session",{"id" : id});
+        },
+        
+        randomNumber:function(minimum,maximum){
+            //return a random number between min and max
+            return (Math.random() * (maximum - minimum + 1) );
+        },
     },
 
     mounted(){
@@ -88,8 +102,8 @@ doWebSockets = function()
     
         app.$data.chatSocket.onclose = function(e) {
             console.error('Socket closed, trying to connect ... ');
-            //app.$data.reconnecting=true;
-            //window.setTimeout(doWebSockets(), app.randomNumber(500,1500));            
+            app.$data.reconnecting=true;
+            window.setTimeout(doWebSockets(), app.randomNumber(500,1500));            
         }; 
 
         app.$data.chatSocket.onopen = function(e) {

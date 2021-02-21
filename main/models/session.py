@@ -143,7 +143,6 @@ class Session(models.Model):
 
         return False
 
-    @sync_to_async
     def json(self):
         '''
         return json object of model
@@ -161,5 +160,5 @@ def post_delete_parameterset(sender, instance, *args, **kwargs):
     '''
     use signal to delete associated parameter set
     '''
-    if instance.parameterset:
-        instance.parameterset.delete()
+    if instance.parameter_set:
+        instance.parameter_set.delete()

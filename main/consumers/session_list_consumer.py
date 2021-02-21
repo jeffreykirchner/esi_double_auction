@@ -1,18 +1,18 @@
 '''
 websocket session list
 '''
-from datetime import datetime
-
 import json
 import logging
 import pytz
 
 from channels.generic.websocket import AsyncWebsocketConsumer
-from channels.db import database_sync_to_async
-from asgiref.sync import sync_to_async
 
 from main.models import Session
 from main.models import ParameterSet
+
+from main.consumers import get_session_list_json
+from main.consumers import create_new_session
+from main.consumers import delete_session
 
 class SessionListConsumer(AsyncWebsocketConsumer):
     '''
@@ -56,6 +56,32 @@ class SessionListConsumer(AsyncWebsocketConsumer):
             }
         )
 
+    async def delete_session(self, event):
+        '''
+        delete specified session
+        '''
+        logger = logging.getLogger(__name__) 
+        logger.info(f"Delete Session {event}")
+
+        message_text = event["message_text"]
+
+        status = await delete_session(message_text["id"])
+
+        logger.info(f"Delete Session success: {status}")
+
+        #build response
+        message_data = {}
+        message_data["sessions"] = await get_session_list_json()
+
+        message = {}
+        message["messageType"] = "get_sessions"
+        message["messageData"] = message_data
+
+        # Send message to WebSocket
+        await self.send(text_data=json.dumps({
+            'message': message
+        }))
+
     async def create_session(self, event):
         '''
         create a new session
@@ -63,18 +89,11 @@ class SessionListConsumer(AsyncWebsocketConsumer):
         logger = logging.getLogger(__name__) 
         logger.info(f"Create Session {event}")
 
-        parameter_set = ParameterSet()
-        parameter_set.save()
-
-        session = Session()
-
-        session.parameter_set = parameter_set
-        session.start_date = datetime.now(pytz.UTC)
-
-        session.save()
+        await create_new_session()
         
+        #build response
         message_data = {}
-        message_data["sessions"] = [i.json() for i in Session.objects.all()]
+        message_data["sessions"] = await get_session_list_json()
 
         message = {}
         message["messageType"] = event["type"]
@@ -92,8 +111,9 @@ class SessionListConsumer(AsyncWebsocketConsumer):
         logger = logging.getLogger(__name__) 
         logger.info(f"Get Session {event}")
 
+        #build response
         message_data = {}
-        message_data["sessions"] = await self.get_session_list_json()
+        message_data["sessions"] = await get_session_list_json()
 
         message = {}
         message["messageType"] = event["type"]
@@ -103,8 +123,3 @@ class SessionListConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({
             'message': message
         }))
-
-    @sync_to_async
-    def get_session_list_json(self):
-
-        return [i.json() for i in Session.objects.all()]
