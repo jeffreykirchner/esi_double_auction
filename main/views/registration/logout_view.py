@@ -15,6 +15,6 @@ def logout_view(request):
 
     logout(request)
 
-    return render(request,'registration/loggedOut.html',{})
+    return render(request,'registration/logged_out.html',{})
 
     

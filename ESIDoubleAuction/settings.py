@@ -28,8 +28,7 @@ except ImportError:
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Application definition
-INSTALLED_APPS = [
-    'django.contrib.admin',
+INSTALLED_APPS = [    
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -37,6 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'crispy_forms',
     'main',
+    'django.contrib.admin',
     'channels',
 ]
 
@@ -52,6 +52,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'ESIDoubleAuction.urls'
+ADMIN_SITE_HEADER = 'ESI Administration'
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 TEMPLATES = [
     {

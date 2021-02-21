@@ -3,6 +3,9 @@ session model
 '''
 
 import logging
+import uuid
+
+from asgiref.sync import sync_to_async
 
 from django.dispatch import receiver
 from django.db import models
@@ -23,7 +26,10 @@ class Session(models.Model):
     parameter_set = models.ForeignKey(ParameterSet, on_delete=models.CASCADE)
 
     title = models.CharField(max_length = 300, default="*** New Session ***")    #title of session
-    start_date = models.DateField(default=now)                                  #date of session start
+    start_date = models.DateField(default=now)                                   #date of session start
+
+    channel_key = models.UUIDField(default=uuid.uuid4, editable=False, verbose_name = 'Channel Key')     #unique channel to communicate on
+    session_key = models.UUIDField(default=uuid.uuid4, editable=False, verbose_name = 'Session Key')     #unique key for session to auto login subjects by id
 
     started =  models.BooleanField(default=False)                               #starts session and filll in session
     current_period = models.IntegerField(default=0)                             #current period of the session
@@ -137,7 +143,7 @@ class Session(models.Model):
 
         return False
 
-    #return json object of class
+    @sync_to_async
     def json(self):
         '''
         return json object of model
@@ -146,6 +152,7 @@ class Session(models.Model):
             "id":self.id,
             "title":self.title,
             "start_date":self.get_start_date_string(),
+            "current_period":self.current_period,
         }
 
 

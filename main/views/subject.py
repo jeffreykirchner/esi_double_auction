@@ -11,7 +11,7 @@ class SubjectView(TemplateView):
     '''
     template_name = "subject_home.html"
 
-    def get(self, request):
+    def get(self, request, *args, **kwargs):
         '''
         handle get requests
         '''
@@ -19,7 +19,7 @@ class SubjectView(TemplateView):
         return render(request, self.template_name, {"id":""})
     
 
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
         '''
         handle post requests
         '''

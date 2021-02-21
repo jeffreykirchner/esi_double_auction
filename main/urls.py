@@ -11,11 +11,15 @@ from main import views
 
 urlpatterns = [
 
-    re_path(r'^admin/login/$', views.login_view),
-    path('accounts/login/', views.login_view, name="login"),
+    #auth
+    re_path(r'^admin/login/$', views.LoginView.as_view()),
+    #re_path(r'^admin/logout/', views.logout_view),
+    path('accounts/login/', views.LoginView.as_view(), name='login'),
+    path('accounts/logout/', views.logout_view, name='logout'),
 
-    path('', login_required(views.StaffHomeView.as_view())),
-    path('subject', views.SubjectView.as_view()),
+    #main
+    path('', login_required(views.StaffHomeView.as_view()), name='home'),
+    path('subject', views.SubjectView.as_view(), name='subject'),
 
     #txt
     path('robots.txt', views.RobotsTxt, name='robotsTxt'),

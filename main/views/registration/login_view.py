@@ -7,21 +7,23 @@ import logging
 from django.contrib.auth import authenticate, login,logout
 from django.shortcuts import render
 from django.http import JsonResponse
+from django.views.generic import TemplateView
 
 from main.models import Parameters
 from main.forms import LoginForm
 
 
-def login_view(request):
+class LoginView(TemplateView):
     '''
-    log in view
+    log in class view
     '''
-    logger = logging.getLogger(__name__) 
-    
-    #logger.info(request)
-    
-    if request.method == 'POST':
 
+    template_name = 'registration/login.html'
+
+    def post(self, request, *args, **kwargs):
+        '''
+        handle post requests
+        '''
         data = json.loads(request.body.decode('utf-8'))
 
         if data["action"] == "login":
@@ -29,7 +31,10 @@ def login_view(request):
 
         return JsonResponse({"response" :  "error"},safe=False)
 
-    else:
+    def get(self, request, *args, **kwargs):
+        '''
+        handle get requests
+        '''
         logout(request)
 
         request.session['redirect_path'] = request.GET.get('next','/')
@@ -42,46 +47,46 @@ def login_view(request):
         for i in form:
             form_ids.append(i.html_name)
 
-        return render(request,'registration/login.html',{"labManager":prm.lab_manager,
-                                                         "form":form,
-                                                         "form_ids":form_ids})
-    
+        return render(request, self.template_name, {"labManager":prm.contact_email,
+                                               "form":form,
+                                               "form_ids":form_ids})
+
 def login_function(request,data):
     '''
     handle login
     '''
-    logger = logging.getLogger(__name__) 
+    logger = logging.getLogger(__name__)
     #logger.info(data)
 
     #convert form into dictionary
-    form_data_dict = {}             
+    form_data_dict = {}
 
-    for field in data["formData"]:            
+    for field in data["formData"]:
         form_data_dict[field["name"]] = field["value"]
-    
-    f = LoginForm(form_data_dict)
 
-    if f.is_valid():
+    form = LoginForm(form_data_dict)
 
-        username = f.cleaned_data['username']
-        password = f.cleaned_data['password']
+    if form.is_valid():
+
+        username = form.cleaned_data['username']
+        password = form.cleaned_data['password']
 
         #logger.info(f"Login user {username}")
 
         user = authenticate(request, username=username.lower(), password=password)
 
         if user is not None:
-            login(request, user) 
+            login(request, user)
 
-            rp = request.session.get('redirect_path','/')        
+            redirect_path = request.session.get('redirect_path','/')
 
-            logger.info(f"Login user {username} success , redirect {rp}")
+            logger.info(f"Login user {username} success , redirect {redirect_path}")
 
-            return JsonResponse({"status":"success","redirect_path":rp}, safe=False)
+            return JsonResponse({"status":"success", "redirect_path" : redirect_path}, safe=False)
         else:
             logger.warning(f"Login user {username} fail user / pass")
-            
-            return JsonResponse({"status":"error"}, safe=False)
+
+            return JsonResponse({"status" : "error"}, safe=False)
     else:
-        logger.info(f"Login user form validation error")
-        return JsonResponse({"status":"validation","errors":dict(f.errors.items())}, safe=False)
+        logger.info("Login user form validation error")
+        return JsonResponse({"status":"validation", "errors":dict(form.errors.items())}, safe=False)

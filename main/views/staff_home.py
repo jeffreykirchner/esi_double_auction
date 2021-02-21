@@ -6,10 +6,10 @@ import logging
 import channels.layers
 from asgiref.sync import async_to_sync
 
-from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
 from django.views.generic import TemplateView
 from django.shortcuts import render
+
+from main.models import Parameters
 
 class StaffHomeView(TemplateView):
     '''
@@ -17,11 +17,13 @@ class StaffHomeView(TemplateView):
     '''
     template_name = "staff_home.html"
     
-    def get(self, request):
+    def get(self, request, *args, **kwargs):
         '''
         handle get requests
         '''
 
-        logger = logging.getLogger(__name__) 
+        #logger = logging.getLogger(__name__) 
 
-        return render(request, self.template_name, {"id":""})
+        parameters = Parameters.objects.first()
+
+        return render(request, self.template_name, {"parameters":parameters})
