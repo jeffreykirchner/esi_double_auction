@@ -78,7 +78,7 @@ LOGGING = {
             'handlers': ['console', 'logfile'],
             'level': 'INFO',           
         },
-        'django_cron': {
+        'channels': {
             'handlers': ['console', 'logfile'],
             'level': 'INFO',           
         },
