@@ -16,7 +16,12 @@ class SocketConsumerMixin(AsyncWebsocketConsumer):
         inital connection from websocket
         '''
         self.room_name = self.scope['url_route']['kwargs']['room_name']
-        self.room_group_name = self.room_name
+        
+        kwargs = self.scope['url_route']['kwargs']
+        room_name =  kwargs.get('room_name')
+        page_key =  kwargs.get('page_key',"")
+
+        self.room_group_name = room_name + page_key
 
         # Join room group
         await self.channel_layer.group_add(

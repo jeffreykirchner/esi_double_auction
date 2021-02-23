@@ -4,7 +4,7 @@ doWebSockets = function()
         var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
         app.$data.chatSocket = new WebSocket(            
                                ws_scheme + '://' + window.location.host +
-                               '/ws/{{websocket_path}}/{{parameters.channel_key}}/');        
+                               '/ws/{{websocket_path}}/{{parameters.channel_key}}/{{page_key}}');        
     
         app.$data.chatSocket.onmessage = function(e) {
             var data = JSON.parse(e.data);                       

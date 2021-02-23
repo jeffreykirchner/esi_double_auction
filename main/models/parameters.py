@@ -29,7 +29,7 @@ class Parameters(models.Model):
     staff_session_help_text = models.CharField(max_length=5000, default="")                # help text shown to staff
     staff_home_help_text = models.CharField(max_length=5000, default="")                   # help text shown to staff home page
 
-    channel_key = models.UUIDField(default=uuid.uuid4, editable=False, verbose_name = 'Channel Key')     #unique channel to communicate on
+    channel_key = models.UUIDField(default=uuid.uuid4, verbose_name = 'Channel Key')     #unique channel to communicate on
 
     timestamp = models.DateTimeField(auto_now_add=True)
     updated= models.DateTimeField(auto_now=True)

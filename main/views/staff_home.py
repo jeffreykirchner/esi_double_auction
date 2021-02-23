@@ -16,6 +16,7 @@ class StaffHomeView(View):
     class based staff view
     '''
     template_name = "staff_home.html"
+    websocket_path = "staff-home"
     
     def get(self, request, *args, **kwargs):
         '''
@@ -27,4 +28,5 @@ class StaffHomeView(View):
         parameters = Parameters.objects.first()
 
         return render(request, self.template_name, {"parameters" : parameters,
-                                                    "websocket_path" : "staff-home"})
+                                                    "page_key" : self.websocket_path,
+                                                    "websocket_path" : self.websocket_path})

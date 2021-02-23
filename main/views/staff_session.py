@@ -19,16 +19,19 @@ class StaffSessionView(SingleObjectMixin, View):
     class based staff view
     '''
     template_name = "staff_session.html"
+    websocket_path = "staff-session"
     model = Session
     
     def get(self, request, *args, **kwargs):
         '''
         handle get requests
         '''
-        
+
         parameters = Parameters.objects.first()
+        session = self.get_object()
 
         return render(request, self.template_name, {"parameters" : parameters,
                                                     "session_form" : SessionForm(),
-                                                    "websocket_path" : "staff-session",
-                                                    "session" : self.get_object()})
+                                                    "websocket_path" : self.websocket_path,
+                                                    "page_key" : f'{self.websocket_path}-{session.id}',
+                                                    "session" : session})

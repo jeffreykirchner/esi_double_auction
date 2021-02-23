@@ -88,7 +88,7 @@ var app = Vue.createApp({
             if(messageData.status == "success")
             {
                 app.takeGetSession(messageData);       
-                $('#editSessionModal').modal('toggle');    
+                $('#editSessionModal').modal('hide');    
             } 
             else
             {

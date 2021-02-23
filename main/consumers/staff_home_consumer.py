@@ -67,7 +67,7 @@ class StaffHomeConsumer(SocketConsumerMixin):
         return a list of sessions
         '''
         logger = logging.getLogger(__name__) 
-        logger.info(f"Get Session {event}")
+        logger.info(f"Get Sessions {event}")
 
         #build response
         message_data = {}
