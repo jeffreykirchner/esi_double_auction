@@ -60,7 +60,7 @@
                     <tbody id="sessionList">                                                  
                         <tr v-for="(s,index) in sessions" v-bind:key="s.id">                                                                          
                             <td> 
-                                <a :href="'/session/' + s.id + '/' "><span v-html="s.title"></span></a>                                        
+                                <a :href="'/staff-session/' + s.id + '/' "><span v-html="s.title"></span></a>                                        
                             </td>
                             <td style="text-align: center;"> 
                                 <span v-html="s.start_date"></span>                                 

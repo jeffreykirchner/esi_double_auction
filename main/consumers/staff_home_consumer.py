@@ -3,58 +3,16 @@ websocket session list
 '''
 import json
 import logging
-import pytz
 
-from channels.generic.websocket import AsyncWebsocketConsumer
-
-from main.models import Session
-from main.models import ParameterSet
-
+from main.consumers import SocketConsumerMixin
 from main.consumers import get_session_list_json
 from main.consumers import create_new_session
 from main.consumers import delete_session
 
-class SessionListConsumer(AsyncWebsocketConsumer):
+class StaffHomeConsumer(SocketConsumerMixin):
     '''
     websocket session list
-    '''
-    async def connect(self):
-        self.room_name = self.scope['url_route']['kwargs']['room_name']
-        self.room_group_name = self.room_name
-
-        # Join room group
-        await self.channel_layer.group_add(
-            self.room_group_name,
-            self.channel_name
-        )
-
-        await self.accept()
-
-    async def disconnect(self, close_code):
-        # Leave room group
-        await self.channel_layer.group_discard(
-            self.room_group_name,
-            self.channel_name
-        )
-
-     # Receive message from WebSocket
-    async def receive(self, text_data):
-        '''
-        incoming data from websocket
-        '''
-        text_data_json = json.loads(text_data)
-
-        message_type = text_data_json['messageType']
-        message_text = text_data_json['messageText']
-
-        # Send message to room group
-        await self.channel_layer.group_send(
-            self.room_group_name,
-            {
-                'type': message_type,
-                'message_text': message_text
-            }
-        )
+    '''    
 
     async def delete_session(self, event):
         '''

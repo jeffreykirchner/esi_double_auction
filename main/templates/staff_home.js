@@ -7,7 +7,6 @@ var app = Vue.createApp({
     delimiters: ["[[", "]]"],
 
     data() {return {chatSocket : "",
-                    testMessage : "test",
                     reconnecting : true,
                     working : false,
                     sessions : [],
@@ -16,6 +15,11 @@ var app = Vue.createApp({
                     titleSortButtonText: 'Title <i class="fas fa-sort"></i>',
                 }},
     methods: {
+        handleSocketConnected(){
+            //fire when socket connects
+            app.sendGetSessions();
+        },
+
         takeMessage(data) {
            //process socket message from server
 
@@ -75,10 +79,6 @@ var app = Vue.createApp({
             app.sendMessage("delete_session",{"id" : id});
         },
         
-        randomNumber:function(minimum,maximum){
-            //return a random number between min and max
-            return (Math.random() * (maximum - minimum + 1) );
-        },
     },
 
     mounted(){
@@ -87,31 +87,4 @@ var app = Vue.createApp({
 
 }).mount('#app');
 
-//web sockets
-doWebSockets = function()
-{
-        var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-        app.$data.chatSocket = new WebSocket(            
-                               ws_scheme + '://' + window.location.host +
-                               '/ws/sessionList/{{parameters.channel_key}}/');        
-    
-        app.$data.chatSocket.onmessage = function(e) {
-            var data = JSON.parse(e.data);                       
-            app.takeMessage(data);
-        };
-    
-        app.$data.chatSocket.onclose = function(e) {
-            console.error('Socket closed, trying to connect ... ');
-            app.$data.reconnecting=true;
-            window.setTimeout(doWebSockets(), app.randomNumber(500,1500));            
-        }; 
-
-        app.$data.chatSocket.onopen = function(e) {
-            console.log('Socket connected.');     
-            app.$data.reconnecting=false;   
-            // app.$data.sendingMessage=false;
-            app.sendGetSessions();                        
-        };                
-};
-
-doWebSockets();
+{%include "js/web_sockets.js"%}

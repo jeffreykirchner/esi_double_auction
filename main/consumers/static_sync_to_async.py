@@ -46,6 +46,7 @@ def create_new_session():
 def delete_session(id_):
     '''
     delete specified session
+    param: id_ {int} session id
     '''
 
     logger = logging.getLogger(__name__)   
@@ -64,4 +65,21 @@ def delete_session(id_):
     except ObjectDoesNotExist:
         logger.warning(f"Delete Session, not found: {id}")
         return False
+
+@sync_to_async
+def get_session(id_):
+    '''
+    return session with specified id
+    param: id_ {int} session id
+    '''
+    session = None
+    logger = logging.getLogger(__name__)
+
+    try:        
+        session = Session.objects.get(id=id_)
+    except ObjectDoesNotExist:
+        logger.warning(f"get_session session, not found: {id_}")
+    
+    return session.json()
+        
 

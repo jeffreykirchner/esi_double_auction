@@ -6,12 +6,12 @@ import logging
 import channels.layers
 from asgiref.sync import async_to_sync
 
-from django.views.generic import TemplateView
+from django.views.generic import View
 from django.shortcuts import render
 
 from main.models import Parameters
 
-class StaffHomeView(TemplateView):
+class StaffHomeView(View):
     '''
     class based staff view
     '''
@@ -26,4 +26,5 @@ class StaffHomeView(TemplateView):
 
         parameters = Parameters.objects.first()
 
-        return render(request, self.template_name, {"parameters":parameters})
+        return render(request, self.template_name, {"parameters" : parameters,
+                                                    "websocket_path" : "staff-home"})
