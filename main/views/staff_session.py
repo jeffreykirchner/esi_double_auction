@@ -30,8 +30,10 @@ class StaffSessionView(SingleObjectMixin, View):
         parameters = Parameters.objects.first()
         session = self.get_object()
 
-        return render(request, self.template_name, {"parameters" : parameters,
-                                                    "session_form" : SessionForm(),
-                                                    "websocket_path" : self.websocket_path,
-                                                    "page_key" : f'{self.websocket_path}-{session.id}',
-                                                    "session" : session})
+        return render(request=request,
+                      template_name=self.template_name,
+                      context={"parameters" : parameters,
+                               "session_form" : SessionForm(),
+                               "websocket_path" : self.websocket_path,
+                               "page_key" : f'{self.websocket_path}-{session.id}',
+                               "session" : session})
