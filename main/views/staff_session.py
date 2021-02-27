@@ -14,6 +14,7 @@ from main.models import Session
 
 from main.forms import SessionForm
 
+
 class StaffSessionView(SingleObjectMixin, View):
     '''
     class based staff view
@@ -21,6 +22,8 @@ class StaffSessionView(SingleObjectMixin, View):
     template_name = "staff_session.html"
     websocket_path = "staff-session"
     model = Session
+
+   
     
     def get(self, request, *args, **kwargs):
         '''
