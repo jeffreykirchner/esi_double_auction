@@ -14,74 +14,24 @@ import { fab } from '@fortawesome/free-brands-svg-icons'
 import { faCheckSquare, faCoffee } from '@fortawesome/free-solid-svg-icons'
 
 import BaseComponent from 'base_react.js'
+import Web_Socket from 'web_socket.js'
+import TableRows from 'bootstrap_table.js'
+
+import parse from 'html-react-parser';
 
 library.add(fab, faCheckSquare, faCoffee)
 
-// randomNumber = function(minimum,maximum){
-//     //return a random number between min and max
-//     return (Math.random() * (maximum - minimum + 1) );
-// };
 
-
-const ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-
-function TableRows(props) {
-    const content = props.sessions.map((session) =>
-                <tr key={session.id}>
-                    <td className={styles.table_cell_left}>
-                        <a href={'staff_session/' + session.id}>{session.title}</a>
-                    </td>
-                    <td className={styles.table_cell_center}>{session.start_date}</td>
-                    <td className={styles.table_cell_center}>{session.current_period}</td>
-                    <td className={styles.table_cell_center}> </td>
-                    <td className={styles.table_cell_center}>
-                        <button className="btn btn-outline-danger btn-sm" disabled={props.working}
-                                onClick={props.this.sendDeleteSession.bind(props.this,session.id)}>
-                            Delete 
-                        </button>
-                    </td>
-                </tr>
-            );
-
-    return(content);
-  }
-
-class Socket extends Component{
+class Staff_Home extends Component{
     state = {
         sessions : [],
         working : true
     }
 
-    client_socket = new WebSocket(ws_scheme + '://' + window.location.host +           
-                             '/ws/staff-home/fa14d62f-ad50-4a26-bcca-d3bee0daf596/1');
+    web_socket = null
 
-    componentDidMount() {
-         this.client_socket.onopen = () => {
-            // on connecting, do nothing but log it to the console
-            console.log('connected')
-            this.sendMessage('get_sessions', {})
-          }
-      
-          this.client_socket.onmessage = evt => {
-            const message = JSON.parse(evt.data).message
-            console.log(message)
-            this.takeMessage(message)
-          }
-      
-          this.client_socket.onclose = () => {
-            console.log('disconnected')
-            // automatically try to reconnect on connection loss
-            this.setState({
-                //client_socket: new WebSocket(URL),
-            })
-          }         
-       
-    }
-
-    //send socket message
-    sendMessage (messageType, messageText) {
-        const message = {'messageType': messageType, 'messageText': messageText}
-        this.client_socket.send(JSON.stringify(message))
+    componentDidMount() {  
+        this.web_socket = new Web_Socket('/ws/staff-home/fa14d62f-ad50-4a26-bcca-d3bee0daf596/1',this)
     }
 
     //handle incoming socket message
@@ -107,7 +57,7 @@ class Socket extends Component{
     //create new session
     sendCreateSession(){
         this.setState({working:true})
-        this.sendMessage("create_session",{})
+        this.web_socket.sendMessage("create_session",{})
     }
     
     //take result of session creation
@@ -124,10 +74,62 @@ class Socket extends Component{
     sendDeleteSession(id){
         //delete specified session
         this.setState({working:true})
-        this.sendMessage("delete_session",{"id" : id});
+        this.web_socket.sendMessage("delete_session",{"id" : id});
     }
 
-    render() {  
+    buildTableJsonCell(className,value){
+
+        return {
+            class : className,
+            value : value
+        }
+    }
+
+    buildTableJson(incoming_data){
+
+        let return_data = []
+
+        for(let i=0;i<incoming_data.length;i++)
+        {
+            let row = {}
+            row["id"] = incoming_data[i].id
+
+            let v = incoming_data[i]
+
+            let data = []
+
+            let temp = <a href={'staff_session/' + v.id}>{v.title}</a>
+            data.push(this.buildTableJsonCell(styles.table_cell_left, temp))
+
+            temp = v.start_date
+            data.push(this.buildTableJsonCell(styles.table_cell_center, temp))
+            
+            temp = v.current_period
+            data.push(this.buildTableJsonCell(styles.table_cell_center, temp))
+            
+            temp = null
+            data.push(this.buildTableJsonCell(styles.table_cell_center, temp))
+
+            temp = <button className='btn btn-outline-danger btn-sm' disabled={this.state.working}
+                        onClick={this.sendDeleteSession.bind(this, incoming_data[i].id)}>
+                                   Delete
+                               </button>
+            data.push(this.buildTableJsonCell(styles.table_cell_center, temp))
+            
+            row["data"] = data
+
+            return_data.push(row)
+        }
+
+        console.log(return_data)
+
+        return (return_data)
+    }
+
+    render() {   
+
+        const session_table_data = this.buildTableJson(this.state.sessions)
+
         return (
             <div className="row justify-content-lg-center mt-4">
                 <div className="col col-md-8">
@@ -168,7 +170,8 @@ class Socket extends Component{
                                 </thead>
 
                                 <tbody id="sessionList">                                                  
-                                    <TableRows sessions={this.state.sessions} working={this.state.working} this={this} />                                                    
+                                    {/* <TableRows sessions={this.state.sessions} working={this.state.working} this={this} />               */}
+                                    <TableRows rows = {session_table_data} />                                    
                                 </tbody>
 
                             </table>
@@ -188,7 +191,7 @@ function App() {
   return (
     <div>
       <BaseComponent />
-      <Socket />
+      <Staff_Home />
     </div>
   );
 }
