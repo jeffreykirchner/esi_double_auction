@@ -9,3 +9,7 @@
 .table_head_center {
     text-align: center;
   }
+
+.table_head_left {
+    text-align: left;
+  }

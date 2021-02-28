@@ -9,6 +9,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { AxiosProvider, Request, Get, Delete, Head, Post, Put, Patch, withAxios } from 'react-axios'
 import axios from 'axios';
 
+import AxiosPost from 'axios_post.js';
+
 function NavMenu () {
   
     return(
@@ -30,7 +32,15 @@ function NavBar(props) {
 
         var menuJSX
 
-        if(props.isStaff)
+        if(props.isStaff == null)
+        {
+            //empty nav bar
+            menuJSX = (
+                <ul className="navbar-nav mr-auto">                    
+                </ul>
+            )
+        }
+        else if(props.isStaff)
         {
             menuJSX = (
                 <>
@@ -74,21 +84,15 @@ function NavBar(props) {
 
 class BaseComponent extends React.Component {
 
-    state = {isStaff : true}
+    state = {isStaff : null};
 
     componentDidMount() {
-        axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
-        axios.defaults.xsrfCookieName = "csrftoken"
+        AxiosPost("/",{action:"getBase"},this.takeSetup.bind(this));        
+    }
 
-        axios.post('/', {data:"somedata"})
-        .then(
-            (result) => {
-                console.log(result.data)
-            },
-            (error) => {
-                console.log(error)
-            })
-        
+    takeSetup(data){
+        //console.log("take Setup: " + data);
+        this.setState({isStaff : data.is_staff});
     }
 
     render() {

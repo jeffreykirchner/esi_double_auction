@@ -1,47 +1,68 @@
 
-import React, { Component } from 'react'
-import ReactDOM from 'react-dom'
-import Popper from 'popper.js'
-import 'bootstrap'
+import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
+import Popper from 'popper.js';
+import 'bootstrap';
 import { Tab } from 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import styles from 'styles.module.css'; 
-import Jquery from 'jquery'
+import Jquery from 'jquery';
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { fab } from '@fortawesome/free-brands-svg-icons'
-import { faCheckSquare, faCoffee } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { fab } from '@fortawesome/free-brands-svg-icons';
+import { faCog } from '@fortawesome/free-solid-svg-icons';
+library.add(fab, faCog);
 
-import BaseComponent from 'base_react.js'
-import Web_Socket from 'web_socket.js'
-import TableRows from 'bootstrap_table.js'
+import BaseComponent from 'base_react.js';
+import Web_Socket from 'web_socket.js';
+import BootstrapTable from 'bootstrap_table.js';
 
 import parse from 'html-react-parser';
 
-library.add(fab, faCheckSquare, faCoffee)
+import AxiosPost from 'axios_post.js';
 
 
 class Staff_Home extends Component{
     state = {
-        sessions : [],
-        working : true
+        sessions : [],          //list of experiment sessions
+        working : true,         //waiting for server response
+        connecting: true
+    };
+
+    web_socket = null;
+    websocketPath = null;   //websocketPath component of ws url
+    channelKey = null;      //channelKey componnet of ws url  
+    pageKey = null;         //page key component of ws url
+
+    componentDidMount() {
+        AxiosPost("/",{action:"getSocket"},this.takeSetup.bind(this));  
     }
 
-    web_socket = null
+    takeSetup(data){
+        //console.log("take Setup: " + data);
+        this.websocketPath = data.websocket_path;
+        this.channelKey = data.channel_key;
+        this.pageKey = data.page_key;
+        
+        this.web_socket = new Web_Socket('/ws/' + this.websocketPath + '/' + this.channelKey + '/' + this.pageKey,
+                                         this.takeMessage.bind(this),
+                                         this.takeConnecting.bind(this)); 
+    }
 
-    componentDidMount() {  
-        this.web_socket = new Web_Socket('/ws/staff-home/fa14d62f-ad50-4a26-bcca-d3bee0daf596/1',this)
+    //update websocket connecting status
+    takeConnecting(connecting){
+        this.setState({connecting : connecting});
     }
 
     //handle incoming socket message
     takeMessage (message) {
 
-        const messageType = message.messageType
-        const messageData = message.messageData
+        const messageType = message.messageType;
+        const messageData = message.messageData;
         
-        console.log(messageType)
-        console.log(messageData)
+        console.log(messageType);
+        console.log(messageData);
 
         switch(messageType) {
             case "create_session":
@@ -56,24 +77,24 @@ class Staff_Home extends Component{
 
     //create new session
     sendCreateSession(){
-        this.setState({working:true})
-        this.web_socket.sendMessage("create_session",{})
+        this.setState({working:true});
+        this.web_socket.sendMessage("create_session",{});
     }
     
     //take result of session creation
     takeCreateSession (messageData) {
-        this.setState({sessions:messageData.sessions,working:false})
+        this.setState({sessions:messageData.sessions,working:false});
     }
 
     //get current list of sessions
     takeGetSessions (messageData) {
-        this.setState({sessions:messageData.sessions,working:false})
+        this.setState({sessions:messageData.sessions,working:false});
     }
 
     //delete selected session
     sendDeleteSession(id){
         //delete specified session
-        this.setState({working:true})
+        this.setState({working:true});
         this.web_socket.sendMessage("delete_session",{"id" : id});
     }
 
@@ -82,60 +103,74 @@ class Staff_Home extends Component{
         return {
             class : className,
             value : value
-        }
+        };
     }
 
     buildTableJson(incoming_data){
 
-        let return_data = []
+        let return_data = [];
 
         for(let i=0;i<incoming_data.length;i++)
         {
-            let row = {}
-            row["id"] = incoming_data[i].id
+            let row = {};
+            row["id"] = incoming_data[i].id;
 
-            let v = incoming_data[i]
+            let v = incoming_data[i];
 
-            let data = []
+            let data = [];
 
-            let temp = <a href={'staff_session/' + v.id}>{v.title}</a>
-            data.push(this.buildTableJsonCell(styles.table_cell_left, temp))
+            let temp = <a href={'staff_session/' + v.id}>{v.title}</a>;
+            data.push(this.buildTableJsonCell(styles.table_cell_left, temp));
 
-            temp = v.start_date
-            data.push(this.buildTableJsonCell(styles.table_cell_center, temp))
+            temp = v.start_date;
+            data.push(this.buildTableJsonCell(styles.table_cell_center, temp));
             
-            temp = v.current_period
-            data.push(this.buildTableJsonCell(styles.table_cell_center, temp))
+            temp = v.current_period;
+            data.push(this.buildTableJsonCell(styles.table_cell_center, temp));
             
-            temp = null
-            data.push(this.buildTableJsonCell(styles.table_cell_center, temp))
+            temp = null;
+            data.push(this.buildTableJsonCell(styles.table_cell_center, temp));
 
             temp = <button className='btn btn-outline-danger btn-sm' disabled={this.state.working}
                         onClick={this.sendDeleteSession.bind(this, incoming_data[i].id)}>
                                    Delete
-                               </button>
-            data.push(this.buildTableJsonCell(styles.table_cell_center, temp))
+                               </button>;
+            data.push(this.buildTableJsonCell(styles.table_cell_center, temp));
             
-            row["data"] = data
+            row["data"] = data;
 
-            return_data.push(row)
+            return_data.push(row);
         }
 
-        console.log(return_data)
+        //console.log(return_data);
 
-        return (return_data)
+        return (return_data);
+    }
+
+    buildTableHeadJson() {
+        let return_data = [];
+
+        return_data.push(this.buildTableJsonCell(styles.table_cell_left,"Title"));
+        return_data.push(this.buildTableJsonCell(styles.table_cell_center,"Date"));
+        return_data.push(this.buildTableJsonCell(styles.table_cell_center," Current Period"));
+        return_data.push(this.buildTableJsonCell(styles.table_cell_center," Treatment"));
+        return_data.push(this.buildTableJsonCell(styles.table_cell_center," Control"));
+
+        return (return_data);
     }
 
     render() {   
 
-        const session_table_data = this.buildTableJson(this.state.sessions)
+        const session_table_data = this.buildTableJson(this.state.sessions);
+        const session_table_head = this.buildTableHeadJson();        
 
         return (
             <div className="row justify-content-lg-center mt-4">
                 <div className="col col-md-8">
                     <div className="card">
                         <div className="card-header">
-                            Double Auction
+                            <span className="mr-2">Double Auction</span>
+                            {this.state.connecting && <span>... Connecting <FontAwesomeIcon icon={faCog} spin /></span>}
 
                             <span className="float-right">
                                 <button className="btn btn-outline-success" type="button" onClick={this.sendCreateSession.bind(this)} disabled={this.state.working}>
@@ -145,43 +180,14 @@ class Staff_Home extends Component{
                         </div>
                         <div className="card-body">
                             
-                            <table className="table table-hover table-condensed table-responsive-md">                            
-
-                                <caption style={{captionSide:'top',textAlign: 'center'}}>Sessions</caption>
-
-                                <thead>
-                                    <tr>
-                                        <th scope="col">
-                                            Title
-                                        </th> 
-                                        <th scope="col" className={styles.table_head_center}>
-                                            Date                             
-                                        </th>
-                                        <th scope="col" className={styles.table_head_center}>
-                                            Current Period
-                                        </th>
-                                        <th scope="col" className={styles.table_head_center}>
-                                            Treatment
-                                        </th>                                                      
-                                        <th scope="col" className={styles.table_head_center}>
-                                            Control
-                                        </th>
-                                    </tr>
-                                </thead>
-
-                                <tbody id="sessionList">                                                  
-                                    {/* <TableRows sessions={this.state.sessions} working={this.state.working} this={this} />               */}
-                                    <TableRows rows = {session_table_data} />                                    
-                                </tbody>
-
-                            </table>
+                            <BootstrapTable title = "Sessions" table_data = {session_table_data} table_head = {session_table_head}/>
 
                         </div>
 
                     </div>
                 </div>
             </div>
-        )
+        );
     }
 }
 

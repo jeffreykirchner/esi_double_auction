@@ -29,7 +29,16 @@ class StaffHomeView(View):
         logger = logging.getLogger(__name__) 
         logger.info(data)
 
-        return JsonResponse({"response" : "some data"}, safe=False)
+        if data["action"] == "getBase":
+            return JsonResponse({"is_staff" : request.user.is_staff}, safe=False)
+        elif data["action"] == "getSocket":
+            parameters = Parameters.objects.first()
+
+            return JsonResponse({"page_key" : self.websocket_path,
+                                 "websocket_path" : self.websocket_path,
+                                 "channel_key" : parameters.channel_key}, safe=False)
+
+        return JsonResponse({"status" : "error"}, safe=False)
     
     def get(self, request, *args, **kwargs):
         '''
