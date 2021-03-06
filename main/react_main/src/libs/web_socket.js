@@ -1,4 +1,4 @@
-import randomNumber from 'random_number.js'
+import randomNumber from 'libs/random_number.js'
 
 //web socket class for react compoents
 class Web_Socket{

@@ -9,7 +9,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { AxiosProvider, Request, Get, Delete, Head, Post, Put, Patch, withAxios } from 'react-axios'
 import axios from 'axios';
 
-import AxiosPost from 'axios_post.js';
+import AxiosPost from 'libs/axios_post.js';
 
 function NavMenu () {
   

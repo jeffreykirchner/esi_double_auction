@@ -5,7 +5,6 @@ module.exports = {
   // Where Webpack looks to load your JavaScript
   entry: {
     staff_home: path.resolve(__dirname, 'src/staff_home.js'),
-    get_cookie: path.resolve(__dirname, 'src/get_cookie.js'),
   },
   mode: 'development',
   // Where Webpack spits out the results (the myapp static folder)

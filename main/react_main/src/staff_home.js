@@ -12,15 +12,18 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fab } from '@fortawesome/free-brands-svg-icons';
 import { faCog } from '@fortawesome/free-solid-svg-icons';
-library.add(fab, faCog);
+import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
+library.add(fab, faCog, faTrashAlt, faPlus);
 
 import BaseComponent from 'base_react.js';
-import Web_Socket from 'web_socket.js';
-import BootstrapTable from 'bootstrap_table.js';
+import Web_Socket from 'libs/web_socket.js';
+import BootstrapTable from 'libs/bootstrap_table.js';
+import AxiosPost from 'libs/axios_post.js';
 
 import parse from 'html-react-parser';
 
-import AxiosPost from 'axios_post.js';
+
 
 
 class Staff_Home extends Component{
@@ -93,7 +96,6 @@ class Staff_Home extends Component{
 
     //delete selected session
     sendDeleteSession(id){
-        //delete specified session
         this.setState({working:true});
         this.web_socket.sendMessage("delete_session",{"id" : id});
     }
@@ -132,8 +134,8 @@ class Staff_Home extends Component{
             data.push(this.buildTableJsonCell(styles.table_cell_center, temp));
 
             temp = <button className='btn btn-outline-danger btn-sm' disabled={this.state.working}
-                        onClick={this.sendDeleteSession.bind(this, incoming_data[i].id)}>
-                                   Delete
+                           onClick={this.sendDeleteSession.bind(this, incoming_data[i].id)}>
+                                   Delete <FontAwesomeIcon icon={faTrashAlt} />
                                </button>;
             data.push(this.buildTableJsonCell(styles.table_cell_center, temp));
             
@@ -174,7 +176,7 @@ class Staff_Home extends Component{
 
                             <span className="float-right">
                                 <button className="btn btn-outline-success" type="button" onClick={this.sendCreateSession.bind(this)} disabled={this.state.working}>
-                                    Create Session                                   
+                                    Create Session <FontAwesomeIcon icon={faPlus} />                               
                                 </button>
                             </span>                                                                        
                         </div>
