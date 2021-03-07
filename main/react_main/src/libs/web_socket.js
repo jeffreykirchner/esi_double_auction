@@ -22,8 +22,7 @@ class Web_Socket{
             // on connecting, do nothing but log it to the console
             console.log('connected');
             this.connecting=false;
-            this.takeConnectingCallback(false);
-            this.sendMessage('get_sessions', {});
+            this.takeConnectingCallback(false);            
           }
       
         this.client_socket.onmessage = evt => {

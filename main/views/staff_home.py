@@ -4,9 +4,6 @@ staff view
 import logging
 import json
 
-import channels.layers
-from asgiref.sync import async_to_sync
-
 from django.views.generic import View
 from django.shortcuts import render
 from django.http import JsonResponse

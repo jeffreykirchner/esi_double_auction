@@ -5,6 +5,7 @@ module.exports = {
   // Where Webpack looks to load your JavaScript
   entry: {
     staff_home: path.resolve(__dirname, 'src/staff_home.js'),
+    staff_session: path.resolve(__dirname, 'src/staff_session.js'),
   },
   mode: 'development',
   // Where Webpack spits out the results (the myapp static folder)
