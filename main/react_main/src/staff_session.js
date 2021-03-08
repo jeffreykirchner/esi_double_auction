@@ -1,6 +1,6 @@
 
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM, { findDOMNode } from 'react-dom';
 import Popper from 'popper.js';
 import 'bootstrap';
 import { Tab } from 'bootstrap';
@@ -21,13 +21,22 @@ import AxiosPost from 'libs/axios_post.js';
 import ParametersCard from 'staff_session/parameters_card.js'
 
 import parse from 'html-react-parser';
+//import HtmlToReactParser from 'html-to-react';
 
 class Staff_Session extends Component{
-    state = {
-        sessions : [],          //list of experiment sessions
-        working : true,         //waiting for server response
-        connecting: true
-    };
+    constructor(props)
+    {
+        super(props);
+
+        this.state = {
+            sessions : [],          //list of experiment sessions
+            working : true,         //waiting for server response
+            connecting : true,
+            number_of_periods : 3,
+        };
+
+        this.handleInputChange = this.handleInputChange.bind(this);
+    }    
 
     pathname = window.location.pathname;
 
@@ -41,6 +50,7 @@ class Staff_Session extends Component{
     }
 
     takeSetup(data){
+
         //console.log("take Setup: " + data);
         this.websocketPath = data.websocket_path;
         this.channelKey = data.channel_key;
@@ -54,7 +64,25 @@ class Staff_Session extends Component{
     //update websocket connecting status
     takeConnecting(connecting){
         this.setState({connecting : connecting});
+
+        if(!connecting)
+        {
+            this.web_socket.sendMessage("get_session", {sessionID : this.pageKey});
+        }
     }
+
+    //handle form input changes
+    handleInputChange(event) {
+        const target = event.target;
+        const value = target.value;
+        const name = target.name;
+
+        console.log("handle input change " + name + " " + value)
+    
+        this.setState({
+          [name]: value
+        });
+      }
 
     //handle incoming socket message
     takeMessage (message) {
@@ -69,8 +97,8 @@ class Staff_Session extends Component{
             case "create_session":
                 this.takeCreateSession(messageData);
                 break;
-            case "get_sessions":
-                this.takeGetSessions(messageData);
+            case "get_session":
+                this.takeGetSession(messageData);
                 break;
 
         }
@@ -88,8 +116,11 @@ class Staff_Session extends Component{
     }
 
     //get current list of sessions
-    takeGetSessions (messageData) {
-        this.setState({sessions:messageData.sessions,working:false});
+    takeGetSession (messageData) {
+
+        this.setState({sessions : messageData.sessions, working: false});
+        this.setState({parameterSetForm : parameterSetForm});
+        //this.setState({parameterSetForm : });
     }
 
     //delete selected session
@@ -99,13 +130,16 @@ class Staff_Session extends Component{
     }
 
     render() {    
+        var tmp = <input type="number" value={this.state.number_of_periods} onChange={this.handleInputChange} name="number_of_periods"></input>;
 
         return (
-            <div className="row justify-content-lg-center mt-4">
+            <div className="row justify-content-lg-center m-4">
                 <div className="col col-md-8">
                     <ParametersCard connecting = {this.state.connecting}/>
                 </div>
-            </div>
+                <div className="col col-md-4">
+                </div>
+            </div>            
         );
     }
 }

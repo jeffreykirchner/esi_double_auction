@@ -7,13 +7,15 @@ import logging
 from asgiref.sync import sync_to_async
 
 from django.core.exceptions import ObjectDoesNotExist
+from django.template import Context, Template
+from django.template.loader import get_template
 
 from main.consumers import SocketConsumerMixin
 from main.consumers import get_session
 
 from main.views import Session
 
-from main.forms import SessionForm
+from main.forms import ParameterSetForm, SessionForm
 
 class StaffSessionConsumer(SocketConsumerMixin):
     '''
@@ -27,9 +29,15 @@ class StaffSessionConsumer(SocketConsumerMixin):
         logger = logging.getLogger(__name__) 
         logger.info(f"Get Session {event}")
 
+        parameter_set_form = ParameterSetForm()
+        template = get_template('staff_session/parameter_set_table.html')
+        context = Context()
+
         #build response
         message_data = {}
         message_data["session"] = await get_session(event["message_text"]["sessionID"])
+        message_data["parameter_set_form"] = template.render({"form" : parameter_set_form})
+
 
         message = {}
         message["messageType"] = event["type"]

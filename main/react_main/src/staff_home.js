@@ -20,8 +20,6 @@ import AxiosPost from 'libs/axios_post.js';
 
 import SessionCard from 'staff_home/session_card.js'
 
-import parse from 'html-react-parser';
-
 class Staff_Home extends Component{
     state = {
         sessions : [],          //list of experiment sessions

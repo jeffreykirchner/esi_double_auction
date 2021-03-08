@@ -13,12 +13,10 @@ class ParameterSet(models.Model):
     '''
     session parameters
     '''
-
-    consent_form_required = models.BooleanField(default=True)                                               #true if subject must agree to special consent form before doing experiment
-    consent_form = models.ForeignKey(ConsentForms,on_delete=models.CASCADE,null=True,blank=True)    #text of special consent form
+    consent_form_required = models.BooleanField(default=True)                                           #true if subject must agree to special consent form before doing experiment
+    consent_form = models.ForeignKey(ConsentForms,on_delete=models.CASCADE,null=True,blank=True)        #text of special consent form
 
     number_of_periods = models.IntegerField(default=1)                #number of periods in the session
-    number_of_subjects = models.IntegerField(default=1)               #number of subjects in the session
 
     timestamp = models.DateTimeField(auto_now_add= True)
     updated= models.DateTimeField(auto_now= True)
