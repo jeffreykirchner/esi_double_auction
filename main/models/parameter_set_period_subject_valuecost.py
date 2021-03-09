@@ -1,5 +1,5 @@
 '''
-sessions parameters
+a value or cost for a subject in a period
 '''
 from django.db import models
 
@@ -8,7 +8,7 @@ from main.models import ParameterSetPeriodSubject
 #experiment session parameters
 class ParameterSetPeriodSubjectValuecost(models.Model):
     '''
-    session parameters
+    a value or cost for a subject in a period
     '''
 
     parameter_set_period_subject = models.ForeignKey(ParameterSetPeriodSubject, on_delete=models.CASCADE,
@@ -23,8 +23,8 @@ class ParameterSetPeriodSubjectValuecost(models.Model):
         return str(self.id)
 
     class Meta:
-        verbose_name = 'Parameter Set Subject Value'
-        verbose_name_plural = 'Parameter Sets Subjet Values'
+        verbose_name = 'Parameter Set Subject Value or Cost'
+        verbose_name_plural = 'Parameter Sets Subjet Value or Costs'
 
     def json(self):
         '''
@@ -33,5 +33,5 @@ class ParameterSetPeriodSubjectValuecost(models.Model):
         return{
 
             "id" : self.id,
-            "value" : self.value,
+            "value" : self.value_cost,
         }

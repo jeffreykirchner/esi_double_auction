@@ -39,18 +39,39 @@ def create_new_session():
     parameter_set_period.parameter_set = parameter_set
     parameter_set_period.save()
 
+    #setup seller
     parameter_set_period_subject_1 = ParameterSetPeriodSubject()
     parameter_set_period_subject_1.id_number = 1
+    parameter_set_period_subject_1.SubjectType = "Seller"
     parameter_set_period_subject_1.save()
 
+    #setup buyer
     parameter_set_period_subject_2 = ParameterSetPeriodSubject()
     parameter_set_period_subject_2.id_number = 2
+    parameter_set_period_subject_2.SubjectType = "Buyer"
     parameter_set_period_subject_2.save()
 
-    parameter_set_period_subject_1_value = ParameterSetPeriodSubjectValuecost()
-    parameter_set_period_subject_1_value.parameter_set_period_subject = parameter_set_period_subject_1
-    parameter_set_period_subject_1_value.value = 2
-    parameter_set_period_subject_1_value.save()
+    #seller costs
+    valuecost_1 = ParameterSetPeriodSubjectValuecost()
+    valuecost_1.parameter_set_period_subject = parameter_set_period_subject_1
+    valuecost_1.value_cost = 2
+    valuecost_1.save()
+
+    valuecost_2 = ParameterSetPeriodSubjectValuecost()
+    valuecost_2.parameter_set_period_subject = parameter_set_period_subject_1
+    valuecost_2.value_cost = 4
+    valuecost_2.save()
+
+    #buyer values
+    valuecost_3 = ParameterSetPeriodSubjectValuecost()
+    valuecost_3.parameter_set_period_subject = parameter_set_period_subject_2
+    valuecost_3.value_cost = 6
+    valuecost_3.save()
+
+    valuecost_4 = ParameterSetPeriodSubjectValuecost()
+    valuecost_4.parameter_set_period_subject = parameter_set_period_subject_2
+    valuecost_4.value_cost = 8
+    valuecost_4.save()
 
     #create new session
     session = Session()
