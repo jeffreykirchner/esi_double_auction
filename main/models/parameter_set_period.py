@@ -1,20 +1,21 @@
 '''
-sessions parameters
+sessions parameter period
 '''
 from django.db import models
 from django.db.utils import IntegrityError
 
-from main.models import ConsentForms
+from main.models import ParameterSet
 
 import main
 
 #experiment session parameters
-class ParameterSet(models.Model):
+class ParameterSetPeriod(models.Model):
     '''
-    session parameters
+    session parameter period
     '''
-    consent_form_required = models.BooleanField(default=True)                                           #true if subject must agree to special consent form before doing experiment
-    consent_form = models.ForeignKey(ConsentForms,on_delete=models.CASCADE,null=True,blank=True)        #text of special consent form
+    parameter_set = models.ForeignKey(ParameterSet, on_delete=models.CASCADE, related_name="parameter_set_periods")
+  
+    number = models.IntegerField(default=1, verbose_name= "Period Number")             #period number in set
 
     timestamp = models.DateTimeField(auto_now_add= True)
     updated= models.DateTimeField(auto_now= True)
@@ -23,8 +24,12 @@ class ParameterSet(models.Model):
         return str(self.id)
 
     class Meta:
-        verbose_name = 'Experiment Parameter Set'
-        verbose_name_plural = 'Experiment Parameter Sets'
+        verbose_name = 'Parameter Set Period'
+        verbose_name_plural = 'Parameter Set Periods'
+
+        constraints = [
+            models.UniqueConstraint(fields=['parameter_set', 'number'], name='unique_PSP')
+        ]
 
     def setup_from_dict(self, new_ps):
         '''
@@ -36,6 +41,8 @@ class ParameterSet(models.Model):
         try:
             self.consent_form_required = new_ps.get("consent_form_required")
             self.consent_form = main.models.ConsentForms.objects.get(id=new_ps.get("consent_form"))
+            self.number_of_periods = new_ps.get("number_of_periods")
+            self.number_of_subjects = new_ps.get("number_of_subjects")
 
             self.save()
 
@@ -54,22 +61,19 @@ class ParameterSet(models.Model):
 
         self.consent_form_required = new_ps.consent_form_required
         self.consent_form = new_ps.consent_form
+        self.number_of_periods = new_ps.number_of_periods
+        self.number_of_subjects = new_ps.number_of_subjects
 
         self.save()
-    
-    def get_period_count(self):
-        '''
-        return the number of periods
-        '''
-        return self.parameter_set_periods.all().count()
 
     def json(self):
         '''
         return json object of model
         '''
         return{
+
             "id" : self.id,
             "consent_form_required" : self.consent_form_required,
-            "consent_form" : self.consent_form.id if self.consent_form else None,
-            "periods" : [psp.json() for psp in self.parameter_set_periods.all()],
+            "number" : self.number,
+            "subjects" : [subject.json() for subject in self.parameter_set_period_subjects.all()],
         }

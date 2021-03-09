@@ -29,10 +29,9 @@ class Staff_Session extends Component{
         super(props);
 
         this.state = {
-            sessions : [],          //list of experiment sessions
+            session : {},           //list of experiment sessions
             working : true,         //waiting for server response
             connecting : true,
-            number_of_periods : 3,
         };
 
         this.handleInputChange = this.handleInputChange.bind(this);
@@ -94,8 +93,8 @@ class Staff_Session extends Component{
         console.log(messageData);
 
         switch(messageType) {
-            case "create_session":
-                this.takeCreateSession(messageData);
+            case "update_parameter_set":
+                
                 break;
             case "get_session":
                 this.takeGetSession(messageData);
@@ -104,29 +103,12 @@ class Staff_Session extends Component{
         }
     }
 
-    //create new session
-    sendCreateSession(){
-        this.setState({working:true});
-        this.web_socket.sendMessage("create_session",{});
-    }
-    
-    //take result of session creation
-    takeCreateSession (messageData) {
-        this.setState({sessions:messageData.sessions,working:false});
-    }
 
     //get current list of sessions
     takeGetSession (messageData) {
 
-        this.setState({sessions : messageData.sessions, working: false});
-        this.setState({parameterSetForm : parameterSetForm});
-        //this.setState({parameterSetForm : });
-    }
+        this.setState({session : messageData.session, working: false});
 
-    //delete selected session
-    sendDeleteSession(id){
-        this.setState({working:true});
-        this.web_socket.sendMessage("delete_session",{"id" : id});
     }
 
     render() {    

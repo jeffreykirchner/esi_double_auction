@@ -3,20 +3,30 @@ sessions parameters
 '''
 from django.db import models
 from django.db.utils import IntegrityError
+from django.utils.translation import gettext_lazy as _
 
-from main.models import ParameterSet
+from main.models import ParameterSetPeriod
 
 import main
 
 #experiment session parameters
-class ParameterSetSubject(models.Model):
+class ParameterSetPeriodSubject(models.Model):
     '''
     session parameters
     '''
 
-    parameter_set = models.ForeignKey(ParameterSet,on_delete=models.CASCADE, related_name="parameter_set_subjects")
+    class SubjectType(models.TextChoices):
+        '''
+        Subject Type
+        '''
+        BUYER = 'Buyer', _('Buyer')          #buy only
+        SELLER = "Seller", _('Seller')       #sell only
 
-    id_number = models.IntegerField(null=True, verbose_name = 'ID Number in Session')                                   #local id number in session
+    parameter_set_period = models.ForeignKey(ParameterSetPeriod,on_delete=models.CASCADE, related_name="parameter_set_period_subjects")
+
+    id_number = models.IntegerField(default=1, verbose_name='ID Number in Session')                         #local id number in session
+    subject_type = models.CharField(default=SubjectType.BUYER, max_length=100,
+                                    choices=SubjectType.choices, verbose_name="Type of participant")        #type of participant
 
     timestamp = models.DateTimeField(auto_now_add = True)
     updated= models.DateTimeField(auto_now = True)
@@ -27,6 +37,10 @@ class ParameterSetSubject(models.Model):
     class Meta:
         verbose_name = 'Study Parameter Set Subject'
         verbose_name_plural = 'Study Parameter Sets Subjets'
+
+        constraints = [
+            models.UniqueConstraint(fields=['parameter_set_period', 'id_number'], name='unique_PSPS')
+        ]
 
     def setup_from_dict(self, new_ps):
         '''
@@ -66,5 +80,8 @@ class ParameterSetSubject(models.Model):
         return{
 
             "id" : self.id,
-            "consent_form_required" : self.id_number,
+            "id_number" : self.id_number,
+            "subject_type" : self.subject_type,
+            "inventory" : self.inventory,
+            "values" : [value.json() for value in self.parameter_set_period_subject_values.all()]
         }
