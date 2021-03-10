@@ -73,7 +73,6 @@ class ParameterSetPeriod(models.Model):
         return{
 
             "id" : self.id,
-            "consent_form_required" : self.consent_form_required,
             "number" : self.number,
             "subjects" : [subject.json() for subject in self.parameter_set_period_subjects.all()],
         }

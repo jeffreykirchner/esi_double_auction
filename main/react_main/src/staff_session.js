@@ -29,7 +29,8 @@ class Staff_Session extends Component{
         super(props);
 
         this.state = {
-            session : {},           //list of experiment sessions
+            session : {parameter_set:{periods : []}
+                       },           //list of experiment sessions
             working : true,         //waiting for server response
             connecting : true,
         };
@@ -117,7 +118,7 @@ class Staff_Session extends Component{
         return (
             <div className="row justify-content-lg-center m-4">
                 <div className="col col-md-8">
-                    <ParametersCard connecting = {this.state.connecting}/>
+                    <ParametersCard connecting = {this.state.connecting} parameterSet = {this.state.session.parameter_set}/>
                 </div>
                 <div className="col col-md-4">
                 </div>

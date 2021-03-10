@@ -78,10 +78,8 @@ class ParameterSetPeriodSubject(models.Model):
         return json object of model
         '''
         return{
-
             "id" : self.id,
             "id_number" : self.id_number,
             "subject_type" : self.subject_type,
-            "inventory" : self.inventory,
             "values" : [value.json() for value in self.parameter_set_period_subject_values.all()]
         }

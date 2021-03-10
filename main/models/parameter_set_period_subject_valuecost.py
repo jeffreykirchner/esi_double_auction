@@ -33,5 +33,5 @@ class ParameterSetPeriodSubjectValuecost(models.Model):
         return{
 
             "id" : self.id,
-            "value" : self.value_cost,
+            "value_cost" : float(self.value_cost),
         }

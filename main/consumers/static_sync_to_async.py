@@ -37,18 +37,21 @@ def create_new_session():
 
     parameter_set_period = ParameterSetPeriod()
     parameter_set_period.parameter_set = parameter_set
+    parameter_set_period.number = 1
     parameter_set_period.save()
 
     #setup seller
     parameter_set_period_subject_1 = ParameterSetPeriodSubject()
+    parameter_set_period_subject_1.parameter_set_period = parameter_set_period
     parameter_set_period_subject_1.id_number = 1
-    parameter_set_period_subject_1.SubjectType = "Seller"
+    parameter_set_period_subject_1.subject_type = "Seller"
     parameter_set_period_subject_1.save()
 
     #setup buyer
     parameter_set_period_subject_2 = ParameterSetPeriodSubject()
+    parameter_set_period_subject_2.parameter_set_period = parameter_set_period
     parameter_set_period_subject_2.id_number = 2
-    parameter_set_period_subject_2.SubjectType = "Buyer"
+    parameter_set_period_subject_2.subject_type = "Buyer"
     parameter_set_period_subject_2.save()
 
     #seller costs
