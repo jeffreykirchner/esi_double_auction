@@ -60,7 +60,6 @@ function ParametersTable(props)
 function ParametersCard(props)
 {
     
-
     const content = (
         <div className="card">
             <div className="card-header">
@@ -68,7 +67,9 @@ function ParametersCard(props)
                 {props.connecting && <span>... Connecting <FontAwesomeIcon icon={faCog} spin /></span>}
 
                 <span className="float-right">
-                    
+                    <button className="btn btn-outline-success" type="button" onClick={props.sendAddPeriod} disabled={props.working}>
+                        Add Period <FontAwesomeIcon icon={faPlus} />                               
+                    </button>
                 </span>                                                                        
             </div>
             <div className="card-body">    
@@ -78,7 +79,7 @@ function ParametersCard(props)
         </div>
     );
 
-    return(content );
+    return(content);
 }
 
 export default ParametersCard

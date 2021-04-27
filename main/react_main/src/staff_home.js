@@ -18,7 +18,7 @@ import BaseComponent from 'base_react.js';
 import Web_Socket from 'libs/web_socket.js';
 import AxiosPost from 'libs/axios_post.js';
 
-import SessionCard from 'staff_home/session_card.js'
+import SessionCard from 'staff_home/sessions_card.js'
 
 class Staff_Home extends Component{
     state = {

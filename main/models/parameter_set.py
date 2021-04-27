@@ -7,6 +7,7 @@ from django.db.utils import IntegrityError
 from main.models import ConsentForms
 
 import main
+import main.models
 
 #experiment session parameters
 class ParameterSet(models.Model):
@@ -56,6 +57,18 @@ class ParameterSet(models.Model):
         self.consent_form = new_ps.consent_form
 
         self.save()
+    
+    def add_period(self):
+        '''
+        add a new period to parameter set
+        '''
+
+        last_parameter_set_period = self.parameter_set_periods.all().last()
+
+        parameter_set_period = main.models.ParameterSetPeriod()
+        parameter_set_period.number = last_parameter_set_period.number + 1
+        parameter_set_period.parameter_set = self
+        parameter_set_period.save()
     
     def get_period_count(self):
         '''

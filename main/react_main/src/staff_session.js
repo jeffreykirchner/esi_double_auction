@@ -104,21 +104,30 @@ class Staff_Session extends Component{
         }
     }
 
-
     //get current list of sessions
     takeGetSession (messageData) {
-
         this.setState({session : messageData.session, working: false});
+    }
 
+    //add period to session
+    sendAddPeriod(){
+        this.web_socket.sendMessage("send_add_period", {session_id : this.state.session.id});
+    }
+
+    sendDeletePeriod(periodId){
+        this.web_socket.sendMessage("send_delete_period", {periodId : periodId});
     }
 
     render() {    
-        var tmp = <input type="number" value={this.state.number_of_periods} onChange={this.handleInputChange} name="number_of_periods"></input>;
-
+        
         return (
             <div className="row justify-content-lg-center m-4">
                 <div className="col col-md-8">
-                    <ParametersCard connecting = {this.state.connecting} parameterSet = {this.state.session.parameter_set}/>
+                    <ParametersCard connecting = {this.state.connecting}
+                                    parameterSet = {this.state.session.parameter_set}
+                                    sendAddPeriod = {this.sendAddPeriod.bind(this)}
+                                    sendDeletePeriod = {this.sendDeletePeriod.bind(this)}
+                                    working = {this.state.working}/>
                 </div>
                 <div className="col col-md-4">
                 </div>

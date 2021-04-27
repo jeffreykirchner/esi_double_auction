@@ -31,6 +31,8 @@ class ParameterSetPeriod(models.Model):
             models.UniqueConstraint(fields=['parameter_set', 'number'], name='unique_PSP')
         ]
 
+        ordering = ['number']
+
     def setup_from_dict(self, new_ps):
         '''
         load values from dict

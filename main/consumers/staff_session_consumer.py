@@ -60,8 +60,28 @@ class StaffSessionConsumer(SocketConsumerMixin):
         await self.send(text_data=json.dumps({
             'message': message
         }))
+    
+    async def send_add_period(self, event):
+        '''
+        add another period to session
+        '''
 
 #local sync_to_asyncs
+@sync_to_async
+def take_add_period(data):
+    '''
+    add new period to session
+    '''
+    logger = logging.getLogger(__name__)
+    session_id = data["session_id"]
+
+    try:        
+        session = Session.objects.get(id=session_id)
+    except ObjectDoesNotExist:
+        logger.warning(f"take_add_period session, not found: {session_id}")
+
+    
+
 @sync_to_async
 def take_update_session_form(data):
     '''
