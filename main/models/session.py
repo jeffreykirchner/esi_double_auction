@@ -26,7 +26,6 @@ class Session(models.Model):
     parameter_set = models.ForeignKey(ParameterSet, on_delete=models.CASCADE)
 
     title = models.CharField(max_length = 300, default="*** New Session ***")    #title of session
-    start_date = models.DateField(default=now)                                   #date of session start
 
     channel_key = models.UUIDField(default=uuid.uuid4, editable=False, verbose_name = 'Channel Key')     #unique channel to communicate on
     session_key = models.UUIDField(default=uuid.uuid4, editable=False, verbose_name = 'Session Key')     #unique key for session to auto login subjects by id
@@ -53,7 +52,7 @@ class Session(models.Model):
     class Meta:
         verbose_name = 'Experiment Session'
         verbose_name_plural = 'Experiment Sessions'
-        ordering = ['-start_date']
+        ordering = ['title']
 
     #get the current session day
     def get_current_session_period(self) :
@@ -148,10 +147,11 @@ class Session(models.Model):
         return json object of model
         '''
         return{
-            "id":self.id,
-            "title":self.title,
-            "start_date":self.get_start_date_string(),
-            "current_period":self.current_period,
+            "id" : self.id,
+            "title" : self.title,
+            "started" : self.started,
+            "current_period" : self.current_period,
+            "parameter_set" : self.parameter_set.json(),
         }
 
 
