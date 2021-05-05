@@ -1,5 +1,3 @@
-import randomNumber from 'random_number.js';
-
 //web sockets, needs should be included with companion vue.js app
 doWebSockets = function()
 {
@@ -24,6 +22,11 @@ doWebSockets = function()
             app.$data.reconnecting=false;   
             app.handleSocketConnected();                      
         };                
+};
+
+randomNumber = function(minimum,maximum){
+    //return a random number between min and max
+    return (Math.random() * (maximum - minimum + 1) );
 };
 
 doWebSockets();
