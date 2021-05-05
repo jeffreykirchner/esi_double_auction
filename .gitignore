@@ -2,4 +2,3 @@ logs/*
 ESIDoubleAuctionEnv/*
 .vscode/*
 *.pyc
-node_modules
