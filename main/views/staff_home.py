@@ -15,7 +15,7 @@ class StaffHomeView(View):
     '''
     class based staff view
     '''
-    template_name = "staff_home.html"
+    template_name = "staff/staff_home.html"
     websocket_path = "staff-home"
     
     def get(self, request, *args, **kwargs):

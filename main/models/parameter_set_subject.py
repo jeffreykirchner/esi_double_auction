@@ -1,22 +1,31 @@
 '''
-sessions parameters
+subject parameters
 '''
 from django.db import models
 from django.db.utils import IntegrityError
+from django.utils.translation import gettext_lazy as _
 
 from main.models import ParameterSet
 
 import main
 
-#experiment session parameters
 class ParameterSetSubject(models.Model):
     '''
-    session parameters
+    subject parameters
     '''
+
+    class SubjectType(models.TextChoices):
+        '''
+        treatment types for session
+        '''
+        BUYER = 'Buyer', _('Buyer')
+        SELLER = 'Seller', _('Seller')
 
     parameter_set = models.ForeignKey(ParameterSet,on_delete=models.CASCADE, related_name="parameter_set_subjects")
 
-    id_number = models.IntegerField(null=True, verbose_name = 'ID Number in Session')                                   #local id number in session
+    period_number = models.IntegerField(null=True, verbose_name = 'Period number')
+    id_number = models.IntegerField(null=True, verbose_name = 'ID Number in Period')                                #local id number in the period
+    subject_type = models.CharField(max_length=100, choices=SubjectType.choices, default=SubjectType.BUYER)         #subject type of subject
 
     timestamp = models.DateTimeField(auto_now_add = True)
     updated= models.DateTimeField(auto_now = True)
@@ -25,8 +34,12 @@ class ParameterSetSubject(models.Model):
         return str(self.id)
 
     class Meta:
-        verbose_name = 'Study Parameter Set Subject'
-        verbose_name_plural = 'Study Parameter Sets Subjets'
+        verbose_name = 'Parameters for Subject'
+        verbose_name_plural = 'Parameters for Subjects'
+
+        constraints = [
+            models.UniqueConstraint(fields=['parameter_set', 'period_number', 'id_number', 'subject_type'], name='unique_subject_for_period'),
+        ]
 
     def setup_from_dict(self, new_ps):
         '''
@@ -66,5 +79,8 @@ class ParameterSetSubject(models.Model):
         return{
 
             "id" : self.id,
-            "consent_form_required" : self.id_number,
+            "period_number" : self.period_number,
+            "id_number" : self.id_number,
+            "subject_type" : self.subject_type,
+            "value_costs" : [vc.json() for vc in self.parameter_set_subject_valuecosts.all()]
         }

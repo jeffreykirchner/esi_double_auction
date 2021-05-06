@@ -1,0 +1,41 @@
+<div class="card">                  
+    <div class="card-header">
+        <span class="align-middle">Session</span>      
+        
+        <span class="float-end">                            
+            <button class="btn btn-outline-primary" type="button" v-on:click = "showEditSession()">
+                Edit <i class="far fa-edit"></i>
+            </button>
+
+        </span>
+    </div>
+    <div class="card-body">    
+
+        <div class="row">
+            <div class="col-4" style="text-align: right;">
+                {{session_form.title.label}}:
+            </div>
+            <div class="col-md-8">
+                <span v-html="session.title"></span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4" style="text-align: right;">
+                Run Date:
+            </div>
+            <div class="col-md-8">
+                <span v-html="session.start_date"></span>
+            </div>
+        </div>                    
+        <div class="row">
+            <div class="col-md-4" style="text-align: right;">
+                Current Period:
+            </div>
+            <div class="col-md-8">
+                <span v-html="session.current_period"></span>
+            </div>
+        </div>
+
+
+    </div>                    
+</div>

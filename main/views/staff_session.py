@@ -18,7 +18,7 @@ class StaffSessionView(SingleObjectMixin, View):
     '''
     class based staff view
     '''
-    template_name = "staff_session.html"
+    template_name = "staff/staff_session.html"
     websocket_path = "staff-session"
     model = Session
     

@@ -1,0 +1,53 @@
+<div class="card">                  
+    <div class="card-header">                
+        <span class="align-middle">Parameters</span>       
+            
+
+        <span class="float-end">
+            <span v-show="reconnecting" class="me-1">
+                Connecting <i class="fas fa-cog fa-spin fa-1x"></i>
+            </span>
+            <button class="btn btn-outline-primary me-1" type="button" v-on:click = "downloadParameterset()" title="Download to a file.">
+                <span v-html = "downloadParametersetButtonText"></span>
+            </button> 
+            <button class="btn btn-outline-primary me-1" type="button" v-bind:disabled = "session.started" v-on:click = "showUploadParameters('parameters')" title = "Upload from a file.">
+                Upload  <i class="fas fa-upload"></i>
+            </button> 
+            <button class="btn btn-outline-primary me-1" type="button" v-bind:disabled = "session.started" v-on:click = "showImportParameters()" title="Import from another session.">
+                Import <i class="fas fa-file-import"></i>
+            </button> 
+            <button class="btn btn-outline-primary" type="button" v-on:click = "showEditParameters()" title="Show edit form.">
+                Edit <i class="far fa-edit"></i>
+            </button>
+        </span>
+
+        
+    </div>
+    <div class="card-body">    
+        <div class="row">
+            <div class="col-md text-center">
+                Buyers
+            </div>
+            <div class="col-md text-center">
+                Sellers
+            </div>
+        </div>                  
+        <div class="row">
+            <div class="col-md text-center">
+                <div class="input-group">
+                    <button class="btn btn-outline-secondary" type="button">-</button>
+                    <input type="number" class="form-control" aria-label="Buyer Count" disabled=true style="background-color: white;" v-model="session.parameter_set.number_of_buyers">
+                    <button class="btn btn-outline-secondary" type="button">+</button>
+                </div>
+            </div>
+            <div class="col-md text-center">
+                <div class="input-group">
+                    <button class="btn btn-outline-secondary" type="button">-</button>
+                    <input type="number" class="form-control" aria-label="Seller Count" disabled=true style="background-color: white;" v-model="session.parameter_set.number_of_sellers">                    
+                    <button class="btn btn-outline-secondary" type="button">+</button>
+                </div>
+            </div>
+        </div>                                  
+        
+    </div>                    
+</div> 

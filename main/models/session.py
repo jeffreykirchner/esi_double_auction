@@ -6,6 +6,7 @@ import logging
 import uuid
 
 from asgiref.sync import sync_to_async
+from django.conf import settings
 
 from django.dispatch import receiver
 from django.db import models
@@ -24,6 +25,7 @@ class Session(models.Model):
     session model
     '''
     parameter_set = models.ForeignKey(ParameterSet, on_delete=models.CASCADE)
+    creator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     title = models.CharField(max_length = 300, default="*** New Session ***")    #title of session
     start_date = models.DateField(default=now)                                   #date of session start
@@ -31,12 +33,8 @@ class Session(models.Model):
     channel_key = models.UUIDField(default=uuid.uuid4, editable=False, verbose_name = 'Channel Key')     #unique channel to communicate on
     session_key = models.UUIDField(default=uuid.uuid4, editable=False, verbose_name = 'Session Key')     #unique key for session to auto login subjects by id
 
-    started =  models.BooleanField(default=False)                               #starts session and filll in session
-    current_period = models.IntegerField(default=0)                             #current period of the session
-
-    canceled = models.BooleanField(default=False)                               #true if session needs to be canceled
-    cancelation_text =  models.CharField(max_length=10000, default="")          #text sent to subjects if experiment is canceled
-    cancelation_text_subject = models.CharField(max_length=1000, default="")    #email subject text for experiment cancelation
+    started =  models.BooleanField(default=False)                                #starts session and filll in session
+    current_period = models.IntegerField(default=0)                              #current period of the session
 
     invitations_sent = models.BooleanField(default=False)                        #true once invititations have been sent to subjects
     invitation_text =  models.CharField(max_length=10000, default="")            #text sent to subjects in experiment invititation
@@ -152,6 +150,7 @@ class Session(models.Model):
             "title":self.title,
             "start_date":self.get_start_date_string(),
             "current_period":self.current_period,
+            "parameter_set":self.parameter_set.json(),
         }
 
 

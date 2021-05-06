@@ -14,11 +14,12 @@ class ParameterSet(models.Model):
     session parameters
     '''
 
-    consent_form_required = models.BooleanField(default=True)                                               #true if subject must agree to special consent form before doing experiment
-    consent_form = models.ForeignKey(ConsentForms,on_delete=models.CASCADE,null=True,blank=True)    #text of special consent form
+    consent_form_required = models.BooleanField(default=True)                                          #true if subject must agree to special consent form before doing experiment
+    consent_form = models.ForeignKey(ConsentForms,on_delete=models.CASCADE,null=True,blank=True)       #text of special consent form
 
-    number_of_periods = models.IntegerField(default=1)                #number of periods in the session
-    number_of_subjects = models.IntegerField(default=1)               #number of subjects in the session
+    number_of_periods = models.IntegerField(default=1, verbose_name="Number of periods")     #number of periods in the session
+    number_of_buyers = models.IntegerField(default=1, verbose_name="Number of buyers")       #number of buyers in the session
+    number_of_sellers = models.IntegerField(default=1, verbose_name="Number of sellers")     #number of buyers in the session
 
     timestamp = models.DateTimeField(auto_now_add= True)
     updated= models.DateTimeField(auto_now= True)
@@ -41,7 +42,7 @@ class ParameterSet(models.Model):
             self.consent_form_required = new_ps.get("consent_form_required")
             self.consent_form = main.models.ConsentForms.objects.get(id=new_ps.get("consent_form"))
             self.number_of_periods = new_ps.get("number_of_periods")
-            self.number_of_subjects = new_ps.get("number_of_subjects")
+            self.number_of_buyers = new_ps.get("number_of_buyers")
 
             self.save()
 
@@ -61,7 +62,7 @@ class ParameterSet(models.Model):
         self.consent_form_required = new_ps.consent_form_required
         self.consent_form = new_ps.consent_form
         self.number_of_periods = new_ps.number_of_periods
-        self.number_of_subjects = new_ps.number_of_subjects
+        self.number_of_buyers = new_ps.number_of_buyers
 
         self.save()
 
@@ -75,5 +76,8 @@ class ParameterSet(models.Model):
             "consent_form_required" : self.consent_form_required,
             "consent_form" : self.consent_form.id if self.consent_form else None,
             "number_of_periods" : self.number_of_periods,
-            "number_of_subjects" : self.number_of_subjects,
+            "number_of_buyers" : self.number_of_buyers,
+            "number_of_sellers" : self.number_of_sellers,
+            "buyers" : [s.json()  for s in self.parameter_set_subjects.all() if s.subject_type == 'Buyer'],
+            "sellers" : [s.json() for s in self.parameter_set_subjects.all() if s.subject_type == 'Seller'],
         }

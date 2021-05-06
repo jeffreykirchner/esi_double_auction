@@ -10,7 +10,12 @@ var app = Vue.createApp({
                     reconnecting : true,
                     working : false,
                     sessionID : {{session.id}},
-                    session : {},
+                    session : {
+                        parameter_set : {
+                            number_of_buyers : 0,
+                            number_of_sellers : 0,
+                        }
+                    },
                     downloadParametersetButtonText:'Download <i class="fas fa-download"></i>',
                 }},
     methods: {
@@ -103,7 +108,13 @@ var app = Vue.createApp({
             app.clearMainFormErrors();
             app.$data.cancelModal=true;
             app.$data.sessionBeforeEdit = Object.assign({}, app.$data.session);
-            $('#editSessionModal').modal('show');                   
+
+            
+            var myModal = new bootstrap.Modal(document.getElementById('editSessionModal'), {
+                keyboard: false
+              })
+
+            myModal.toggle();
         },
 
         /** hide edit session modal
