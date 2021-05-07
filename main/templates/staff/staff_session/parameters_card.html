@@ -23,31 +23,97 @@
 
         
     </div>
-    <div class="card-body">    
+    <div class="card-body">     
+
+        <!-- edit values -->
         <div class="row">
             <div class="col-md text-center">
-                Buyers
-            </div>
-            <div class="col-md text-center">
-                Sellers
-            </div>
-        </div>                  
-        <div class="row">
-            <div class="col-md text-center">
+                <table class="table table-hover table-condensed table-responsive-lg"> 
+                    <caption class="text-center" style="caption-side:top;">Buyers</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col" class = "m-1 p-1">
+                                ID
+                            </th> 
+                            <th scope="col" class = "text-center m-1 p-1">
+                                Value 1
+                            </th>
+                            <th scope="col" class = "text-center m-1 p-1">
+                                Value 2
+                            </th>
+                            <th scope="col" class = "text-center m-1 p-1">
+                                Value 3
+                            </th>
+                            <th scope="col" class = "text-center m-1 p-1">
+                                Value 4
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="buyer_list">
+
+                    </tbody>
+                </table>
+
                 <div class="input-group">
-                    <button class="btn btn-outline-secondary" type="button">-</button>
-                    <input type="number" class="form-control" aria-label="Buyer Count" disabled=true style="background-color: white;" v-model="session.parameter_set.number_of_buyers">
-                    <button class="btn btn-outline-secondary" type="button">+</button>
+                    <button class="btn btn-outline-secondary" type="button" v-bind:disabled="reconnecting">-</button>
+                    <input type="number" 
+                           class="form-control text-center"
+                           aria-label="Buyer Count"
+                           disabled=true
+                           style="background-color: white;"
+                           v-model="session.parameter_set.number_of_buyers">
+                    <button class="btn btn-outline-secondary text-center" type="button">+</button>
                 </div>
             </div>
             <div class="col-md text-center">
+                <table class="table table-hover table-condensed table-responsive-lg"> 
+                    <caption class="text-center" style="caption-side:top;">Sellers</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col" class = "m-1 p-1">
+                                ID
+                            </th> 
+                            <th scope="col" class = "text-center m-1 p-1">
+                                Cost 1
+                            </th>
+                            <th scope="col" class = "text-center m-1 p-1">
+                                Cost 2
+                            </th>
+                            <th scope="col" class = "text-center m-1 p-1">
+                                Cost 3
+                            </th>
+                            <th scope="col" class = "text-center m-1 p-1">
+                                Cost 4
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="buyer_list">
+                        
+                    </tbody>
+                </table>
+
                 <div class="input-group">
-                    <button class="btn btn-outline-secondary" type="button">-</button>
-                    <input type="number" class="form-control" aria-label="Seller Count" disabled=true style="background-color: white;" v-model="session.parameter_set.number_of_sellers">                    
+                    <button class="btn btn-outline-secondary" type="button" v-bind:disabled="reconnecting">-</button>
+                    <input type="number"
+                           class="form-control text-center"
+                           aria-label="Seller Count"
+                           disabled=true
+                           style="background-color: white;"
+                           v-model="session.parameter_set.number_of_sellers">                    
                     <button class="btn btn-outline-secondary" type="button">+</button>
                 </div>
             </div>
-        </div>                                  
+        </div> 
+
+        <!-- chanage count -->
+        <div class="row">
+            <div class="col-md text-center">
+                
+            </div>
+            <div class="col-md text-center">
+                
+            </div>
+        </div>                                 
         
     </div>                    
 </div> 
