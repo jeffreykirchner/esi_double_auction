@@ -14,6 +14,8 @@ var app = Vue.createApp({
                         parameter_set : {
                             number_of_buyers : 0,
                             number_of_sellers : 0,
+                            sellers : [],
+                            buyers : [],
                         }
                     },
                     downloadParametersetButtonText:'Download <i class="fas fa-download"></i>',

@@ -50,7 +50,9 @@
                         </tr>
                     </thead>
                     <tbody id="buyer_list">
-
+                        <tr v-for="(s, index) in session.parameter_set.buyers" v-bind:key="s.id">
+                            
+                        </tr>
                     </tbody>
                 </table>
 
@@ -88,7 +90,9 @@
                         </tr>
                     </thead>
                     <tbody id="buyer_list">
-                        
+                        <tr v-for="(s, index) in session.parameter_set.sellers" v-bind:key="s.id">
+                            
+                        </tr>
                     </tbody>
                 </table>
 

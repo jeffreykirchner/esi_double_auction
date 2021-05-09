@@ -22,7 +22,7 @@ def get_session_list_json():
     return [i.json() for i in Session.objects.filter(soft_delete=False)]
 
 @sync_to_async
-def create_new_session():
+def create_new_session(user):
     '''
     create an emtpy session and return it
     '''
@@ -34,6 +34,7 @@ def create_new_session():
 
     session.parameter_set = parameter_set
     session.start_date = datetime.now(pytz.UTC)
+    session.creator = user
 
     session.save()
 
