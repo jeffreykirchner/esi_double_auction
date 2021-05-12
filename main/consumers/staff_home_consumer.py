@@ -47,7 +47,7 @@ class StaffHomeConsumer(SocketConsumerMixin):
         logger = logging.getLogger(__name__) 
         logger.info(f"Create Session {event}")
 
-        await create_new_session()
+        await create_new_session(self.scope["user"])
         
         #build response
         message_data = {}

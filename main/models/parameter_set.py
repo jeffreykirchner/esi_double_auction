@@ -15,7 +15,7 @@ class ParameterSet(models.Model):
     '''
 
     consent_form_required = models.BooleanField(default=True)                                          #true if subject must agree to special consent form before doing experiment
-    consent_form = models.ForeignKey(ConsentForms,on_delete=models.CASCADE,null=True,blank=True)       #text of special consent form
+    consent_form = models.ForeignKey(ConsentForms, on_delete=models.CASCADE, null=True, blank=True)       #text of special consent form
 
     number_of_periods = models.IntegerField(default=1, verbose_name="Number of periods")     #number of periods in the session
     number_of_buyers = models.IntegerField(default=1, verbose_name="Number of buyers")       #number of buyers in the session

@@ -3,9 +3,9 @@ subject parameters
 '''
 from django.db import models
 from django.db.utils import IntegrityError
-from django.utils.translation import gettext_lazy as _
 
 from main.models import ParameterSet
+from main.globals import SubjectType
 
 import main
 
@@ -14,21 +14,14 @@ class ParameterSetSubject(models.Model):
     subject parameters
     '''
 
-    class SubjectType(models.TextChoices):
-        '''
-        treatment types for session
-        '''
-        BUYER = 'Buyer', _('Buyer')
-        SELLER = 'Seller', _('Seller')
-
     parameter_set = models.ForeignKey(ParameterSet,on_delete=models.CASCADE, related_name="parameter_set_subjects")
 
-    period_number = models.IntegerField(null=True, verbose_name = 'Period number')
-    id_number = models.IntegerField(null=True, verbose_name = 'ID Number in Period')                                #local id number in the period
+    period_number = models.IntegerField(verbose_name='Period number')
+    id_number = models.IntegerField(verbose_name='ID Number in Period')                                #local id number in the period
     subject_type = models.CharField(max_length=100, choices=SubjectType.choices, default=SubjectType.BUYER)         #subject type of subject
 
-    timestamp = models.DateTimeField(auto_now_add = True)
-    updated= models.DateTimeField(auto_now = True)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    updated= models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return str(self.id)
@@ -36,7 +29,7 @@ class ParameterSetSubject(models.Model):
     class Meta:
         verbose_name = 'Parameters for Subject'
         verbose_name_plural = 'Parameters for Subjects'
-
+        ordering = ['id_number']
         constraints = [
             models.UniqueConstraint(fields=['parameter_set', 'period_number', 'id_number', 'subject_type'], name='unique_subject_for_period'),
         ]

@@ -32,5 +32,5 @@ class ParameterSetSubjectValuecost(models.Model):
         return{
 
             "id" : self.id,
-            "value_cost" : self.value_cost,
+            "value_cost" : str(self.value_cost),
         }

@@ -24,9 +24,6 @@ class SessionSubject(models.Model):
     consent_required = models.BooleanField(default=True,verbose_name = 'Consent Form Signed')          #true if subject has done consent form
     consent_signature = models.CharField(max_length = 300,default = '', verbose_name = 'Consent Form Signature')
 
-    questionnaire1_required = models.BooleanField(default=True, verbose_name = 'Pre-questionnaire Complete')   #pre experiment questionnaire
-    questionnaire2_required = models.BooleanField(default=True, verbose_name = 'Post-questionnaire Complete')   #post experiment questionnaire
-
     display_color = models.CharField(max_length = 300,default = '#000000',verbose_name = 'Graph Color')
 
     soft_delete =  models.BooleanField(default=False)                                                 #hide subject if true

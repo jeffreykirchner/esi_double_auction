@@ -11,8 +11,9 @@ from asgiref.sync import sync_to_async
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 
-from main.models import Session
-from main.models import ParameterSet
+from main.models import Session, session_subject
+
+from main.globals import create_new_session_parameterset
 
 @sync_to_async
 def get_session_list_json():
@@ -22,19 +23,16 @@ def get_session_list_json():
     return [i.json() for i in Session.objects.filter(soft_delete=False)]
 
 @sync_to_async
-def create_new_session(user):
+def create_new_session(auth_user):
     '''
     create an emtpy session and return it
     '''
-
-    parameter_set = ParameterSet()
-    parameter_set.save()
-
+    
     session = Session()
 
-    session.parameter_set = parameter_set
+    session.parameter_set = create_new_session_parameterset()
     session.start_date = datetime.now(pytz.UTC)
-    session.creator = user
+    session.creator = auth_user
 
     session.save()
 

@@ -50,21 +50,28 @@
                         </tr>
                     </thead>
                     <tbody id="buyer_list">
-                        <tr v-for="(s, index) in session.parameter_set.buyers" v-bind:key="s.id">
-                            
+                        <tr v-for="(b, index) in session.parameter_set.buyers" v-bind:key="b.id">
+                            <td>
+                                [[b.id_number]]
+                            </td>
+                            <td v-for="(vc, index) in b.value_costs" v-bind:key="vc.id">
+                                [[vc.value_cost]]
+                            </td>
                         </tr>
                     </tbody>
                 </table>
 
-                <div class="input-group">
-                    <button class="btn btn-outline-secondary" type="button" v-bind:disabled="reconnecting">-</button>
-                    <input type="number" 
-                           class="form-control text-center"
-                           aria-label="Buyer Count"
-                           disabled=true
-                           style="background-color: white;"
-                           v-model="session.parameter_set.number_of_buyers">
-                    <button class="btn btn-outline-secondary text-center" type="button">+</button>
+                <div class = "d-flex justify-content-center">
+                    <div class="input-group w-50">
+                        <button class="btn btn-outline-secondary" type="button" v-bind:disabled="reconnecting || session.parameter_set.buyers.length <= 1">-</button>
+                        <input type="number" 
+                            class="form-control text-center"
+                            aria-label="Buyer Count"
+                            disabled=true
+                            style="background-color: white;"
+                            v-model="session.parameter_set.number_of_buyers">
+                        <button class="btn btn-outline-secondary text-center" type="button">+</button>
+                    </div>
                 </div>
             </div>
             <div class="col-md text-center">
@@ -89,22 +96,30 @@
                             </th>
                         </tr>
                     </thead>
-                    <tbody id="buyer_list">
+                    <tbody id="seller_list">
                         <tr v-for="(s, index) in session.parameter_set.sellers" v-bind:key="s.id">
-                            
+                            <td>
+                                [[s.id_number]]
+                            </td>
+                            <td v-for="(vc, index) in s.value_costs" v-bind:key="vc.id">
+                                [[vc.value_cost]]
+                            </td>
                         </tr>
                     </tbody>
+                    
                 </table>
 
-                <div class="input-group">
-                    <button class="btn btn-outline-secondary" type="button" v-bind:disabled="reconnecting">-</button>
-                    <input type="number"
-                           class="form-control text-center"
-                           aria-label="Seller Count"
-                           disabled=true
-                           style="background-color: white;"
-                           v-model="session.parameter_set.number_of_sellers">                    
-                    <button class="btn btn-outline-secondary" type="button">+</button>
+                <div class = "d-flex justify-content-center">
+                    <div class="input-group w-50">
+                        <button class="btn btn-outline-secondary" type="button" v-bind:disabled="reconnecting || session.parameter_set.sellers.length <= 1">-</button>
+                        <input type="number"
+                            class="form-control text-center"
+                            aria-label="Seller Count"
+                            disabled=true
+                            style="background-color: white;"
+                            v-model="session.parameter_set.number_of_sellers">                    
+                        <button class="btn btn-outline-secondary" type="button">+</button>
+                    </div>
                 </div>
             </div>
         </div> 
