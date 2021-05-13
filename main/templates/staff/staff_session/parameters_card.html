@@ -111,14 +111,20 @@
 
                 <div class = "d-flex justify-content-center">
                     <div class="input-group w-50">
-                        <button class="btn btn-outline-secondary" type="button" v-bind:disabled="reconnecting || session.parameter_set.sellers.length <= 1">-</button>
+                        <button class="btn btn-outline-secondary" 
+                                type="button" 
+                                v-bind:disabled="reconnecting || session.parameter_set.sellers.length <= 1"
+                                v-on:click="sendUpdateSubjectCount('SELLER', -1)">-</button>
                         <input type="number"
                             class="form-control text-center"
                             aria-label="Seller Count"
                             disabled=true
                             style="background-color: white;"
                             v-model="session.parameter_set.number_of_sellers">                    
-                        <button class="btn btn-outline-secondary" type="button">+</button>
+                        <button class="btn btn-outline-secondary"
+                                v-bind:disabled="reconnecting"
+                                v-on:click="sendUpdateSubjectCount('SELLER', 1)"
+                                type="button">+</button>
                     </div>
                 </div>
             </div>

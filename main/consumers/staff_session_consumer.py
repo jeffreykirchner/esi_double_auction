@@ -45,7 +45,7 @@ class StaffSessionConsumer(SocketConsumerMixin):
         return a list of sessions
         '''
         logger = logging.getLogger(__name__) 
-        logger.info(f"Update Session {event}")
+        logger.info(f"Update Session: {event}")
 
         #build response
         message_data = {}
@@ -59,6 +59,32 @@ class StaffSessionConsumer(SocketConsumerMixin):
         await self.send(text_data=json.dumps({
             'message': message
         }))
+    
+    async def update_subject_count(self,event):
+        '''
+        add or remove a buyer or seller
+        '''
+
+        logger = logging.getLogger(__name__) 
+        logger.info(f"Update Buyer or Seller count: {event}")
+
+        
+        #update subject count
+        message_data = {}
+        message_data["status"] = await take_update_subject_count(event["message_text"])
+
+        message_data["session"] = await get_session(event["message_text"]["sessionID"])
+
+        message = {}
+        message["messageType"] = "update_session"
+        message["messageData"] = message_data
+
+        # Send message to WebSocket
+        await self.send(text_data=json.dumps({
+            'message': message
+        }))
+
+
 
 #local sync_to_asyncs
 @sync_to_async
@@ -94,4 +120,18 @@ def take_update_session_form(data):
                                 
     logger.info("Invalid session form")
     return {"status":"fail", "errors":dict(form.errors.items())}
+
+@sync_to_async
+def take_update_subject_count(data):
+    '''
+    take update to buyer or seller count for sessio
+    param: data {"type":"buyer or seller","adjustment":"-1 or 1"} update to buyer or seller count
+    '''
+
+    subject_type = data["type"]
+    adjustment = data["adjustment"]
+
+    return "success"
+
+    
 

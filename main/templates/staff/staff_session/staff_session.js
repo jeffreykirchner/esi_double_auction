@@ -100,8 +100,19 @@ var app = Vue.createApp({
             else
             {
                 app.$data.cancelModal=true;                           
-                app.displayErrors(response.data.errors);
+                app.displayErrors(messageData.errors);
             } 
+        },
+
+        /** send session update form   
+         * @param type : BUYER or SELLER
+         * @param adjustment : 1 or -1
+        */
+        sendUpdateSubjectCount(type, adjustment){
+            app.$data.cancelModal = false;
+            app.sendMessage("update_subject_count", {"sessionID" : app.$data.sessionID,
+                                                     "type" : type,
+                                                     "adjustment" : adjustment});
         },
 
         /** show edit session modal
