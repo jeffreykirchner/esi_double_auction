@@ -66,6 +66,60 @@ class ParameterSet(models.Model):
 
         self.save()
 
+    def add_parameter_set_subject(self, subject_type):
+        '''
+        create new parameter set subject set
+
+        subject_type: SubjectType , BUYER or SELLER
+        period_number: Int 1 to N
+        id_number: Int unique ID within buyer or seller group, 1 to N
+        '''
+
+        last_subject = self.parameter_set_subjects.filter(subject_type=subject_type, period_number=1).last()
+
+        if last_subject == None:
+            id_number = 1
+        else:
+            id_number = last_subject.id_number + 1
+
+        for period_number in range(self.number_of_periods):
+            subject = main.models.ParameterSetSubject()
+
+            subject.parameter_set = self
+            subject.subject_type = subject_type
+            subject.period_number = period_number + 1
+            subject.id_number = id_number
+
+            subject.save()
+
+            for i in range(4):
+                ps_value_cost = main.models.ParameterSetSubjectValuecost()
+
+                ps_value_cost.parameter_set_subject = subject
+                ps_value_cost.value_cost = 0
+
+                ps_value_cost.save()
+
+    def remove_parameter_set_subject(self, subject_type):
+        '''
+        remove the last parameter set subject
+
+        create new parameter set subject
+        parameter_set: ParameterSet to attach subject to
+        subject_type: SubjectType , BUYER or SELLER
+        period_number: Int 1 to N
+        id_number: Int unique ID within buyer or seller group, 1 to N
+        '''
+
+        last_subject = self.parameter_set_subjects.filter(subject_type=subject_type, period_number=1).last()
+
+        if last_subject == None:
+            return "fail"
+
+        self.parameter_set_subjects.filter(subject_type=subject_type, id_number=last_subject.id_number).delete()
+
+        return "success"
+
     def json(self):
         '''
         return json object of model

@@ -110,6 +110,7 @@ var app = Vue.createApp({
         */
         sendUpdateSubjectCount(type, adjustment){
             app.$data.cancelModal = false;
+            app.$data.working = true;
             app.sendMessage("update_subject_count", {"sessionID" : app.$data.sessionID,
                                                      "type" : type,
                                                      "adjustment" : adjustment});

@@ -14,7 +14,7 @@ class ParameterSetSubject(models.Model):
     subject parameters
     '''
 
-    parameter_set = models.ForeignKey(ParameterSet,on_delete=models.CASCADE, related_name="parameter_set_subjects")
+    parameter_set = models.ForeignKey(ParameterSet, on_delete=models.CASCADE, related_name="parameter_set_subjects")
 
     period_number = models.IntegerField(verbose_name='Period number')
     id_number = models.IntegerField(verbose_name='ID Number in Period')                                #local id number in the period

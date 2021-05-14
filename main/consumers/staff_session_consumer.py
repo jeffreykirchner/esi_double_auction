@@ -14,6 +14,7 @@ from main.consumers import get_session
 from main.views import Session
 
 from main.forms import SessionForm
+from main.globals import SubjectType
 
 class StaffSessionConsumer(SocketConsumerMixin):
     '''
@@ -130,6 +131,19 @@ def take_update_subject_count(data):
 
     subject_type = data["type"]
     adjustment = data["adjustment"]
+    session_id = data["sessionID"]
+
+    session = Session.objects.get(id=session_id)
+
+    if subject_type == "SELLER":
+        subject_type = SubjectType.SELLER
+    else:
+        subject_type = SubjectType.BUYER
+
+    if adjustment == 1:
+        session.parameter_set.add_parameter_set_subject(subject_type)
+    else:
+        session.parameter_set.remove_parameter_set_subject(subject_type)
 
     return "success"
 
