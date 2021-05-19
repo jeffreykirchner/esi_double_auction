@@ -3,15 +3,15 @@ subject parameters
 '''
 from django.db import models
 
-from main.models import ParameterSetSubject
+from main.models import ParameterSetPeriodSubject
 
 import main
 
-class ParameterSetSubjectValuecost(models.Model):
+class ParameterSetPeriodSubjectValuecost(models.Model):
     '''
     subject parameter value or cost
     '''
-    parameter_set_subject = models.ForeignKey(ParameterSetSubject, on_delete=models.CASCADE, related_name="parameter_set_subject_valuecosts")
+    parameter_set_period_subject = models.ForeignKey(ParameterSetPeriodSubject, on_delete=models.CASCADE, related_name="parameter_set_period_subject_valuecosts")
 
     value_cost = models.DecimalField(decimal_places=2, default=0, max_digits=5)    #value or cost
 

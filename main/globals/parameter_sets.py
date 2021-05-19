@@ -22,7 +22,6 @@ def create_new_session_parameterset():
     parameter_set = main.models.ParameterSet()
     parameter_set.save()
 
-    parameter_set.add_parameter_set_subject(SubjectType.BUYER, 1, 1)
-    parameter_set.add_parameter_set_subject(SubjectType.SELLER, 1, 1)
+    parameter_set.add_session_period()
     
     return parameter_set

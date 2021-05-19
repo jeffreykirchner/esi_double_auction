@@ -23,7 +23,54 @@
 
         
     </div>
-    <div class="card-body">     
+    <div class="card-body"> 
+
+        <!-- change count -->
+        <div class="row mb-4">
+            <div class="col-md text-center">
+                <label for="period_count">Number of Periods</label>
+                
+                <div class = "d-flex justify-content-center">
+                    <div class="input-group w-50">
+                        <button class="btn btn-outline-secondary" 
+                                type="button" 
+                                v-bind:disabled="reconnecting || working || session.parameter_set.number_of_periods <= 1"
+                                v-on:click="sendUpdatePeriodCount(-1)">-</button>
+                        <input type="number"
+                               id="period_count"  
+                               class="form-control text-center"
+                               disabled=true
+                               style="background-color: white;"
+                               v-model="session.parameter_set.number_of_periods">                    
+                        <button class="btn btn-outline-secondary"
+                                v-bind:disabled="reconnecting || working"
+                                v-on:click="sendUpdatePeriodCount(1)"
+                                type="button">+</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md text-center">
+                <label for="period_count">Period Visible</label>
+                <div class = "d-flex justify-content-center">
+                    <div class="input-group w-50">
+                        <button class="btn btn-outline-secondary" 
+                                type="button" 
+                                v-bind:disabled="reconnecting || working || current_period <= 1"
+                                v-on:click="updateCurrentPeriod(-1)"><<</button>
+                        <input type="number"
+                               id="period_visible"
+                               class="form-control text-center"
+                               disabled=true
+                               style="background-color: white;"
+                               v-model="current_period">                   
+                        <button class="btn btn-outline-secondary"
+                                v-bind:disabled="reconnecting || working || current_period == session.parameter_set.number_of_periods"
+                                v-on:click="updateCurrentPeriod(1)"
+                                type="button">>></button>
+                    </div>
+                </div>
+            </div>
+        </div>  
 
         <!-- edit values -->
         <div class="row">
@@ -50,12 +97,12 @@
                         </tr>
                     </thead>
                     <tbody id="buyer_list">
-                        <tr v-for="(b, index) in session.parameter_set.buyers" v-bind:key="b.id">
+                        <tr v-for="(b, index) in session.parameter_set.periods[current_period-1].buyers" v-bind:key="b.id">
                             <td>
                                 [[b.id_number]]
                             </td>
                             <td v-for="(vc, index) in b.value_costs" v-bind:key="vc.id">
-                                [[vc.value_cost]]
+                                <button type="button" class="btn btn-light btn-sm">[[vc.value_cost]]</button>                               
                             </td>
                         </tr>
                     </tbody>
@@ -65,7 +112,7 @@
                     <div class="input-group w-50">
                         <button class="btn btn-outline-secondary"
                                 type="button"
-                                v-bind:disabled="reconnecting || session.parameter_set.buyers.length <= 1 || working"
+                                v-bind:disabled="reconnecting || session.parameter_set.periods[current_period-1].buyers.length <= 1 || working"
                                 v-on:click="sendUpdateSubjectCount('BUYER', -1)">-</button>
                         <input type="number" 
                             class="form-control text-center"
@@ -103,12 +150,12 @@
                         </tr>
                     </thead>
                     <tbody id="seller_list">
-                        <tr v-for="(s, index) in session.parameter_set.sellers" v-bind:key="s.id">
+                        <tr v-for="(s, index) in session.parameter_set.periods[current_period-1].sellers" v-bind:key="s.id">
                             <td>
                                 [[s.id_number]]
                             </td>
                             <td v-for="(vc, index) in s.value_costs" v-bind:key="vc.id">
-                                [[vc.value_cost]]
+                                <button type="button" class="btn btn-light btn-sm">[[vc.value_cost]]</button>
                             </td>
                         </tr>
                     </tbody>
@@ -119,7 +166,7 @@
                     <div class="input-group w-50">
                         <button class="btn btn-outline-secondary" 
                                 type="button" 
-                                v-bind:disabled="reconnecting || session.parameter_set.sellers.length <= 1 || working"
+                                v-bind:disabled="reconnecting || session.parameter_set.periods[current_period-1].sellers.length <= 1 || working"
                                 v-on:click="sendUpdateSubjectCount('SELLER', -1)">-</button>
                         <input type="number"
                             class="form-control text-center"
@@ -134,17 +181,7 @@
                     </div>
                 </div>
             </div>
-        </div> 
-
-        <!-- chanage count -->
-        <div class="row">
-            <div class="col-md text-center">
-                
-            </div>
-            <div class="col-md text-center">
-                
-            </div>
-        </div>                                 
+        </div>                                  
         
     </div>                    
 </div> 

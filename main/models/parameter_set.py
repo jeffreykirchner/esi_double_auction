@@ -17,7 +17,6 @@ class ParameterSet(models.Model):
     consent_form_required = models.BooleanField(default=True)                                          #true if subject must agree to special consent form before doing experiment
     consent_form = models.ForeignKey(ConsentForms, on_delete=models.CASCADE, null=True, blank=True)       #text of special consent form
 
-    number_of_periods = models.IntegerField(default=1, verbose_name="Number of periods")     #number of periods in the session
     number_of_buyers = models.IntegerField(default=1, verbose_name="Number of buyers")       #number of buyers in the session
     number_of_sellers = models.IntegerField(default=1, verbose_name="Number of sellers")     #number of buyers in the session
 
@@ -66,59 +65,58 @@ class ParameterSet(models.Model):
 
         self.save()
 
-    def add_parameter_set_subject(self, subject_type):
+    def add_session_period(self):
         '''
-        create new parameter set subject set
-
-        subject_type: SubjectType , BUYER or SELLER
-        period_number: Int 1 to N
-        id_number: Int unique ID within buyer or seller group, 1 to N
+        add new period to session
         '''
 
-        last_subject = self.parameter_set_subjects.filter(subject_type=subject_type, period_number=1).last()
+        last_period = self.parameter_set_periods.last()
 
-        if last_subject == None:
-            id_number = 1
+        if last_period == None:
+            period_number = 1
         else:
-            id_number = last_subject.id_number + 1
+            period_number = last_period.period_number + 1
 
-        for period_number in range(self.number_of_periods):
-            subject = main.models.ParameterSetSubject()
+        parameter_set_period = main.models.ParameterSetPeriod()
 
-            subject.parameter_set = self
-            subject.subject_type = subject_type
-            subject.period_number = period_number + 1
-            subject.id_number = id_number
+        parameter_set_period.parameter_set = self
+        parameter_set_period.period_number = period_number
 
-            subject.save()
+        parameter_set_period.save()
 
-            for i in range(4):
-                ps_value_cost = main.models.ParameterSetSubjectValuecost()
-
-                ps_value_cost.parameter_set_subject = subject
-                ps_value_cost.value_cost = 0
-
-                ps_value_cost.save()
-
-    def remove_parameter_set_subject(self, subject_type):
-        '''
-        remove the last parameter set subject
-
-        create new parameter set subject
-        parameter_set: ParameterSet to attach subject to
-        subject_type: SubjectType , BUYER or SELLER
-        period_number: Int 1 to N
-        id_number: Int unique ID within buyer or seller group, 1 to N
-        '''
-
-        last_subject = self.parameter_set_subjects.filter(subject_type=subject_type, period_number=1).last()
-
-        if last_subject == None:
-            return "fail"
-
-        self.parameter_set_subjects.filter(subject_type=subject_type, id_number=last_subject.id_number).delete()
+        parameter_set_period.update_subject_count()
 
         return "success"
+    
+    def remove_session_period(self):
+        '''
+        remove last period froms session
+        '''
+
+        last_period = self.parameter_set_periods.last()
+
+        if last_period == None:
+            return "fail"
+        
+        if last_period.period_number <= 1:
+            return "fail"
+        
+        last_period.delete()
+
+        return "success"
+    
+    def update_subject_counts(self):
+        '''
+        update the number of subjects in the session
+        '''
+
+        status = "success"
+
+        for i in self.parameter_set_periods.all():
+            if i.update_subject_count() == "fail":
+                status = "fail"
+
+        return status
 
     def json(self):
         '''
@@ -129,9 +127,8 @@ class ParameterSet(models.Model):
             "id" : self.id,
             "consent_form_required" : self.consent_form_required,
             "consent_form" : self.consent_form.id if self.consent_form else None,
-            "number_of_periods" : self.number_of_periods,
+            "number_of_periods" : self.parameter_set_periods.all().count(),
             "number_of_buyers" : self.number_of_buyers,
             "number_of_sellers" : self.number_of_sellers,
-            "buyers" : [s.json()  for s in self.parameter_set_subjects.all() if s.subject_type == 'Buyer'],
-            "sellers" : [s.json() for s in self.parameter_set_subjects.all() if s.subject_type == 'Seller'],
+            "periods" : [p.json()  for p in self.parameter_set_periods.all()],
         }

@@ -4,19 +4,18 @@ subject parameters
 from django.db import models
 from django.db.utils import IntegrityError
 
-from main.models import ParameterSet
+from main.models import ParameterSetPeriod
 from main.globals import SubjectType
 
 import main
 
-class ParameterSetSubject(models.Model):
+class ParameterSetPeriodSubject(models.Model):
     '''
     subject parameters
     '''
 
-    parameter_set = models.ForeignKey(ParameterSet, on_delete=models.CASCADE, related_name="parameter_set_subjects")
+    parameter_set_period = models.ForeignKey(ParameterSetPeriod, on_delete=models.CASCADE, related_name="parameter_set_period_subjects")
 
-    period_number = models.IntegerField(verbose_name='Period number')
     id_number = models.IntegerField(verbose_name='ID Number in Period')                                #local id number in the period
     subject_type = models.CharField(max_length=100, choices=SubjectType.choices, default=SubjectType.BUYER)         #subject type of subject
 
@@ -29,9 +28,9 @@ class ParameterSetSubject(models.Model):
     class Meta:
         verbose_name = 'Parameters for Subject'
         verbose_name_plural = 'Parameters for Subjects'
-        ordering = ['id_number']
+        ordering = ['subject_type', 'id_number']
         constraints = [
-            models.UniqueConstraint(fields=['parameter_set', 'period_number', 'id_number', 'subject_type'], name='unique_subject_for_period'),
+            models.UniqueConstraint(fields=['parameter_set_period', 'id_number', 'subject_type'], name='unique_subject_for_period'),
         ]
 
     def setup_from_dict(self, new_ps):
@@ -72,8 +71,7 @@ class ParameterSetSubject(models.Model):
         return{
 
             "id" : self.id,
-            "period_number" : self.period_number,
             "id_number" : self.id_number,
             "subject_type" : self.subject_type,
-            "value_costs" : [vc.json() for vc in self.parameter_set_subject_valuecosts.all()]
+            "value_costs" : [vc.json() for vc in self.parameter_set_period_subject_valuecosts.all()]
         }

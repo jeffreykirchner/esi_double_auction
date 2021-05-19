@@ -14,10 +14,14 @@ var app = Vue.createApp({
                         parameter_set : {
                             number_of_buyers : 0,
                             number_of_sellers : 0,
-                            sellers : [],
-                            buyers : [],
-                        }
-                    },
+                            number_of_periods : 0,
+                            periods : [ {
+                                sellers : [],
+                                buyers : [],
+                             }]
+                         },
+                     },
+                    current_period : 1,
                     downloadParametersetButtonText:'Download <i class="fas fa-download"></i>',
                 }},
     methods: {
@@ -104,7 +108,7 @@ var app = Vue.createApp({
             } 
         },
 
-        /** send session update form   
+        /** send update to number of buyers or sellers 
          * @param type : BUYER or SELLER
          * @param adjustment : 1 or -1
         */
@@ -112,8 +116,41 @@ var app = Vue.createApp({
             app.$data.cancelModal = false;
             app.$data.working = true;
             app.sendMessage("update_subject_count", {"sessionID" : app.$data.sessionID,
+                                                     "current_period" : app.$data.current_period,
                                                      "type" : type,
                                                      "adjustment" : adjustment});
+        },
+
+        /** send update to number of periods
+         * @param adjustment : 1 or -1
+        */
+        sendUpdatePeriodCount(adjustment){
+            app.$data.cancelModal = false;
+            app.$data.working = true;
+            app.sendMessage("update_period_count", {"sessionID" : app.$data.sessionID,
+                                                    "adjustment" : adjustment});
+        },
+
+        /** update the current visible period
+         * @param adjustment : 1 or -1
+        */
+        updateCurrentPeriod(adjustment){
+            
+            if(adjustment == 1)
+            {
+                if(app.$data.current_period < app.$data.session.parameter_set.number_of_periods)
+                {
+                    app.$data.current_period += 1;
+                }
+            }
+            else
+            {
+                if(app.$data.current_period > 1)
+                {
+                    app.$data.current_period -= 1;
+                }
+            }
+
         },
 
         /** show edit session modal

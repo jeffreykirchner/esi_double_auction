@@ -61,7 +61,7 @@ class StaffSessionConsumer(SocketConsumerMixin):
             'message': message
         }))
     
-    async def update_subject_count(self,event):
+    async def update_subject_count(self, event):
         '''
         add or remove a buyer or seller
         '''
@@ -84,7 +84,28 @@ class StaffSessionConsumer(SocketConsumerMixin):
         await self.send(text_data=json.dumps({
             'message': message
         }))
+    
+    async def update_period_count(self, event):
+        '''
+        change the number of periods in a session
+        '''
 
+        
+        
+        #update subject count
+        message_data = {}
+        message_data["status"] = await take_update_period_count(event["message_text"])
+
+        message_data["session"] = await get_session(event["message_text"]["sessionID"])
+
+        message = {}
+        message["messageType"] = "update_session"
+        message["messageData"] = message_data
+
+        # Send message to WebSocket
+        await self.send(text_data=json.dumps({
+            'message': message
+        }))
 
 
 #local sync_to_asyncs
@@ -132,20 +153,52 @@ def take_update_subject_count(data):
     subject_type = data["type"]
     adjustment = data["adjustment"]
     session_id = data["sessionID"]
+    period_number = data["current_period"]
 
     session = Session.objects.get(id=session_id)
 
+    parameter_set = session.parameter_set
+
+    if parameter_set == None:
+        return "fail"
+
     if subject_type == "SELLER":
-        subject_type = SubjectType.SELLER
+        if adjustment == 1:
+           parameter_set.number_of_sellers += 1
+        elif parameter_set.number_of_sellers > 1 :
+            parameter_set.number_of_sellers -= 1
+        else:
+            return "fail"
     else:
-        subject_type = SubjectType.BUYER
+        if adjustment == 1:
+           parameter_set.number_of_buyers += 1
+        elif parameter_set.number_of_buyers > 1 :
+            parameter_set.number_of_buyers -= 1
+        else:
+            return "fail"    
+
+    parameter_set.save()
+    
+    return parameter_set.update_subject_counts()
+
+@sync_to_async
+def take_update_period_count(data):
+    '''
+    update the number of periods
+    '''   
+
+    logger = logging.getLogger(__name__) 
+    logger.info(f"Update period count: {data}")
+
+    adjustment = data["adjustment"]
+    session_id = data["sessionID"]
+
+    session = Session.objects.get(id=session_id)
+
+    parameter_set = session.parameter_set
 
     if adjustment == 1:
-        session.parameter_set.add_parameter_set_subject(subject_type)
+        return parameter_set.add_session_period()
     else:
-        session.parameter_set.remove_parameter_set_subject(subject_type)
-
-    return "success"
-
-    
+        return parameter_set.remove_session_period()
 
