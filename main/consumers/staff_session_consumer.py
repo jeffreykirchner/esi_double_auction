@@ -3,6 +3,8 @@ websocket session list
 '''
 import json
 import logging
+from main.forms.valuecost_form import ValuecostForm
+from main.models.parameter_set_period_subject_valuecost import ParameterSetPeriodSubjectValuecost
 
 from asgiref.sync import sync_to_async
 
@@ -106,6 +108,25 @@ class StaffSessionConsumer(SocketConsumerMixin):
         await self.send(text_data=json.dumps({
             'message': message
         }))
+    
+    async def update_valuecost(self, event):
+        '''
+        update a value or cost
+        '''
+        #update subject count
+        message_data = {}
+        message_data["status"] = await take_update_valuecost(event["message_text"])
+
+        message_data["session"] = await get_session(event["message_text"]["sessionID"])
+
+        message = {}
+        message["messageType"] = "update_valuecost"
+        message["messageData"] = message_data
+
+        # Send message to WebSocket
+        await self.send(text_data=json.dumps({
+            'message': message
+        }))
 
 
 #local sync_to_asyncs
@@ -201,4 +222,41 @@ def take_update_period_count(data):
         return parameter_set.add_session_period()
     else:
         return parameter_set.remove_session_period()
+
+@sync_to_async
+def take_update_valuecost(data):
+    '''
+    update a value or cost for session
+    '''   
+
+    logger = logging.getLogger(__name__) 
+    logger.info(f"Update value or cost: {data}")
+
+    session_id = data["sessionID"]
+    id = data["id"]
+
+    form_data = data["formData"]
+
+    try:        
+        valuecost = ParameterSetPeriodSubjectValuecost.objects.get(id=id)
+    except ObjectDoesNotExist:
+        logger.warning(f"take_update_session_form session, not found: {session_id}")
+    
+    form_data_dict = {}
+
+    for field in form_data:            
+        form_data_dict[field["name"]] = field["value"]
+
+    form = ValuecostForm(form_data_dict, instance=valuecost)
+
+    if form.is_valid():
+        #print("valid form")                
+        form.save()              
+
+        return {"value" : "success"}                      
+                                
+    logger.info("Invalid session form")
+    return {"value" : "fail", "errors" : dict(form.errors.items())}
+
+
 

@@ -102,7 +102,14 @@
                                 [[b.id_number]]
                             </td>
                             <td v-for="(vc, index) in b.value_costs" v-bind:key="vc.id">
-                                <button type="button" class="btn btn-light btn-sm">[[vc.value_cost]]</button>                               
+                                <button type="button" class="btn btn-light btn-sm" v-on:click = "showEditValuecost(vc)" >
+                                    <span v-if="vc.enabled == 'True'">
+                                        [[vc.value_cost]]
+                                    </span>
+                                    <span v-else>
+                                        OFF
+                                    </span>
+                                </button>                               
                             </td>
                         </tr>
                     </tbody>
@@ -155,7 +162,14 @@
                                 [[s.id_number]]
                             </td>
                             <td v-for="(vc, index) in s.value_costs" v-bind:key="vc.id">
-                                <button type="button" class="btn btn-light btn-sm">[[vc.value_cost]]</button>
+                                <button type="button" class="btn btn-light btn-sm" v-on:click = "showEditValuecost(vc)" >
+                                    <span v-if="vc.enabled == 'True'">
+                                        [[vc.value_cost]]
+                                    </span>
+                                    <span v-else>
+                                        OFF
+                                    </span>
+                                </button>
                             </td>
                         </tr>
                     </tbody>

@@ -68,10 +68,16 @@ class ParameterSetPeriodSubject(models.Model):
         '''
         return json object of model
         '''
+
+        if self.subject_type == 'Buyer':
+            value_costs = [vc.json() for vc in self.parameter_set_period_subject_valuecosts.all().order_by('-enabled', '-value_cost')]
+        else:
+            value_costs = [vc.json() for vc in self.parameter_set_period_subject_valuecosts.all().order_by('-enabled', 'value_cost')]
+
         return{
 
             "id" : self.id,
             "id_number" : self.id_number,
             "subject_type" : self.subject_type,
-            "value_costs" : [vc.json() for vc in self.parameter_set_period_subject_valuecosts.all()]
+            "value_costs" : value_costs,
         }

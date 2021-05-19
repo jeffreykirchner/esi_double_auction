@@ -13,6 +13,7 @@ from main.models import Parameters
 from main.models import Session
 
 from main.forms import SessionForm
+from main.forms import ValuecostForm
 
 class StaffSessionView(SingleObjectMixin, View):
     '''
@@ -30,10 +31,16 @@ class StaffSessionView(SingleObjectMixin, View):
         parameters = Parameters.objects.first()
         session = self.get_object()
 
+        valuecost_form_ids=[]
+        for i in ValuecostForm():
+            valuecost_form_ids.append(i.html_name)
+
         return render(request=request,
                       template_name=self.template_name,
                       context={"parameters" : parameters,
                                "session_form" : SessionForm(),
+                               "valuecost_form" : ValuecostForm(),
+                               "valuecost_form_ids" : valuecost_form_ids,
                                "websocket_path" : self.websocket_path,
                                "page_key" : f'{self.websocket_path}-{session.id}',
                                "session" : session})

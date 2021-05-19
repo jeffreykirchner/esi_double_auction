@@ -23,6 +23,13 @@ var app = Vue.createApp({
                      },
                     current_period : 1,
                     downloadParametersetButtonText:'Download <i class="fas fa-download"></i>',
+                    valuecost_modal_label:'Edit Value or Cost',
+                    current_valuecost:{
+                        id:0,
+                        valuecost:0,
+                        enabled:false,
+                    },
+                    valuecost_form_ids: {{valuecost_form_ids|safe}},
                 }},
     methods: {
 
@@ -48,6 +55,9 @@ var app = Vue.createApp({
                     break;
                 case "update_session":
                     app.takeUpdateSession(messageData);
+                    break;
+                case "update_valuecost":
+                    app.takeUpdateValuecost(messageData);
                     break;
     
             }
@@ -131,6 +141,36 @@ var app = Vue.createApp({
                                                     "adjustment" : adjustment});
         },
 
+        /** send update to number of periods
+        * @param adjustment : 1 or -1
+        */
+        sendUpdateValuecost(){
+            
+            app.$data.working = true;
+            app.sendMessage("update_valuecost", {"sessionID" : app.$data.sessionID,
+                                                 "id" : app.$data.current_valuecost.id,
+                                                 "formData" : $("#valuecostForm").serializeArray(),});
+        },
+
+        /** take update valuecost
+         * @param messageData {json} result of update, either sucess or fail with errors
+        */
+         takeUpdateValuecost(messageData){
+            app.$data.cancelModal=false;
+            app.clearMainFormErrors();
+
+            if(messageData.status.value == "success")
+            {
+                app.takeGetSession(messageData);       
+                $('#valuecostModal').modal('hide');    
+            } 
+            else
+            {
+                app.$data.cancelModal=true;                           
+                app.displayErrors(messageData.errors);
+            } 
+        },
+
         /** update the current visible period
          * @param adjustment : 1 or -1
         */
@@ -151,6 +191,32 @@ var app = Vue.createApp({
                 }
             }
 
+        },
+
+        /** show edit valuecost modal
+        */
+         showEditValuecost:function(value_cost){
+            app.clearMainFormErrors();
+            app.$data.cancelModal=true;
+            app.$data.sessionBeforeEdit = Object.assign({}, app.$data.session);
+
+            app.$data.current_valuecost = Object.assign({}, value_cost);
+
+            var myModal = new bootstrap.Modal(document.getElementById('valuecostModal'), {
+                keyboard: false
+              })
+
+            myModal.toggle();
+        },
+
+        /** hide edit valuecost modal
+        */
+        hideEditValuecost:function(){
+            if(app.$data.cancelModal)
+            {
+                Object.assign(app.$data.session, app.$data.sessionBeforeEdit);
+                app.$data.sessionBeforeEdit=null;
+            }
         },
 
         /** show edit session modal
@@ -182,19 +248,13 @@ var app = Vue.createApp({
         */
         clearMainFormErrors:function(){
             
-            for(var item in app.$data.session.parameterset)
-            {
-                $("#id_" + item).attr("class","form-control");
-                $("#id_errors_" + item).remove();
-            }
-
             for(var item in app.$data.session)
             {
                 $("#id_" + item).attr("class","form-control");
                 $("#id_errors_" + item).remove();
             }
 
-            s = app.$data.subject_form_ids;
+            s = app.$data.valuecost_form_ids;
             for(var i in s)
             {
                 $("#id_" + s[i]).attr("class","form-control");
@@ -228,6 +288,7 @@ var app = Vue.createApp({
 
     mounted(){
         $('#editSessionModal').on("hidden.bs.modal", this.hideEditSession); 
+        $('#valuecostModal').on("hidden.bs.modal", this.hideEditValuecost); 
     },
 
 }).mount('#app');
