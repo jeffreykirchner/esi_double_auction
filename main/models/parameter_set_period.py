@@ -95,30 +95,6 @@ class ParameterSetPeriod(models.Model):
 
         return "success"
 
-        # last_subject = self.parameter_set_period_subjects.filter(subject_type=subject_type).last()
-
-        # if last_subject == None:
-        #     id_number = 1
-        # else:
-        #     id_number = last_subject.id_number + 1
-
-        # # for period_number in range(self.parameter_set.number_of_periods):
-        # subject = main.models.ParameterSetPeriodSubject()
-
-        # subject.parameter_set_period = self
-        # subject.subject_type = subject_type
-        # subject.id_number = id_number
-
-        # subject.save()
-
-        # for i in range(4):
-        #     ps_value_cost = main.models.ParameterSetPeriodSubjectValuecost()
-
-        #     ps_value_cost.parameter_set_period_subject = subject
-        #     ps_value_cost.value_cost = 0
-
-        #     ps_value_cost.save()
-
     def remove_parameter_set_subject(self, subject_type):
         '''
         remove the last parameter set subject
@@ -138,6 +114,58 @@ class ParameterSetPeriod(models.Model):
         self.parameter_set_period_subjects.filter(subject_type=subject_type, id_number=last_subject.id_number).delete()
 
         return "success"
+    
+    def get_buyer_list(self):
+        '''
+        return a list of all the buyers in the this period
+        '''
+
+        return [b for b in self.parameter_set_period_subjects.all() if b.subject_type == 'Buyer']
+
+    def get_seller_list(self):
+        '''
+        return a list of all the buyers in the this period
+        '''
+
+        return [s for s in self.parameter_set_period_subjects.all() if s.subject_type == 'Seller']
+    
+    def shift_values_or_costs(self, value_or_cost, direction):
+        '''
+        shift values or costs in the direction specficied
+        value_or_cost : string 'value' or 'cost'
+        direction: string 'up' or 'down'
+        '''
+
+
+        if value_or_cost == 'value':
+            user_list = self.get_buyer_list()
+        else:
+            user_list = self.get_seller_list()
+
+        if len(user_list) <= 1:
+            return "fail"
+
+        for i in range(len(user_list)):
+                user_list[i].id_number = 10000 + i
+                user_list[i].save()
+
+        if direction == "up":
+            
+            for i in range(1, len(user_list)):
+                user_list[i].id_number = i
+                user_list[i].save()
+            
+            user_list[0].id_number = len(user_list)
+            user_list[0].save()
+        else:
+            for i in range(len(user_list)-1):
+                user_list[i].id_number = i + 2
+                user_list[i].save()
+            
+            user_list[len(user_list)-1].id_number = 1
+            user_list[len(user_list)-1].save()
+
+        return "success"
 
     def json(self):
         '''
@@ -147,6 +175,6 @@ class ParameterSetPeriod(models.Model):
 
             "id" : self.id,
             "period_number" : self.period_number,
-            "buyers" : [s.json()  for s in self.parameter_set_period_subjects.all() if s.subject_type == 'Buyer'],
-            "sellers" : [s.json() for s in self.parameter_set_period_subjects.all() if s.subject_type == 'Seller'],
+            "buyers" : [b.json() for b in self.get_buyer_list()],
+            "sellers" : [s.json() for s in self.get_seller_list()],
         }

@@ -193,6 +193,18 @@ var app = Vue.createApp({
 
         },
 
+        /** shift the values or costs in the current period from one buyer or seller to the next
+         * @param valueOrCost : 'value' or 'cost'
+         * @param valueOrCost : 'up' or 'down'
+        */
+        shiftValueOrCost(valueOrCost, direction){
+            app.$data.working = true;
+            app.sendMessage("shift_value_or_cost", {"sessionID" : app.$data.sessionID,
+                                                    "currentPeriod" : app.$data.current_period,
+                                                    "valueOrCost" : valueOrCost,
+                                                    "direction" : direction,});
+        },
+
         /** show edit valuecost modal
         */
          showEditValuecost:function(value_cost){

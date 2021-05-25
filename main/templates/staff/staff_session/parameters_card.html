@@ -56,7 +56,7 @@
                         <button class="btn btn-outline-secondary" 
                                 type="button" 
                                 v-bind:disabled="reconnecting || working || current_period <= 1"
-                                v-on:click="updateCurrentPeriod(-1)"><<</button>
+                                v-on:click="updateCurrentPeriod(-1)"><i class="fas fa-angle-double-left"></i></button>
                         <input type="number"
                                id="period_visible"
                                class="form-control text-center"
@@ -66,17 +66,17 @@
                         <button class="btn btn-outline-secondary"
                                 v-bind:disabled="reconnecting || working || current_period == session.parameter_set.number_of_periods"
                                 v-on:click="updateCurrentPeriod(1)"
-                                type="button">>></button>
+                                type="button"><i class="fas fa-angle-double-right"></i></button>
                     </div>
                 </div>
             </div>
         </div>  
 
-        <!-- edit values -->
+        <!-- edit values and costs -->
         <div class="row">
             <div class="col-md text-center">
                 <table class="table table-hover table-condensed table-responsive-lg"> 
-                    <caption class="text-center" style="caption-side:top;">Buyers</caption>
+                    <caption class="text-center" style="caption-side:top;">Buyers ([[session.parameter_set.number_of_buyers]])</caption>
                     <thead>
                         <tr>
                             <th scope="col" class = "m-1 p-1">
@@ -115,24 +115,37 @@
                     </tbody>
                 </table>
 
-                <div class = "d-flex justify-content-center">
-                    <div class="input-group w-50">
-                        <button class="btn btn-outline-secondary"
-                                type="button"
-                                v-bind:disabled="reconnecting || session.parameter_set.periods[current_period-1].buyers.length <= 1 || working"
-                                v-on:click="sendUpdateSubjectCount('BUYER', -1)">-</button>
-                        <input type="number" 
-                            class="form-control text-center"
-                            aria-label="Buyer Count"
-                            disabled=true
-                            style="background-color: white;"
-                            v-model="session.parameter_set.number_of_buyers">
-                        <button class="btn btn-outline-secondary text-center"
-                                type="button"
-                                v-bind:disabled="reconnecting || working"
-                                v-on:click="sendUpdateSubjectCount('BUYER', 1)">+</button>
-                    </div>
+                <div class="btn-group" role="group" aria-label="Buyer parameters">
+                    <button class="btn btn-outline-secondary"
+                            type="button"
+                            v-bind:disabled="reconnecting || working"
+                            v-on:click="sendUpdateSubjectCount('BUYER', 1)"
+                            title = "Add a buyer">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                    <button class="btn btn-outline-secondary"
+                            type="button"
+                            v-bind:disabled="reconnecting || session.parameter_set.periods[current_period-1].buyers.length <= 1 || working"
+                            v-on:click="sendUpdateSubjectCount('BUYER', -1)"
+                            title = "Remove last Buyer">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <button type="button"
+                            class="btn btn-outline-secondary"
+                            v-on:click="shiftValueOrCost('value','up')"
+                            v-bind:disabled="reconnecting || working"
+                            title = "Shift values up">
+                        <i class="fas fa-angle-double-up"></i>
+                    </button>
+                    <button type="button"
+                            class="btn btn-outline-secondary"
+                            v-on:click="shiftValueOrCost('value','down')"
+                            v-bind:disabled="reconnecting || working"
+                            title = "Shift values down">
+                        <i class="fas fa-angle-double-down"></i>
+                    </button>
                 </div>
+
             </div>
             <div class="col-md text-center">
                 <table class="table table-hover table-condensed table-responsive-lg"> 
@@ -176,26 +189,57 @@
                     
                 </table>
 
-                <div class = "d-flex justify-content-center">
-                    <div class="input-group w-50">
-                        <button class="btn btn-outline-secondary" 
-                                type="button" 
-                                v-bind:disabled="reconnecting || session.parameter_set.periods[current_period-1].sellers.length <= 1 || working"
-                                v-on:click="sendUpdateSubjectCount('SELLER', -1)">-</button>
-                        <input type="number"
-                            class="form-control text-center"
-                            aria-label="Seller Count"
-                            disabled=true
-                            style="background-color: white;"
-                            v-model="session.parameter_set.number_of_sellers">                    
-                        <button class="btn btn-outline-secondary"
-                                v-bind:disabled="reconnecting || working"
-                                v-on:click="sendUpdateSubjectCount('SELLER', 1)"
-                                type="button">+</button>
-                    </div>
+                <div class="btn-group" role="group" aria-label="Seller parameters">
+                    <button class="btn btn-outline-secondary"
+                            type="button"
+                            v-bind:disabled="reconnecting || working"
+                            v-on:click="sendUpdateSubjectCount('SELLER', 1)"
+                            title = "Add a buyer">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                    <button class="btn btn-outline-secondary"
+                            type="button"
+                            v-bind:disabled="reconnecting || session.parameter_set.periods[current_period-1].sellers.length <= 1 || working"
+                            v-on:click="sendUpdateSubjectCount('SELLER', -1)"
+                            title = "Remove last Buyer">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <button type="button"
+                            class="btn btn-outline-secondary"
+                            v-on:click="shiftValueOrCost('cost','up')"
+                            v-bind:disabled="reconnecting || working"
+                            title = "Shift values up">
+                        <i class="fas fa-angle-double-up"></i>
+                    </button>
+                    <button type="button"
+                            class="btn btn-outline-secondary"
+                            v-on:click="shiftValueOrCost('cost','down')"
+                            v-bind:disabled="reconnecting || working"
+                            title = "Shift values down">
+                        <i class="fas fa-angle-double-down"></i>
+                    </button>
                 </div>
+
             </div>
         </div>                                  
         
+        <!-- shift values and costs -->
+        <div class="row mt-4">
+            <div class="col-md text-center">
+                
+            </div>
+
+            <div class="col-md text-center">
+            </div>
+        </div>
+
+        <!-- copy values and costs -->
+        <div class="row mt-4">
+            <div class="col-md text-center">
+            </div>
+
+            <div class="col-md text-center">
+            </div>
+        </div>
     </div>                    
 </div> 

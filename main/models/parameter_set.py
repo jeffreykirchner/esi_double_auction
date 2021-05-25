@@ -51,7 +51,7 @@ class ParameterSet(models.Model):
 
         return message
 
-    def setup(self,new_ps):
+    def setup(self, new_ps):
         '''
         copy another parameter set into this one
         '''
@@ -117,6 +117,18 @@ class ParameterSet(models.Model):
                 status = "fail"
 
         return status
+    
+    def shift_values_or_costs(self, value_or_cost, period_number, direction):
+        '''
+        shift the values or costs for a period in the direction specified
+        value_or_cost : string 'value' or 'cost'
+        period : int 1 to N
+        direction: string 'up' or 'down'
+        '''
+
+        parameter_set_period = self.parameter_set_periods.get(period_number = period_number)
+
+        return parameter_set_period.shift_values_or_costs(value_or_cost, direction)
 
     def json(self):
         '''
