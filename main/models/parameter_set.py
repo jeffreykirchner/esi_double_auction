@@ -129,6 +129,25 @@ class ParameterSet(models.Model):
         parameter_set_period = self.parameter_set_periods.get(period_number = period_number)
 
         return parameter_set_period.shift_values_or_costs(value_or_cost, direction)
+    
+    def copy_values_or_costs(self, value_or_cost, period_number):
+        '''
+        copy values or costs from previous period
+        value_or_cost : string 'value' or 'cost'
+        period : int 1 to N
+        '''
+
+        source_period = self.parameter_set_periods.get(period_number=period_number-1)
+        target_period = self.parameter_set_periods.get(period_number=period_number)
+
+        source_period_json = source_period.json()
+        source_period_json["period_number"] = period_number
+
+        if value_or_cost == "value":
+            return target_period.from_dict(source_period_json, True, False)
+        else:
+            return target_period.from_dict(source_period_json, False, True)
+
 
     def json(self):
         '''

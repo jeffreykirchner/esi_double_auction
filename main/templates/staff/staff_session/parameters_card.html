@@ -16,9 +16,6 @@
             <button class="btn btn-outline-primary me-1" type="button" v-bind:disabled = "session.started" v-on:click = "showImportParameters()" title="Import from another session.">
                 Import <i class="fas fa-file-import"></i>
             </button> 
-            <button class="btn btn-outline-primary" type="button" v-on:click = "showEditParameters()" title="Show edit form.">
-                Edit <i class="far fa-edit"></i>
-            </button>
         </span>
 
         
@@ -144,12 +141,19 @@
                             title = "Shift values down">
                         <i class="fas fa-angle-double-down"></i>
                     </button>
+                    <button type="button"
+                            class="btn btn-outline-secondary"
+                            v-on:click="copyValueOrCost('value')"
+                            v-bind:disabled="reconnecting || working || current_period <= 1"
+                            title = "Copy values from previous period">
+                        <i class="fas fa-copy"></i>
+                    </button>
                 </div>
 
             </div>
             <div class="col-md text-center">
                 <table class="table table-hover table-condensed table-responsive-lg"> 
-                    <caption class="text-center" style="caption-side:top;">Sellers</caption>
+                    <caption class="text-center" style="caption-side:top;">Sellers ([[session.parameter_set.number_of_sellers]])</caption>
                     <thead>
                         <tr>
                             <th scope="col" class = "m-1 p-1">
@@ -217,6 +221,13 @@
                             v-bind:disabled="reconnecting || working"
                             title = "Shift values down">
                         <i class="fas fa-angle-double-down"></i>
+                    </button>
+                    <button type="button"
+                            class="btn btn-outline-secondary"
+                            v-on:click="copyValueOrCost('cost')"
+                            v-bind:disabled="reconnecting || working || current_period <= 1"
+                            title = "Copy costs from previous period">
+                        <i class="fas fa-copy"></i>
                     </button>
                 </div>
 

@@ -167,6 +167,35 @@ class ParameterSetPeriod(models.Model):
 
         return "success"
 
+    def from_dict(self, source, copy_buyers, copy_sellers):
+        '''
+        copy source values into this period
+        source : dict object of period
+        '''
+        
+        message = "Parameters loaded successfully."
+
+        self.period_number = source.get("period_number")
+        #self.parameter_set = ParameterSet.objects.get(id=source.get("parameter_set"))
+
+        self.update_subject_count()
+
+        self.save()
+
+        if copy_buyers:
+            buyer_list = self.get_buyer_list()
+
+            for i in range(len(buyer_list)):
+                buyer_list[i].from_dict(source.get("buyers")[i])
+        
+        if copy_sellers:
+            seller_list = self.get_seller_list()
+
+            for i in range(len(seller_list)):
+                seller_list[i].from_dict(source.get("sellers")[i])
+
+        return message
+
     def json(self):
         '''
         return json object of model
@@ -174,6 +203,7 @@ class ParameterSetPeriod(models.Model):
         return{
 
             "id" : self.id,
+            #"parameter_set" : self.parameter_set.id,
             "period_number" : self.period_number,
             "buyers" : [b.json() for b in self.get_buyer_list()],
             "sellers" : [s.json() for s in self.get_seller_list()],

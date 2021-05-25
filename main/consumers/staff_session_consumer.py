@@ -147,6 +147,26 @@ class StaffSessionConsumer(SocketConsumerMixin):
         await self.send(text_data=json.dumps({
             'message': message
         }))
+    
+    async def copy_value_or_cost(self, event):
+        '''
+        copy values or costs form previous period
+        '''
+        #update subject count
+
+        message_data = {}
+        message_data["status"] = await take_copy_value_or_cost(event["message_text"])
+
+        message_data["session"] = await get_session(event["message_text"]["sessionID"])
+
+        message = {}
+        message["messageType"] = "update_session"
+        message["messageData"] = message_data
+
+        # Send message to WebSocket
+        await self.send(text_data=json.dumps({
+            'message': message
+        }))
 
 
 #local sync_to_asyncs
@@ -299,4 +319,28 @@ def take_shift_value_or_cost(data):
     status = parameter_set.shift_values_or_costs(value_or_cost, period, direction)
     
     return status
+
+@sync_to_async
+def take_copy_value_or_cost(data):
+    '''
+    copy values or costs from previous periods
+    '''   
+
+    logger = logging.getLogger(__name__) 
+    logger.info(f"shift values up or down: {data}")
+
+    status = "success"
+    session_id = data["sessionID"]
+    period = data["currentPeriod"]
+    value_or_cost =  data["valueOrCost"]
+
+    if period <= 1:
+        return "fail"
+
+    session = Session.objects.get(id=session_id)
+    parameter_set = session.parameter_set
+
+    status = parameter_set.copy_values_or_costs(value_or_cost, period)
+    
+    return "success"
 

@@ -33,51 +33,61 @@ class ParameterSetPeriodSubject(models.Model):
             models.UniqueConstraint(fields=['parameter_set_period', 'id_number', 'subject_type'], name='unique_subject_for_period'),
         ]
 
-    def setup_from_dict(self, new_ps):
+    def get_value_cost_list_json(self):
+        '''
+        return a list of values or costs associated with this subject in json format
+        '''
+
+        if self.subject_type == 'Buyer':
+            return [v.json() for v in self.parameter_set_period_subject_valuecosts.all().order_by('-enabled', '-value_cost')]
+        else:
+            return [c.json() for c in self.parameter_set_period_subject_valuecosts.all().order_by('-enabled', 'value_cost')]
+    
+    def get_value_cost_list(self):
+        '''
+        return a list of values or costs models associated with this subject
+        '''
+
+        if self.subject_type == 'Buyer':
+            return [v for v in self.parameter_set_period_subject_valuecosts.all().order_by('-enabled', '-value_cost')]
+        else:
+            return [c for c in self.parameter_set_period_subject_valuecosts.all().order_by('-enabled', 'value_cost')]
+
+    def from_dict(self, source):
         '''
         load values from dict
         '''
 
         message = "Parameters loaded successfully."
 
-        try:
-            self.parameter_set = main.models.ParameterSet.objects.get(id=new_ps.get("parameter_set"))
-            self.id_number = new_ps.get("id_number")
+        # try:
+        # self.parameter_set_period = main.models.ParameterSet.objects.get(id=source.get("parameter_set_period"))
+        self.subject_type = source.get("subject_type")
+        self.id_number = source.get("id_number")
 
-            self.save()
+        value_cost_list = self.get_value_cost_list()
 
-        except IntegrityError as exp:
-            message = f"Failed to load parameter set subject: {exp}"
-            #logger.info(message)
+        for i in range(len(value_cost_list)):
+            value_cost_list[i].from_dict(source.get("value_costs")[i])
+
+        self.save()
+
+        # except IntegrityError as exp:
+        #     message = f"Failed to load parameter set subject: {exp}"
+        #     #logger.info(message)
 
         return message
-
-    def setup(self,new_ps):
-        '''
-        copy another parameter set into this one
-        '''
-
-        self.save()
-
-        self.parameter_set = new_ps.parameter_set
-        self.id_number = new_ps.id_number
-
-        self.save()
 
     def json(self):
         '''
         return json object of model
         '''
 
-        if self.subject_type == 'Buyer':
-            value_costs = [vc.json() for vc in self.parameter_set_period_subject_valuecosts.all().order_by('-enabled', '-value_cost')]
-        else:
-            value_costs = [vc.json() for vc in self.parameter_set_period_subject_valuecosts.all().order_by('-enabled', 'value_cost')]
-
         return{
 
             "id" : self.id,
+            # "parameter_set_period" : self.parameter_set_period.id,
             "id_number" : self.id_number,
             "subject_type" : self.subject_type,
-            "value_costs" : value_costs,
+            "value_costs" : self.get_value_cost_list_json(),
         }

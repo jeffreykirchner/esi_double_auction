@@ -205,6 +205,17 @@ var app = Vue.createApp({
                                                     "direction" : direction,});
         },
 
+        /** copy values or costs from pervious period
+         * @param valueOrCost : 'value' or 'cost'
+         * @param valueOrCost : 'up' or 'down'
+        */
+         copyValueOrCost(valueOrCost){
+            app.$data.working = true;
+            app.sendMessage("copy_value_or_cost", {"sessionID" : app.$data.sessionID,
+                                                    "currentPeriod" : app.$data.current_period,
+                                                    "valueOrCost" : valueOrCost});
+        },
+
         /** show edit valuecost modal
         */
          showEditValuecost:function(value_cost){

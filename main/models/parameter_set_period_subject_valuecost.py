@@ -26,6 +26,17 @@ class ParameterSetPeriodSubjectValuecost(models.Model):
         verbose_name = 'Value or cost'
         verbose_name_plural = 'Value or costs'
 
+    def from_dict(self, source):
+        '''
+        load values from source
+        source : dict object representing this model
+        '''
+
+        self.value_cost = source.get("value_cost")
+        self.enabled = True if source.get("enabled") == "True" else False
+
+        self.save()
+
     def json(self):
         '''
         return json object of model
