@@ -14,6 +14,7 @@ from main.models import Session
 
 from main.forms import SessionForm
 from main.forms import ValuecostForm
+from main.forms import PeriodForm
 
 class StaffSessionView(SingleObjectMixin, View):
     '''
@@ -35,12 +36,18 @@ class StaffSessionView(SingleObjectMixin, View):
         for i in ValuecostForm():
             valuecost_form_ids.append(i.html_name)
 
+        period_form_ids=[]
+        for i in PeriodForm():
+            period_form_ids.append(i.html_name)
+
         return render(request=request,
                       template_name=self.template_name,
                       context={"parameters" : parameters,
                                "session_form" : SessionForm(),
                                "valuecost_form" : ValuecostForm(),
                                "valuecost_form_ids" : valuecost_form_ids,
+                               "period_form" : PeriodForm(),
+                               "period_form_ids" : period_form_ids,
                                "websocket_path" : self.websocket_path,
                                "page_key" : f'{self.websocket_path}-{session.id}',
                                "session" : session})

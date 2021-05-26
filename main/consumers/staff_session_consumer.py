@@ -3,8 +3,9 @@ websocket session list
 '''
 import json
 import logging
-from main.forms.valuecost_form import ValuecostForm
-from main.models.parameter_set_period_subject_valuecost import ParameterSetPeriodSubjectValuecost
+from main.forms import ValuecostForm
+from main.models import ParameterSetPeriodSubjectValuecost
+from main.models import ParameterSetPeriod
 
 from asgiref.sync import sync_to_async
 
@@ -16,6 +17,7 @@ from main.consumers import get_session
 from main.views import Session
 
 from main.forms import SessionForm
+from main.forms import PeriodForm
 from main.globals import SubjectType
 
 class StaffSessionConsumer(SocketConsumerMixin):
@@ -168,6 +170,24 @@ class StaffSessionConsumer(SocketConsumerMixin):
             'message': message
         }))
 
+    async def update_period(self, event):
+        '''
+        update a period parameters
+        '''
+        #update subject count
+        message_data = {}
+        message_data["status"] = await take_update_period(event["message_text"])
+
+        message_data["session"] = await get_session(event["message_text"]["sessionID"])
+
+        message = {}
+        message["messageType"] = "update_period"
+        message["messageData"] = message_data
+
+        # Send message to WebSocket
+        await self.send(text_data=json.dumps({
+            'message': message
+        }))
 
 #local sync_to_asyncs
 @sync_to_async
@@ -280,7 +300,7 @@ def take_update_valuecost(data):
     try:        
         valuecost = ParameterSetPeriodSubjectValuecost.objects.get(id=id)
     except ObjectDoesNotExist:
-        logger.warning(f"take_update_session_form session, not found: {session_id}")
+        logger.warning(f"take_update_valuecost session, not found ID: {id}")
     
     form_data_dict = {}
 
@@ -344,3 +364,37 @@ def take_copy_value_or_cost(data):
     
     return "success"
 
+@sync_to_async
+def take_update_period(data):
+    '''
+    update period parameters
+    '''   
+
+    logger = logging.getLogger(__name__) 
+    logger.info(f"Update period parameters: {data}")
+
+    session_id = data["sessionID"]
+    period_id = data["periodID"]
+
+    form_data = data["formData"]
+
+    try:        
+        session_period = ParameterSetPeriod.objects.get(id=period_id)
+    except ObjectDoesNotExist:
+        logger.warning(f"take_update_period session period, not found ID: {period_id}")
+    
+    form_data_dict = {}
+
+    for field in form_data:            
+        form_data_dict[field["name"]] = field["value"]
+
+    form = PeriodForm(form_data_dict, instance=session_period)
+
+    if form.is_valid():
+        #print("valid form")                
+        form.save()              
+
+        return {"value" : "success"}                      
+                                
+    logger.info("Invalid session form")
+    return {"value" : "fail", "errors" : dict(form.errors.items())}

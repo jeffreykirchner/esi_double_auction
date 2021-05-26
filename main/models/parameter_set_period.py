@@ -1,6 +1,8 @@
 '''
 session's period parameters
 '''
+from decimal import Decimal
+
 from django.db import models
 from django.db.utils import IntegrityError
 
@@ -16,7 +18,9 @@ class ParameterSetPeriod(models.Model):
 
     parameter_set = models.ForeignKey(ParameterSet, on_delete=models.CASCADE,  related_name="parameter_set_periods")
 
-    period_number = models.IntegerField(verbose_name='Period number')
+    period_number = models.IntegerField(verbose_name='Period number')                                       #period from 1 - N in parameter set
+    price_cap = models.DecimalField(decimal_places=2, default=0, max_digits=5, verbose_name = 'Price Cap')  #max bid or offer allowed in this period 
+    price_cap_enabled = models.BooleanField(default=False, verbose_name = 'Price Cap Enabled')              #if true, enforce price cap
 
     def __str__(self):
         return str(self.id)
@@ -167,7 +171,7 @@ class ParameterSetPeriod(models.Model):
 
         return "success"
 
-    def from_dict(self, source, copy_buyers, copy_sellers):
+    def from_dict(self, source, copy_buyers, copy_sellers, copy_price_cap):
         '''
         copy source values into this period
         source : dict object of period
@@ -176,6 +180,11 @@ class ParameterSetPeriod(models.Model):
         message = "Parameters loaded successfully."
 
         self.period_number = source.get("period_number")
+
+        if copy_price_cap:
+            self.price_cap = Decimal(source.get("price_cap"))
+            self.price_cap_enabled = True if source.get("price_cap_enabled") == "True" else False
+
         #self.parameter_set = ParameterSet.objects.get(id=source.get("parameter_set"))
 
         self.update_subject_count()
@@ -205,6 +214,8 @@ class ParameterSetPeriod(models.Model):
             "id" : self.id,
             #"parameter_set" : self.parameter_set.id,
             "period_number" : self.period_number,
+            "price_cap" : str(self.price_cap),
+            "price_cap_enabled" : "True" if self.price_cap_enabled else "False",
             "buyers" : [b.json() for b in self.get_buyer_list()],
             "sellers" : [s.json() for s in self.get_seller_list()],
         }

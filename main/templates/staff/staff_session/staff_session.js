@@ -16,6 +16,9 @@ var app = Vue.createApp({
                             number_of_sellers : 0,
                             number_of_periods : 0,
                             periods : [ {
+                                period_number : 1,
+                                price_cap : "0.00",
+                                price_cap_enabled : "False",
                                 sellers : [],
                                 buyers : [],
                              }]
@@ -30,6 +33,7 @@ var app = Vue.createApp({
                         enabled:false,
                     },
                     valuecost_form_ids: {{valuecost_form_ids|safe}},
+                    period_form_ids: {{period_form_ids|safe}},
                 }},
     methods: {
 
@@ -59,7 +63,9 @@ var app = Vue.createApp({
                 case "update_valuecost":
                     app.takeUpdateValuecost(messageData);
                     break;
-    
+                case "update_period":
+                    app.takeUpdatePeriod(messageData);
+                    break;    
             }
 
             app.working = false;
@@ -142,7 +148,6 @@ var app = Vue.createApp({
         },
 
         /** send update to number of periods
-        * @param adjustment : 1 or -1
         */
         sendUpdateValuecost(){
             
@@ -155,7 +160,7 @@ var app = Vue.createApp({
         /** take update valuecost
          * @param messageData {json} result of update, either sucess or fail with errors
         */
-         takeUpdateValuecost(messageData){
+        takeUpdateValuecost(messageData){
             app.$data.cancelModal=false;
             app.clearMainFormErrors();
 
@@ -216,14 +221,53 @@ var app = Vue.createApp({
                                                     "valueOrCost" : valueOrCost});
         },
 
+        /** send update to number of periods
+        */
+         sendUpdatePeriod(){
+            
+            app.$data.working = true;
+            app.sendMessage("update_period", {"sessionID" : app.$data.sessionID,
+                                              "periodID" : app.$data.session.parameter_set.periods[app.$data.current_period-1].id,
+                                              "formData" : $("#periodForm").serializeArray(),});
+        },
+
+        /** take update valuecost
+         * @param messageData {json} result of update, either sucess or fail with errors
+        */
+        takeUpdatePeriod(messageData){
+            app.$data.cancelModal=false;
+            app.clearMainFormErrors();
+
+            if(messageData.status.value == "success")
+            {
+                app.takeGetSession(messageData);       
+                $('#editPeriodModal').modal('hide');    
+            } 
+            else
+            {
+                app.$data.cancelModal=true;                           
+                app.displayErrors(messageData.errors);
+            } 
+        },
+
         /** show edit valuecost modal
         */
-         showEditValuecost:function(value_cost){
+         showEditValuecost:function(value_cost, type){
             app.clearMainFormErrors();
             app.$data.cancelModal=true;
             app.$data.sessionBeforeEdit = Object.assign({}, app.$data.session);
 
             app.$data.current_valuecost = Object.assign({}, value_cost);
+
+            if(type == "value")
+            {
+                app.$data.valuecost_modal_label = "Edit value";
+            }
+            else
+            {
+                app.$data.valuecost_modal_label = "Edit cost";
+            }
+
 
             var myModal = new bootstrap.Modal(document.getElementById('valuecostModal'), {
                 keyboard: false
@@ -267,6 +311,31 @@ var app = Vue.createApp({
             }
         },
 
+        /** show edit session modal
+        */
+        showEditPeriod:function(){
+            app.clearMainFormErrors();
+            app.$data.cancelModal=true;
+            app.$data.periodBeforeEdit = Object.assign({}, app.$data.session.parameter_set.periods[app.$data.current_period-1]);
+
+            var myModal = new bootstrap.Modal(document.getElementById('editPeriodModal'), {
+                keyboard: false
+                })
+
+            myModal.toggle();
+        },
+
+        /** hide edit session modal
+        */
+        hideEditPeriod:function(){
+            if(app.$data.cancelModal)
+            {
+                Object.assign(app.$data.session.parameter_set.periods[app.$data.current_period-1], app.$data.periodBeforeEdit);
+                app.$data.periodBeforeEdit=null;
+            }
+        },
+        
+
         /** clear form error messages
         */
         clearMainFormErrors:function(){
@@ -278,6 +347,13 @@ var app = Vue.createApp({
             }
 
             s = app.$data.valuecost_form_ids;
+            for(var i in s)
+            {
+                $("#id_" + s[i]).attr("class","form-control");
+                $("#id_errors_" + s[i]).remove();
+            }
+
+            s = app.$data.period_form_ids;
             for(var i in s)
             {
                 $("#id_" + s[i]).attr("class","form-control");
@@ -312,6 +388,7 @@ var app = Vue.createApp({
     mounted(){
         $('#editSessionModal').on("hidden.bs.modal", this.hideEditSession); 
         $('#valuecostModal').on("hidden.bs.modal", this.hideEditValuecost); 
+        $('#editPeriodModal').on("hidden.bs.modal", this.hideEditPeriod); 
     },
 
 }).mount('#app');

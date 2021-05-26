@@ -144,9 +144,9 @@ class ParameterSet(models.Model):
         source_period_json["period_number"] = period_number
 
         if value_or_cost == "value":
-            return target_period.from_dict(source_period_json, True, False)
+            return target_period.from_dict(source_period_json, True, False, False)
         else:
-            return target_period.from_dict(source_period_json, False, True)
+            return target_period.from_dict(source_period_json, False, True, False)
 
 
     def json(self):

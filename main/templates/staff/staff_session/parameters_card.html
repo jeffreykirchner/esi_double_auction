@@ -23,7 +23,7 @@
     <div class="card-body"> 
 
         <!-- change count -->
-        <div class="row mb-4">
+        <div class="row mb-2 border-bottom pb-2">
             <div class="col-md text-center">
                 <label for="period_count">Number of Periods</label>
                 
@@ -32,7 +32,7 @@
                         <button class="btn btn-outline-secondary" 
                                 type="button" 
                                 v-bind:disabled="reconnecting || working || session.parameter_set.number_of_periods <= 1"
-                                v-on:click="sendUpdatePeriodCount(-1)">-</button>
+                                v-on:click="sendUpdatePeriodCount(-1)"><i class="fas fa-minus"></i></button>
                         <input type="number"
                                id="period_count"  
                                class="form-control text-center"
@@ -42,7 +42,7 @@
                         <button class="btn btn-outline-secondary"
                                 v-bind:disabled="reconnecting || working"
                                 v-on:click="sendUpdatePeriodCount(1)"
-                                type="button">+</button>
+                                type="button"><i class="fas fa-plus"></i></button>
                     </div>
                 </div>
             </div>
@@ -68,6 +68,19 @@
                 </div>
             </div>
         </div>  
+
+        <!-- price cap -->
+        <div class="row">
+            <div class="col-md text-center">
+                <button type="button" class="btn btn-light" v-on:click = "showEditPeriod()" >
+                    Price Cap 
+                        (<span v-if="session.parameter_set.periods[current_period-1].price_cap_enabled == 'True'">ON</span>
+                        <span v-else>OFF</span>): 
+                    [[session.parameter_set.periods[current_period-1].price_cap]]
+                </button>
+            </div>
+
+        </div>
 
         <!-- edit values and costs -->
         <div class="row">
@@ -99,7 +112,7 @@
                                 [[b.id_number]]
                             </td>
                             <td v-for="(vc, index) in b.value_costs" v-bind:key="vc.id">
-                                <button type="button" class="btn btn-light btn-sm" v-on:click = "showEditValuecost(vc)" >
+                                <button type="button" class="btn btn-light btn-sm" v-on:click = "showEditValuecost(vc, 'value')" >
                                     <span v-if="vc.enabled == 'True'">
                                         [[vc.value_cost]]
                                     </span>
@@ -179,7 +192,7 @@
                                 [[s.id_number]]
                             </td>
                             <td v-for="(vc, index) in s.value_costs" v-bind:key="vc.id">
-                                <button type="button" class="btn btn-light btn-sm" v-on:click = "showEditValuecost(vc)" >
+                                <button type="button" class="btn btn-light btn-sm" v-on:click = "showEditValuecost(vc, 'cost')" >
                                     <span v-if="vc.enabled == 'True'">
                                         [[vc.value_cost]]
                                     </span>
