@@ -18,6 +18,7 @@ from main.views import Session
 
 from main.forms import SessionForm
 from main.forms import PeriodForm
+
 from main.globals import SubjectType
 
 class StaffSessionConsumer(SocketConsumerMixin):
@@ -182,6 +183,25 @@ class StaffSessionConsumer(SocketConsumerMixin):
 
         message = {}
         message["messageType"] = "update_period"
+        message["messageData"] = message_data
+
+        # Send message to WebSocket
+        await self.send(text_data=json.dumps({
+            'message': message
+        }))
+    
+    async def import_parameters(self, event):
+        '''
+        import parameters from another session
+        '''
+        #update subject count
+        message_data = {}
+        message_data["status"] = await take_import_parameters(event["message_text"])
+
+        message_data["session"] = await get_session(event["message_text"]["sessionID"])
+
+        message = {}
+        message["messageType"] = "import_parameters"
         message["messageData"] = message_data
 
         # Send message to WebSocket
@@ -398,3 +418,27 @@ def take_update_period(data):
                                 
     logger.info("Invalid session form")
     return {"value" : "fail", "errors" : dict(form.errors.items())}
+
+@sync_to_async
+def take_import_parameters(data):
+    '''
+    import parameters from another session
+    '''   
+    logger = logging.getLogger(__name__) 
+    logger.info(f"Import parameters: {data}")
+
+    session_id = data["sessionID"]
+    form_data = data["formData"]
+    
+    form_data_dict = {}
+
+    for field in form_data:            
+        form_data_dict[field["name"]] = field["value"]
+
+    source_session = Session.objects.get(id=form_data_dict["session"])
+    target_session = Session.objects.get(id=session_id)
+
+    target_session.parameter_set.from_dict(source_session.parameter_set.json())          
+
+    return {"value" : "success"}                      
+                                

@@ -13,10 +13,6 @@ class ParameterSet(models.Model):
     '''
     session parameters
     '''
-
-    consent_form_required = models.BooleanField(default=True)                                          #true if subject must agree to special consent form before doing experiment
-    consent_form = models.ForeignKey(ConsentForms, on_delete=models.CASCADE, null=True, blank=True)       #text of special consent form
-
     number_of_buyers = models.IntegerField(default=1, verbose_name="Number of buyers")       #number of buyers in the session
     number_of_sellers = models.IntegerField(default=1, verbose_name="Number of sellers")     #number of buyers in the session
 
@@ -30,7 +26,7 @@ class ParameterSet(models.Model):
         verbose_name = 'Study Parameter Set'
         verbose_name_plural = 'Study Parameter Sets'
 
-    def setup_from_dict(self, new_ps):
+    def from_dict(self, new_ps):
         '''
         load values from dict
         '''
@@ -38,32 +34,32 @@ class ParameterSet(models.Model):
         message = "Parameters loaded successfully."
 
         try:
-            self.consent_form_required = new_ps.get("consent_form_required")
-            self.consent_form = main.models.ConsentForms.objects.get(id=new_ps.get("consent_form"))
-            self.number_of_periods = new_ps.get("number_of_periods")
             self.number_of_buyers = new_ps.get("number_of_buyers")
+            self.number_of_sellers = new_ps.get("number_of_sellers")
 
             self.save()
+
+            new_period_count = len(new_ps["periods"])
+            current_period_count = self.parameter_set_periods.count()
+
+            #update period count
+            if new_period_count > current_period_count:
+                for i in range(new_period_count-current_period_count):
+                    self.add_session_period()
+            elif current_period_count > new_period_count:
+                for i in range(current_period_count-new_period_count):
+                    self.remove_session_period()
+
+            #copy periods
+            for i in range(new_period_count):
+                period = self.parameter_set_periods.get(period_number=i+1)
+                period.from_dict(new_ps["periods"][i], True, True, True)
 
         except IntegrityError as exp:
             message = f"Failed to load parameter set: {exp}"
             #logger.info(message)
 
         return message
-
-    def setup(self, new_ps):
-        '''
-        copy another parameter set into this one
-        '''
-
-        self.save()
-
-        self.consent_form_required = new_ps.consent_form_required
-        self.consent_form = new_ps.consent_form
-        self.number_of_periods = new_ps.number_of_periods
-        self.number_of_buyers = new_ps.number_of_buyers
-
-        self.save()
 
     def add_session_period(self):
         '''
@@ -156,8 +152,6 @@ class ParameterSet(models.Model):
         return{
 
             "id" : self.id,
-            "consent_form_required" : self.consent_form_required,
-            "consent_form" : self.consent_form.id if self.consent_form else None,
             "number_of_periods" : self.parameter_set_periods.all().count(),
             "number_of_buyers" : self.number_of_buyers,
             "number_of_sellers" : self.number_of_sellers,

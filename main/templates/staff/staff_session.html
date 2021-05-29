@@ -13,10 +13,15 @@
 {%endblock head%}
 
 {% block content %}
+
+<!-- modals -->
 {%include "staff/staff_session/edit_session_modal.html"%}
 {%include "staff/staff_session/edit_valuecost_modal.html"%}
 {%include "staff/staff_session/edit_period_modal.html"%}
+{%include "staff/staff_session/upload_parameters_modal.html"%}
+{%include "staff/staff_session/import_parameters_modal.html"%}
 
+<!-- cards -->
 <div class="row justify-content-lg-center" v-cloak>
     <div class="col-md-8">
         {%include "staff/staff_session/parameters_card.html"%}                 
@@ -25,7 +30,5 @@
         {%include "staff/staff_session/session_card.html"%}                    
     </div>
 </div>
-
-
 
 {% endblock %}

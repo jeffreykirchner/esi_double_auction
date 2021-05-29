@@ -2,22 +2,31 @@
     <div class="card-header">                
         <span class="align-middle">Parameters</span>       
             
-
         <span class="float-end">
             <span v-show="reconnecting" class="me-1">
                 Connecting <i class="fas fa-cog fa-spin fa-1x"></i>
             </span>
-            <button class="btn btn-outline-primary me-1" type="button" v-on:click = "downloadParameterset()" title="Download to a file.">
+            <button class="btn btn-outline-primary me-1"
+                    type="button" 
+                    v-on:click="downloadParameterset()" 
+                    title="Download to a file.">
                 <span v-html = "downloadParametersetButtonText"></span>
             </button> 
-            <button class="btn btn-outline-primary me-1" type="button" v-bind:disabled = "session.started" v-on:click = "showUploadParameters('parameters')" title = "Upload from a file.">
+            <button class="btn btn-outline-primary me-1" 
+                    type="button" 
+                    v-bind:disabled="session.started" 
+                    v-on:click="showUploadParameters('parameters')"
+                    title = "Upload from a file.">
                 Upload  <i class="fas fa-upload"></i>
             </button> 
-            <button class="btn btn-outline-primary me-1" type="button" v-bind:disabled = "session.started" v-on:click = "showImportParameters()" title="Import from another session.">
+            <button class="btn btn-outline-primary me-1"
+                    type="button" 
+                    v-bind:disabled="session.started" 
+                    v-on:click="showImportParameters()"
+                    title="Import parameters from another session.">
                 Import <i class="fas fa-file-import"></i>
             </button> 
         </span>
-
         
     </div>
     <div class="card-body"> 

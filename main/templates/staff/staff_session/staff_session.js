@@ -65,7 +65,11 @@ var app = Vue.createApp({
                     break;
                 case "update_period":
                     app.takeUpdatePeriod(messageData);
-                    break;    
+                    break;   
+                case "import_parameters":
+                    app.takeImportParameters(messageData);
+                    break;  
+                
             }
 
             app.working = false;
@@ -223,7 +227,7 @@ var app = Vue.createApp({
 
         /** send update to number of periods
         */
-         sendUpdatePeriod(){
+        sendUpdatePeriod(){
             
             app.$data.working = true;
             app.sendMessage("update_period", {"sessionID" : app.$data.sessionID,
@@ -248,6 +252,62 @@ var app = Vue.createApp({
                 app.$data.cancelModal=true;                           
                 app.displayErrors(messageData.errors);
             } 
+        },
+
+        /** copy parameters from another period
+        */
+        sendImportParameters(){
+            
+            app.$data.working = true;
+            app.sendMessage("import_parameters", {"sessionID" : app.$data.sessionID,
+                                                  "formData" : $("#importParametersForm").serializeArray(),});
+        },
+
+        /** show parameters copied from another period 
+        */
+        takeImportParameters(){
+            app.$data.cancelModal=false;
+            app.clearMainFormErrors();
+
+            if(messageData.status.value == "success")
+            {
+                app.takeGetSession(messageData);       
+                $('#importParametersModal').modal('hide');    
+            } 
+            else
+            {
+                app.$data.cancelModal=true;                           
+                app.displayErrors(messageData.errors);
+            } 
+        },
+
+        /** upload parameter set from file
+        */
+        uploadParameterset:function(){  
+
+            let formData = new FormData();
+            formData.append('file', app.$data.upload_file);
+
+            axios.post('/session/{{id}}/', formData,
+                    {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                            }
+                        } 
+                    )
+                    .then(function (response) {     
+
+                        app.$data.uploadParametersetMessaage = response.data.message;
+
+                        app.updateSession(response);
+
+                        app.$data.uploadParametersetButtonText= 'Upload <i class="fas fa-upload"></i>';
+
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                        app.$data.searching=false;
+                    });                        
         },
 
         /** show edit valuecost modal
@@ -334,8 +394,24 @@ var app = Vue.createApp({
                 app.$data.periodBeforeEdit=null;
             }
         },
-        
 
+        /** show edit session modal
+        */
+        showImportParameters:function(){
+           
+            var myModal = new bootstrap.Modal(document.getElementById('importParametersModal'), {
+                keyboard: false
+                })
+
+            myModal.toggle();
+        },
+
+        /** hide edit session modal
+        */
+        hideImportParameters:function(){
+            
+        },
+        
         /** clear form error messages
         */
         clearMainFormErrors:function(){
@@ -389,6 +465,7 @@ var app = Vue.createApp({
         $('#editSessionModal').on("hidden.bs.modal", this.hideEditSession); 
         $('#valuecostModal').on("hidden.bs.modal", this.hideEditValuecost); 
         $('#editPeriodModal').on("hidden.bs.modal", this.hideEditPeriod); 
+        $('importParametersModal').on("hidden.bs.modal", this.hideImportParameters); 
     },
 
 }).mount('#app');
