@@ -208,6 +208,20 @@ class StaffSessionConsumer(SocketConsumerMixin):
         await self.send(text_data=json.dumps({
             'message': message
         }))
+    
+    async def download_parameters(self, event):
+        '''
+        download parameters to a file
+        '''
+        #download parameters to a file
+        message = {}
+        message["messageType"] = "download_parameters"
+        message["messageData"] = await take_download_parameters(event["message_text"])
+
+        # Send message to WebSocket
+        await self.send(text_data=json.dumps({
+            'message': message
+        }))
 
 #local sync_to_asyncs
 @sync_to_async
@@ -440,5 +454,19 @@ def take_import_parameters(data):
 
     target_session.parameter_set.from_dict(source_session.parameter_set.json())          
 
-    return {"value" : "success"}                      
+    return {"value" : "success"}
+
+@sync_to_async
+def take_download_parameters(data):
+    '''
+    download parameters to a file
+    '''   
+    logger = logging.getLogger(__name__) 
+    logger.info(f"Import parameters: {data}")
+
+    session_id = data["sessionID"]
+
+    session = Session.objects.get(id=session_id)
+   
+    return {"status" : "success", "parameter_set":session.parameter_set.json()}                      
                                 

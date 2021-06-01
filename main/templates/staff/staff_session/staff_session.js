@@ -34,6 +34,10 @@ var app = Vue.createApp({
                     },
                     valuecost_form_ids: {{valuecost_form_ids|safe}},
                     period_form_ids: {{period_form_ids|safe}},
+                    upload_file: null,
+                    upload_file_name:'Choose File',
+                    uploadParametersetButtonText:'Upload  <i class="fas fa-upload"></i>',
+                    uploadParametersetMessaage:'',
                 }},
     methods: {
 
@@ -68,7 +72,10 @@ var app = Vue.createApp({
                     break;   
                 case "import_parameters":
                     app.takeImportParameters(messageData);
-                    break;  
+                    break;
+                case "download_parameters":
+                    app.takeDownloadParameters(messageData)
+                    break;
                 
             }
 
@@ -281,14 +288,46 @@ var app = Vue.createApp({
             } 
         },
 
-        /** upload parameter set from file
+        /** send request to download parameters to a file 
+        */
+        sendDownloadParameters(){
+            
+            app.$data.working = true;
+            app.sendMessage("download_parameters", {"sessionID" : app.$data.sessionID,});
+        },
+
+        /** download parameter set into a file 
+         @param messageData {json} result of file request, either sucess or fail with errors
+        */
+        takeDownloadParameters(messageData){
+
+            if(messageData.status == "success")
+            {                  
+                console.log(messageData.parameter_set);
+
+                var downloadLink = document.createElement("a");
+                var jsonse = JSON.stringify(messageData.parameter_set);
+                var blob = new Blob([jsonse], {type: "application/json"});
+                var url = URL.createObjectURL(blob);
+                downloadLink.href = url;
+                downloadLink.download = "Double_Auction_Session_" + app.$data.session.id + "_Parameter_Set.json";
+
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);                     
+            } 
+
+            app.$data.working = false;
+        },
+
+        /**upload a parameter set file
         */
         uploadParameterset:function(){  
 
             let formData = new FormData();
             formData.append('file', app.$data.upload_file);
 
-            axios.post('/session/{{id}}/', formData,
+            axios.post('/staff-session/{{id}}/', formData,
                     {
                         headers: {
                             'Content-Type': 'multipart/form-data'
@@ -298,9 +337,7 @@ var app = Vue.createApp({
                     .then(function (response) {     
 
                         app.$data.uploadParametersetMessaage = response.data.message;
-
-                        app.updateSession(response);
-
+                        app.$data.session = response.data.session;
                         app.$data.uploadParametersetButtonText= 'Upload <i class="fas fa-upload"></i>';
 
                     })
@@ -310,9 +347,51 @@ var app = Vue.createApp({
                     });                        
         },
 
+        //direct upload button click
+        uploadAction:function(){
+            if(app.$data.upload_file == null)
+                return;
+
+            app.$data.uploadParametersetMessaage = "";
+            app.$data.uploadParametersetButtonText = '<i class="fas fa-spinner fa-spin"></i>';
+
+            if(app.$data.upload_mode == "parameters")
+            {
+                this.uploadParameterset();
+            }
+            else
+            {
+                
+            }
+
+        },
+
+        handleFileUpload:function(){
+            app.$data.upload_file = this.$refs.file.files[0];
+            app.$data.upload_file_name = app.$data.upload_file.name;
+        },
+
+        /** show upload parameters modal
+        */
+        showUploadParameters:function(upload_mode){
+            app.$data.upload_mode = upload_mode;
+            app.$data.uploadParametersetMessaage = "";
+
+            var myModal = new bootstrap.Modal(document.getElementById('parameterSetModal'), {
+                keyboard: false
+              })
+
+            myModal.toggle();
+        },
+
+        /**hide upload parameters modal
+        */
+        hideUploadParameters:function(){
+        },
+
         /** show edit valuecost modal
         */
-         showEditValuecost:function(value_cost, type){
+        showEditValuecost:function(value_cost, type){
             app.clearMainFormErrors();
             app.$data.cancelModal=true;
             app.$data.sessionBeforeEdit = Object.assign({}, app.$data.session);
@@ -465,7 +544,8 @@ var app = Vue.createApp({
         $('#editSessionModal').on("hidden.bs.modal", this.hideEditSession); 
         $('#valuecostModal').on("hidden.bs.modal", this.hideEditValuecost); 
         $('#editPeriodModal').on("hidden.bs.modal", this.hideEditPeriod); 
-        $('importParametersModal').on("hidden.bs.modal", this.hideImportParameters); 
+        $('#importParametersModal').on("hidden.bs.modal", this.hideImportParameters); 
+        $('#parameterSetModal').on("hidden.bs.modal", this.hideUploadParameters);
     },
 
 }).mount('#app');

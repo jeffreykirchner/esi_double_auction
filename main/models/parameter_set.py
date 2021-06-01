@@ -1,6 +1,8 @@
 '''
 sessions parameters
 '''
+import logging
+
 from django.db import models
 from django.db.utils import IntegrityError
 
@@ -30,6 +32,7 @@ class ParameterSet(models.Model):
         '''
         load values from dict
         '''
+        logger = logging.getLogger(__name__) 
 
         message = "Parameters loaded successfully."
 
@@ -57,7 +60,7 @@ class ParameterSet(models.Model):
 
         except IntegrityError as exp:
             message = f"Failed to load parameter set: {exp}"
-            #logger.info(message)
+            logger.warning(message)
 
         return message
 

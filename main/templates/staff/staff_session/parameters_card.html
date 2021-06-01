@@ -7,22 +7,23 @@
                 Connecting <i class="fas fa-cog fa-spin fa-1x"></i>
             </span>
             <button class="btn btn-outline-primary me-1"
-                    type="button" 
-                    v-on:click="downloadParameterset()" 
+                    type="button"
+                    v-bind:disabled="reconnecting || working" 
+                    v-on:click="sendDownloadParameters()" 
                     title="Download to a file.">
                 <span v-html = "downloadParametersetButtonText"></span>
             </button> 
             <button class="btn btn-outline-primary me-1" 
                     type="button" 
-                    v-bind:disabled="session.started" 
+                    v-bind:disabled="session.started || reconnecting || working" 
                     v-on:click="showUploadParameters('parameters')"
                     title = "Upload from a file.">
                 Upload  <i class="fas fa-upload"></i>
             </button> 
             <button class="btn btn-outline-primary me-1"
                     type="button" 
-                    v-bind:disabled="session.started" 
-                    v-on:click="showImportParameters()"
+                    v-bind:disabled="session.started || reconnecting || working" 
+                    v-on:click="showImportParameters('parameters')"
                     title="Import parameters from another session.">
                 Import <i class="fas fa-file-import"></i>
             </button> 
