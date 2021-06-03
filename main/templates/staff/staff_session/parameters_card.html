@@ -87,6 +87,14 @@
                         (<span v-if="session.parameter_set.periods[current_period-1].price_cap_enabled == 'True'">ON</span>
                         <span v-else>OFF</span>): 
                     [[session.parameter_set.periods[current_period-1].price_cap]]
+
+                    |
+
+                    Y Scale (Price): [[session.parameter_set.periods[current_period-1].y_scale_max]]
+
+                    |
+
+                    X Scale (Trades): [[session.parameter_set.periods[current_period-1].x_scale_max]]
                 </button>
             </div>
 

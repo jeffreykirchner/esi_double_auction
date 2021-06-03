@@ -22,6 +22,12 @@ class ParameterSetPeriod(models.Model):
     price_cap = models.DecimalField(decimal_places=2, default=0, max_digits=5, verbose_name = 'Price Cap')  #max bid or offer allowed in this period 
     price_cap_enabled = models.BooleanField(default=False, verbose_name = 'Price Cap Enabled')              #if true, enforce price cap
 
+    y_scale_max = models.IntegerField(verbose_name='Y Scale Max')                                           #max Y scale of period 
+    x_scale_max = models.IntegerField(verbose_name='X Scale Max')                                           #max X scale of period 
+
+    timestamp = models.DateTimeField(auto_now_add= True)
+    updated= models.DateTimeField(auto_now= True)
+
     def __str__(self):
         return str(self.id)
 
@@ -180,6 +186,8 @@ class ParameterSetPeriod(models.Model):
         message = "Parameters loaded successfully."
 
         self.period_number = source.get("period_number")
+        self.y_scale_max = source.get("y_scale_max")
+        self.x_scale_max = source.get("x_scale_max")
 
         if copy_price_cap:
             self.price_cap = Decimal(source.get("price_cap"))
@@ -214,6 +222,8 @@ class ParameterSetPeriod(models.Model):
             "id" : self.id,
             #"parameter_set" : self.parameter_set.id,
             "period_number" : self.period_number,
+            "y_scale_max" : self.y_scale_max,
+            "x_scale_max" : self.x_scale_max,
             "price_cap" : str(self.price_cap),
             "price_cap_enabled" : "True" if self.price_cap_enabled else "False",
             "buyers" : [b.json() for b in self.get_buyer_list()],

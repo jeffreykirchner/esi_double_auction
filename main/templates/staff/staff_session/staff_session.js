@@ -18,6 +18,8 @@ var app = Vue.createApp({
                             periods : [ {
                                 period_number : 1,
                                 price_cap : "0.00",
+                                y_scale_max: "--",
+                                x_scale_max: "--",
                                 price_cap_enabled : "False",
                                 sellers : [],
                                 buyers : [],
