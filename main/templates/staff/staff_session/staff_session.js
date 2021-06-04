@@ -18,8 +18,8 @@ var app = Vue.createApp({
                             periods : [ {
                                 period_number : 1,
                                 price_cap : "0.00",
-                                y_scale_max: "--",
-                                x_scale_max: "--",
+                                y_scale_max: "",
+                                x_scale_max: "",
                                 price_cap_enabled : "False",
                                 sellers : [],
                                 buyers : [],
@@ -82,6 +82,7 @@ var app = Vue.createApp({
             }
 
             app.working = false;
+            Vue.nextTick(app.update_sdgraph_canvas());
         },
 
         /** send websocket message to server
@@ -138,6 +139,7 @@ var app = Vue.createApp({
         },
 
         {%include "staff/staff_session/parameters_card.js"%}
+        {%include "staff/staff_session/graph_card.js"%}
         
         /** clear form error messages
         */
