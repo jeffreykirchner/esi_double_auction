@@ -6,6 +6,13 @@ update_sdgraph_canvas:function(){
     el.attr('width', parseInt(el.css('width')));
     el.attr('height', parseInt(el.css('height')));
 
+    period = app.$data.session.parameter_set.periods[app.$data.current_period-1];
+
+    y_max = period.y_scale_max;
+    x_max = period.x_scale_max;
+
+    app.draw_axis("sd_graph", 0, y_max, y_max, 0, x_max, x_max, "Price", "Units Traded");
+
 },
 
 /**draw an x-y axis on a canvas
@@ -103,4 +110,9 @@ draw_axis: function (chartID, yMin, yMax, yTickCount, xMin, xMax, xTickCount, yL
 
     ctx.fillText(xLabel,w/2,h-4);
     ctx.restore();                       
+},
+
+/** draw either the supply or demand line
+*/
+draw_sd_line: function(chardID, yMin, yMax, xMin, xMax, valueList, color){
 },
