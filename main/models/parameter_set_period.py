@@ -22,8 +22,8 @@ class ParameterSetPeriod(models.Model):
     price_cap = models.DecimalField(decimal_places=2, default=0, max_digits=5, verbose_name = 'Price Cap')  #max bid or offer allowed in this period 
     price_cap_enabled = models.BooleanField(default=False, verbose_name = 'Price Cap Enabled')              #if true, enforce price cap
 
-    y_scale_max = models.IntegerField(verbose_name='Y Scale Max')                                           #max Y scale of period 
-    x_scale_max = models.IntegerField(verbose_name='X Scale Max')                                           #max X scale of period 
+    y_scale_max = models.IntegerField(verbose_name='Y Scale Max', default=10)                               #max Y scale of period 
+    x_scale_max = models.IntegerField(verbose_name='X Scale Max', default=10)                               #max X scale of period 
 
     timestamp = models.DateTimeField(auto_now_add= True)
     updated= models.DateTimeField(auto_now= True)
