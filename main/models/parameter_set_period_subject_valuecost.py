@@ -46,4 +46,5 @@ class ParameterSetPeriodSubjectValuecost(models.Model):
             "id" : self.id,
             "value_cost" : str(self.value_cost),
             "enabled" : "True" if self.enabled else "False",
+            "label" : self.parameter_set_period_subject.get_label(),
         }

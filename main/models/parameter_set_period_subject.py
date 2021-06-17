@@ -78,6 +78,17 @@ class ParameterSetPeriodSubject(models.Model):
 
         return message
 
+    def get_label(self):
+        '''
+        return label display string
+        '''
+
+        if self.subject_type == 'Buyer':
+            return f'B{self.id_number}'
+        else:
+            return f'S{self.id_number}'
+
+
     def json(self):
         '''
         return json object of model

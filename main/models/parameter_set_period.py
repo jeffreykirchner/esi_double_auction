@@ -213,6 +213,33 @@ class ParameterSetPeriod(models.Model):
 
         return message
 
+    def get_demand(self):
+        '''
+        return a list reprsenting the demand for this period
+        '''
+
+        buyer_list = self.get_buyer_list()
+
+        value_qs = main.models.ParameterSetPeriodSubjectValuecost.objects.filter(parameter_set_period_subject__in = buyer_list) \
+                                                                         .filter(enabled = True) \
+                                                                         .order_by('-value_cost')
+
+        return [i.json() for i in value_qs]
+    
+    def get_supply(self):
+        '''
+        return a list reprsenting the supply for this period
+        '''
+
+        buyer_list = self.get_seller_list()
+
+        cost_qs = main.models.ParameterSetPeriodSubjectValuecost.objects.filter(parameter_set_period_subject__in = buyer_list) \
+                                                                        .filter(enabled = True) \
+                                                                        .order_by('value_cost')
+
+        return [i.json() for i in cost_qs]
+
+
     def json(self):
         '''
         return json object of model
@@ -228,4 +255,6 @@ class ParameterSetPeriod(models.Model):
             "price_cap_enabled" : "True" if self.price_cap_enabled else "False",
             "buyers" : [b.json() for b in self.get_buyer_list()],
             "sellers" : [s.json() for s in self.get_seller_list()],
+            "demand" : self.get_demand(),
+            "supply" : self.get_supply(),
         }

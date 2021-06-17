@@ -23,6 +23,8 @@ var app = Vue.createApp({
                                 price_cap_enabled : "False",
                                 sellers : [],
                                 buyers : [],
+                                demand : [],
+                                supply : [],
                              }]
                          },
                      },
