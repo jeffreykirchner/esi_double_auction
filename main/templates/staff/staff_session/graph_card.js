@@ -209,6 +209,8 @@ draw_sd_line: function(chartID, marginY, marginX, marginTopAndRight, yMin, yMax,
 */
 draw_eq_lines: function(chartID, marginY, marginX, marginTopAndRight, yMin, yMax, xMin, xMax, period){
 
+    if(period.eq_price == "None") return;
+
     var canvas = document.getElementById(chartID),
         ctx = canvas.getContext('2d');
 
@@ -221,6 +223,9 @@ draw_eq_lines: function(chartID, marginY, marginX, marginTopAndRight, yMin, yMax
     ctx.lineWidth = 1;
     ctx.lineCap = "round";
     ctx.setLineDash([5, 5]);
+    ctx.font="14px Arial";
+    ctx.fillStyle = "black";
+    ctx.textAlign = "left";
 
     ctx.translate(marginY, h-marginX);
 
@@ -237,6 +242,8 @@ draw_eq_lines: function(chartID, marginY, marginX, marginTopAndRight, yMin, yMax
     ctx.lineTo(x2, y2); 
 
     ctx.stroke();
+
+    ctx.fillText(period.eq_price, x1+5, y1-5);
 
     ctx.restore(); 
 },

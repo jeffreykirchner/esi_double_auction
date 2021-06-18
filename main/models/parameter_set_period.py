@@ -262,6 +262,7 @@ class ParameterSetPeriod(models.Model):
         
         if eq_quantity and eq_quantity > 0:
             eq_price = (float(supply[eq_quantity-1]['value_cost']) + float(demand[eq_quantity-1]['value_cost'])) / 2
+            eq_price = round(eq_price, 3)
 
         return{
 
