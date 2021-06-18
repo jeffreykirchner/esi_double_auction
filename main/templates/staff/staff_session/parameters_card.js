@@ -70,6 +70,8 @@ updateCurrentPeriod(adjustment){
         }
     }
 
+    Vue.nextTick(app.update_sdgraph_canvas());
+
 },
 
 /** shift the values or costs in the current period from one buyer or seller to the next

@@ -27,6 +27,8 @@ update_sdgraph_canvas:function(){
     //demand
     app.draw_sd_line("sd_graph", marginY, marginX, marginTopAndRight, 0, y_max, 0, x_max, 3, cost_list, "red");
 
+    //equilibrium
+    app.draw_eq_lines("sd_graph", marginY, marginX, marginTopAndRight, 0, y_max, 0, x_max, period)
 },
 
 /**draw an x-y axis on a canvas
@@ -145,6 +147,17 @@ draw_axis: function (chartID, marginY, marginX, marginTopAndRight, yMin, yMax, y
 },
 
 /** draw either the supply or demand line
+ * @param chartID {string} dom ID name of canvas
+ * @param marginY {int} margin between Y axis and vertial edge of graph
+ * @param marginX {int} margin between X axis and horizontal edge of graph
+ * @param marginTopAndRight {int} margin between top and rights side of canvas and grap
+ * @param yMin {int} starting value on Y axis
+ * @param yMax {int} ending value on Y axis
+ * @param xMin {int} starting value on X axis
+ * @param xMax {int} ending value on X axis
+ * @param lineWidth {int} width of the line
+ * @param valueList[] {int} sorted values of line
+ * @param lineColor {string, hex} color of line
 */
 draw_sd_line: function(chartID, marginY, marginX, marginTopAndRight, yMin, yMax, xMin, xMax, lineWidth, valueList, lineColor){
     var canvas = document.getElementById(chartID),
@@ -192,25 +205,75 @@ draw_sd_line: function(chartID, marginY, marginX, marginTopAndRight, yMin, yMax,
     ctx.restore(); 
 },
 
-convertToX:function(tempValue,maxValue,minValue,tempWidth, markerWidth){
-    tempT = tempWidth / (maxValue-minValue);
+/**draw the equilibrium price and quantity lines
+*/
+draw_eq_lines: function(chartID, marginY, marginX, marginTopAndRight, yMin, yMax, xMin, xMax, period){
 
-    tempValue-=minValue;
+    var canvas = document.getElementById(chartID),
+        ctx = canvas.getContext('2d');
 
-    if(tempValue>maxValue) tempValue=maxValue;
+    var w =  ctx.canvas.width;
+    var h = ctx.canvas.height;
+    
+    ctx.save();
 
-    return (tempT * tempValue - markerWidth/2);
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 1;
+    ctx.lineCap = "round";
+    ctx.setLineDash([5, 5]);
+
+    ctx.translate(marginY, h-marginX);
+
+    ctx.beginPath();
+
+    y1 = app.convertToY(period.eq_price, yMax, yMin, h-marginX-marginTopAndRight, 1);
+    x1 = app.convertToX(0, xMax, xMin, w-marginY-marginTopAndRight, 1);
+
+    y2 = app.convertToY(0, yMax, yMin, h-marginX-marginTopAndRight, 1);
+    x2 = app.convertToX(period.eq_quantity, xMax, xMin, w-marginY-marginTopAndRight, 1);
+
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y1); 
+    ctx.lineTo(x2, y2); 
+
+    ctx.stroke();
+
+    ctx.restore(); 
 },
 
-convertToY:function(tempValue,maxValue,minValue,tempHeight, markerHeight){
-    tempT = tempHeight / (maxValue-minValue);
+/**convert value to X cordinate on the graph
+ * @param value {float} value to be converted to X cordinate
+ * @param maxValue {float} ceiling of value on graph
+ * @param minValue {float} floor of value to be shown on graph
+ * @param canvasWidth {int} width of the canvas in pixels
+ * @param markerWidth {int} width of the marker or line in pixels
+ */
+convertToX:function(value, maxValue, minValue, canvasWidth, markerWidth){
+    tempT = canvasWidth / (maxValue-minValue);
 
-    if(tempValue > maxValue) tempValue=maxValue;
-    if(tempValue < minValue) tempValue=minValue;
+    value-=minValue;
 
-    tempValue-=minValue;
+    if(value>maxValue) value=maxValue;
 
-    if(tempValue>maxValue) tempValue=maxValue;
+    return (tempT * value - markerWidth/2);
+},
 
-    return(-1 * tempT * tempValue - markerHeight/2)
+/**convert value to Y cordinate on the graph
+ * @param value {float} value to be converted to Y cordinate
+ * @param maxValue {float} ceiling of value on graph
+ * @param minValue {float} floor of value to be shown on graph
+ * @param canvasHeight {int} height of the canvas in pixels
+ * @param markerHeight {int} height of the marker or line in pixels
+ */
+convertToY:function(value, maxValue, minValue, canvasHeight, markerHeight){
+    tempT = canvasHeight / (maxValue-minValue);
+
+    if(value > maxValue) value=maxValue;
+    if(value < minValue) value=minValue;
+
+    value-=minValue;
+
+    if(value>maxValue) value=maxValue;
+
+    return(-1 * tempT * value - markerHeight/2)
 },

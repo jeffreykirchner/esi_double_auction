@@ -462,7 +462,7 @@ def take_download_parameters(data):
     download parameters to a file
     '''   
     logger = logging.getLogger(__name__) 
-    logger.info(f"Import parameters: {data}")
+    logger.info(f"Download parameters: {data}")
 
     session_id = data["sessionID"]
 

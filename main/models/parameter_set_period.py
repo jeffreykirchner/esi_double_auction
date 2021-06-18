@@ -239,11 +239,29 @@ class ParameterSetPeriod(models.Model):
 
         return [i.json() for i in cost_qs]
 
-
     def json(self):
         '''
         return json object of model
         '''
+
+        supply = self.get_supply()
+        demand = self.get_demand()
+
+        eq_price = None
+        eq_quantity = None
+
+        for i in range(len(supply)):
+
+            if len(demand) < i+1:
+                break
+
+            if float(supply[i]['value_cost']) >= float(demand[i]['value_cost']):
+                eq_quantity = i                
+                break
+        
+        if eq_quantity:
+            eq_price = (float(supply[eq_quantity]['value_cost']) + float(demand[eq_quantity]['value_cost'])) / 2
+
         return{
 
             "id" : self.id,
@@ -255,6 +273,8 @@ class ParameterSetPeriod(models.Model):
             "price_cap_enabled" : "True" if self.price_cap_enabled else "False",
             "buyers" : [b.json() for b in self.get_buyer_list()],
             "sellers" : [s.json() for s in self.get_seller_list()],
-            "demand" : self.get_demand(),
-            "supply" : self.get_supply(),
+            "demand" : demand,
+            "supply" : supply,
+            "eq_price" : eq_price,
+            "eq_quantity" : eq_quantity,
         }
