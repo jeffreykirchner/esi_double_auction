@@ -209,7 +209,7 @@ draw_sd_line: function(chartID, marginY, marginX, marginTopAndRight, yMin, yMax,
 */
 draw_eq_lines: function(chartID, marginY, marginX, marginTopAndRight, yMin, yMax, xMin, xMax, period){
 
-    if(period.eq_price == "None") return;
+    if(period.eq_price == null) return;
 
     var canvas = document.getElementById(chartID),
         ctx = canvas.getContext('2d');

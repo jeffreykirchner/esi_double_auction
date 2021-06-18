@@ -1,5 +1,5 @@
 '''
-session day model
+session period model
 '''
 
 #import logging
@@ -11,11 +11,10 @@ from . import Session
 
 class SessionPeriod(models.Model):
     '''
-    session day model
+    session period model
     '''
     session = models.ForeignKey(Session, on_delete=models.CASCADE, related_name="session_periods")
 
-    login_key = models.UUIDField(default=uuid.uuid4, editable=False, verbose_name = 'Login Key')            #log in key used assign subjects by ID number
     period_number = models.IntegerField()
 
     timestamp = models.DateTimeField(auto_now_add= True)
@@ -28,8 +27,8 @@ class SessionPeriod(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['session', 'period_number'], name='unique_SD')
         ]
-        verbose_name = 'Session Day'
-        verbose_name_plural = 'Session Days'
+        verbose_name = 'Session Period'
+        verbose_name_plural = 'Session Periods'
 
     #return json object of class
     def json(self):
