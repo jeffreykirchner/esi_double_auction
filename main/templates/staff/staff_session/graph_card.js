@@ -249,6 +249,8 @@ draw_eq_lines: function(chartID, marginY, marginX, marginTopAndRight, yMin, yMax
  * @param markerWidth {int} width of the marker or line in pixels
  */
 convertToX:function(value, maxValue, minValue, canvasWidth, markerWidth){
+    markerWidth=0;
+
     tempT = canvasWidth / (maxValue-minValue);
 
     value-=minValue;
@@ -266,6 +268,8 @@ convertToX:function(value, maxValue, minValue, canvasWidth, markerWidth){
  * @param markerHeight {int} height of the marker or line in pixels
  */
 convertToY:function(value, maxValue, minValue, canvasHeight, markerHeight){
+    markerHeight=0;
+    
     tempT = canvasHeight / (maxValue-minValue);
 
     if(value > maxValue) value=maxValue;
