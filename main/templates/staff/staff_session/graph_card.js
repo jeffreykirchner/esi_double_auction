@@ -1,7 +1,5 @@
 /**refresh the supply and demand canvas
 */
-
-
 update_sdgraph_canvas:function(){
 
     var el = $('#sd_graph');

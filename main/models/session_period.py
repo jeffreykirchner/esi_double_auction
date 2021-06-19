@@ -3,7 +3,6 @@ session period model
 '''
 
 #import logging
-import uuid
 
 from django.db import models
 
@@ -15,7 +14,8 @@ class SessionPeriod(models.Model):
     '''
     session = models.ForeignKey(Session, on_delete=models.CASCADE, related_name="session_periods")
 
-    period_number = models.IntegerField()
+    period_number = models.IntegerField()                       #period number from 1 to N
+    current_trade_number = models.IntegerField(default=1)       #current trade number in the period 
 
     timestamp = models.DateTimeField(auto_now_add= True)
     updated= models.DateTimeField(auto_now= True)

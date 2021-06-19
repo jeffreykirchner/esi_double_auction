@@ -17,7 +17,7 @@ class SessionPeriodTrade(models.Model):
     trade_number = models.IntegerField()
 
     timestamp = models.DateTimeField(auto_now_add= True)
-    updated= models.DateTimeField(auto_now= True)
+    updated = models.DateTimeField(auto_now= True)
 
     def __str__(self):
         return f"{self.id}"
@@ -26,6 +26,7 @@ class SessionPeriodTrade(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['session_period', 'trade_number'], name='unique_SD_trade')
         ]
+        ordering = ['trade_number']
         verbose_name = 'Session Period Trade'
         verbose_name_plural = 'Session Period Trades'
 

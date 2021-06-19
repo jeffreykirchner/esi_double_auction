@@ -8,7 +8,44 @@
         
     </div>
     <div class="card-body"> 
+        <!-- start button -->
+        <div class="row">
+            <div class="col-md text-center">
+                <button type="button"
+                        class="btn btn-outline-success"
+                        v-on:click = "start_experiment()"
+                        title="Start Experiment"
+                        v-bind:disabled="reconnecting || working">
+                    Start Experiment <i class="far fa-play-circle"></i>
+                </button>
+            </div>
+        </div>
 
+        <!-- reset experiment -->
+        <div class="row mt-2">
+            <div class="col-md text-center">
+                <button type="button"
+                        class="btn btn-outline-danger"
+                        v-on:click = "reset_experiment()"
+                        title="Reset Experiment"
+                        v-bind:disabled="reconnecting || working">
+                    Reset Experiment <i class="far fa-trash-alt"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- next period -->
+        <div class="row mt-2">
+            <div class="col-md text-center">
+                <button type="button"
+                        class="btn btn-outline-primary"
+                        v-on:click = "reset_experiment()"
+                        title="Start Experiment"
+                        v-bind:disabled="reconnecting || working">
+                    Move to next period <i class="fas fa-fast-forward"></i>
+                </button>
+            </div>
+        </div>
         
     </div>                    
 </div> 

@@ -82,7 +82,10 @@
         <!-- price cap -->
         <div class="row">
             <div class="col-md text-center">
-                <button type="button" class="btn btn-light" v-on:click = "showEditPeriod()" >
+                <button type="button"
+                        class="btn btn-light"
+                        v-on:click = "showEditPeriod()"
+                        v-bind:disabled="reconnecting || working" >
                     Price Cap 
                         (<span v-if="session.parameter_set.periods[current_period-1].price_cap_enabled == 'True'">ON</span>
                         <span v-else>OFF</span>): 
@@ -97,7 +100,6 @@
                     X Scale (Trades): [[session.parameter_set.periods[current_period-1].x_scale_max]]
                 </button>
             </div>
-
         </div>
 
         <!-- edit values and costs -->
