@@ -1,6 +1,8 @@
 '''
 websocket session list
 '''
+from datetime import datetime
+
 import json
 import logging
 from main.forms import ValuecostForm
@@ -78,7 +80,6 @@ class StaffSessionConsumer(SocketConsumerMixin):
         #update subject count
         message_data = {}
         message_data["status"] = await take_update_subject_count(event["message_text"])
-
         message_data["session"] = await get_session(event["message_text"]["sessionID"])
 
         message = {}
@@ -217,6 +218,60 @@ class StaffSessionConsumer(SocketConsumerMixin):
         message = {}
         message["messageType"] = "download_parameters"
         message["messageData"] = await take_download_parameters(event["message_text"])
+
+        # Send message to WebSocket
+        await self.send(text_data=json.dumps({
+            'message': message
+        }))
+
+    async def start_experiment(self, event):
+        '''
+        start experiment
+        '''
+        #update subject count
+        message_data = {}
+        message_data["status"] = await take_start_experiment(event["message_text"])
+        message_data["session"] = await get_session(event["message_text"]["sessionID"])
+
+        message = {}
+        message["messageType"] = event["type"]
+        message["messageData"] = message_data
+
+        # Send message to WebSocket
+        await self.send(text_data=json.dumps({
+            'message': message
+        }))
+    
+    async def reset_experiment(self, event):
+        '''
+        reset experiment, removes all trades, bids and asks
+        '''
+        #update subject count
+        message_data = {}
+        message_data["status"] = await take_reset_experiment(event["message_text"])
+        message_data["session"] = await get_session(event["message_text"]["sessionID"])
+
+        message = {}
+        message["messageType"] = event["type"]
+        message["messageData"] = message_data
+
+        # Send message to WebSocket
+        await self.send(text_data=json.dumps({
+            'message': message
+        }))
+    
+    async def next_period(self, event):
+        '''
+        advance to next period in experiment
+        '''
+        #update subject count
+        message_data = {}
+        message_data["status"] = await take_reset_experiment(event["message_text"])
+        message_data["session"] = await get_session(event["message_text"]["sessionID"])
+
+        message = {}
+        message["messageType"] = event["type"]
+        message["messageData"] = message_data
 
         # Send message to WebSocket
         await self.send(text_data=json.dumps({
@@ -470,3 +525,65 @@ def take_download_parameters(data):
    
     return {"status" : "success", "parameter_set":session.parameter_set.json()}                      
                                 
+@sync_to_async
+def take_start_experiment(data):
+    '''
+    start experiment
+    '''   
+
+    logger = logging.getLogger(__name__) 
+    logger.info(f"Start Experiment: {data}")
+
+    session_id = data["sessionID"]
+    session = Session.objects.get(id=session_id)
+
+    if not session.started:
+        session.started = True
+        session.current_period = 1
+        session.start_date = datetime.now()
+
+        session.save()
+
+    status = "success"
+    
+    return {"status" : status}
+
+@sync_to_async
+def take_reset_experiment(data):
+    '''
+    reset experiment remove bids and asks
+    '''   
+
+    logger = logging.getLogger(__name__) 
+    logger.info(f"Reset Experiment: {data}")
+
+    session_id = data["sessionID"]
+    session = Session.objects.get(id=session_id)
+
+    if session.started:
+        session.started = False
+        session.current_period = 1
+
+        session.save()
+
+        #remove trades, bids and offers
+
+    status = "success"
+    
+    return {"status" : status}
+
+@sync_to_async
+def take_next_period(data):
+    '''
+    advance to next period in the experiment
+    '''   
+
+    logger = logging.getLogger(__name__) 
+    logger.info(f"Advance to Next Period: {data}")
+
+    session_id = data["sessionID"]
+    session = Session.objects.get(id=session_id)
+
+    status = "success"
+    
+    return {"status" : status}

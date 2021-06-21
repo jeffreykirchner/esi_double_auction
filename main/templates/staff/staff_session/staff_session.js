@@ -80,7 +80,15 @@ var app = Vue.createApp({
                 case "download_parameters":
                     app.takeDownloadParameters(messageData)
                     break;
-                
+                case "start_experiment":
+                    app.takeStartExperiment(messageData)
+                    break;
+                case "reset_experiment":
+                    app.takeResetExperiment(messageData)
+                    break;
+                case "next_period":
+                    app.takeNextExperiment(messageData)
+                    break;                
             }
 
             app.working = false;

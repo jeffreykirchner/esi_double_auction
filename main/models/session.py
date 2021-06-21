@@ -149,6 +149,7 @@ class Session(models.Model):
             "id":self.id,
             "title":self.title,
             "start_date":self.get_start_date_string(),
+            "started":self.started,
             "current_period":self.current_period,
             "parameter_set":self.parameter_set.json(),
         }

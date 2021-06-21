@@ -14,9 +14,9 @@
                 <button type="button"
                         class="btn btn-outline-success"
                         v-on:click = "start_experiment()"
-                        title="Start Experiment"
-                        v-bind:disabled="reconnecting || working">
-                    Start Experiment <i class="far fa-play-circle"></i>
+                        title="Start experiment"
+                        v-bind:disabled="reconnecting || working || session.started">
+                    Start experiment <i class="far fa-play-circle"></i>
                 </button>
             </div>
         </div>
@@ -27,9 +27,9 @@
                 <button type="button"
                         class="btn btn-outline-danger"
                         v-on:click = "reset_experiment()"
-                        title="Reset Experiment"
-                        v-bind:disabled="reconnecting || working">
-                    Reset Experiment <i class="far fa-trash-alt"></i>
+                        title="Reset experiment"
+                        v-bind:disabled="reconnecting || working || session.started===false">
+                    Reset experiment <i class="far fa-trash-alt"></i>
                 </button>
             </div>
         </div>
@@ -39,9 +39,9 @@
             <div class="col-md text-center">
                 <button type="button"
                         class="btn btn-outline-primary"
-                        v-on:click = "reset_experiment()"
-                        title="Start Experiment"
-                        v-bind:disabled="reconnecting || working">
+                        v-on:click = "next_period()"
+                        title="Move to next period"
+                        v-bind:disabled="reconnecting || working || session.started===false">
                     Move to next period <i class="fas fa-fast-forward"></i>
                 </button>
             </div>
