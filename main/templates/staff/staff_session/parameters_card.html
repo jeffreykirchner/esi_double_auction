@@ -26,11 +26,23 @@
                     v-on:click="showImportParameters('parameters')"
                     title="Import parameters from another session.">
                 Import <i class="fas fa-file-import"></i>
+            </button>
+            <button class="btn btn-outline-secondary me-1"
+                    type="button" 
+                    v-bind:disabled="reconnecting || working" 
+                    v-on:click="show_parameters = !show_parameters"
+                    title="Hide or show parameters">
+                <span v-if="show_parameters">
+                    Hide <i class="fas fa-eye-slash"></i>
+                </span>
+                <span v-else>
+                    Show <i class="fas fa-eye"></i>
+                </span>
             </button> 
         </span>
         
     </div>
-    <div class="card-body"> 
+    <div class="card-body" v-show="show_parameters"> 
 
         <!-- change count -->
         <div class="row mb-2 border-bottom pb-2">

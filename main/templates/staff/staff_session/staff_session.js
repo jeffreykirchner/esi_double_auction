@@ -42,6 +42,7 @@ var app = Vue.createApp({
                     upload_file_name:'Choose File',
                     uploadParametersetButtonText:'Upload  <i class="fas fa-upload"></i>',
                     uploadParametersetMessaage:'',
+                    show_parameters:false,
                 }},
     methods: {
 
@@ -113,7 +114,16 @@ var app = Vue.createApp({
         */
         takeGetSession(messageData){
             
-            app.$data.session = messageData.session
+            app.$data.session = messageData.session;
+
+            if(app.$data.session.started)
+            {
+                app.$data.show_parameters = false;
+            }
+            else
+            {
+                app.$data.show_parameters = true;
+            }
         },
 
         /** send winsock request to get session info
