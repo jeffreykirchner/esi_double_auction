@@ -6,7 +6,7 @@ sendUpdateSubjectCount(type, adjustment){
     app.$data.cancelModal = false;
     app.$data.working = true;
     app.sendMessage("update_subject_count", {"sessionID" : app.$data.sessionID,
-                                                "current_period" : app.$data.current_period,
+                                                "current_visible_period" : app.$data.current_visible_period,
                                                 "type" : type,
                                                 "adjustment" : adjustment});
 },
@@ -57,16 +57,16 @@ updateCurrentPeriod(adjustment){
     
     if(adjustment == 1)
     {
-        if(app.$data.current_period < app.$data.session.parameter_set.number_of_periods)
+        if(app.$data.current_visible_period < app.$data.session.parameter_set.number_of_periods)
         {
-            app.$data.current_period += 1;
+            app.$data.current_visible_period += 1;
         }
     }
     else
     {
-        if(app.$data.current_period > 1)
+        if(app.$data.current_visible_period > 1)
         {
-            app.$data.current_period -= 1;
+            app.$data.current_visible_period -= 1;
         }
     }
 
@@ -81,7 +81,7 @@ updateCurrentPeriod(adjustment){
 shiftValueOrCost(valueOrCost, direction){
     app.$data.working = true;
     app.sendMessage("shift_value_or_cost", {"sessionID" : app.$data.sessionID,
-                                            "currentPeriod" : app.$data.current_period,
+                                            "currentPeriod" : app.$data.current_visible_period,
                                             "valueOrCost" : valueOrCost,
                                             "direction" : direction,});
 },
@@ -93,7 +93,7 @@ shiftValueOrCost(valueOrCost, direction){
     copyValueOrCost(valueOrCost){
     app.$data.working = true;
     app.sendMessage("copy_value_or_cost", {"sessionID" : app.$data.sessionID,
-                                            "currentPeriod" : app.$data.current_period,
+                                            "currentPeriod" : app.$data.current_visible_period,
                                             "valueOrCost" : valueOrCost});
 },
 
@@ -103,7 +103,7 @@ sendUpdatePeriod(){
     
     app.$data.working = true;
     app.sendMessage("update_period", {"sessionID" : app.$data.sessionID,
-                                        "periodID" : app.$data.session.parameter_set.periods[app.$data.current_period-1].id,
+                                        "periodID" : app.$data.session.parameter_set.periods[app.$data.current_visible_period-1].id,
                                         "formData" : $("#periodForm").serializeArray(),});
 },
 
@@ -320,7 +320,7 @@ hideEditSession:function(){
 showEditPeriod:function(){
     app.clearMainFormErrors();
     app.$data.cancelModal=true;
-    app.$data.periodBeforeEdit = Object.assign({}, app.$data.session.parameter_set.periods[app.$data.current_period-1]);
+    app.$data.periodBeforeEdit = Object.assign({}, app.$data.session.parameter_set.periods[app.$data.current_visible_period-1]);
 
     var myModal = new bootstrap.Modal(document.getElementById('editPeriodModal'), {
         keyboard: false
@@ -334,7 +334,7 @@ showEditPeriod:function(){
 hideEditPeriod:function(){
     if(app.$data.cancelModal)
     {
-        Object.assign(app.$data.session.parameter_set.periods[app.$data.current_period-1], app.$data.periodBeforeEdit);
+        Object.assign(app.$data.session.parameter_set.periods[app.$data.current_visible_period-1], app.$data.periodBeforeEdit);
         app.$data.periodBeforeEdit=null;
     }
 },

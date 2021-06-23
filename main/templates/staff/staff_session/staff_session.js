@@ -11,6 +11,8 @@ var app = Vue.createApp({
                     working : false,
                     sessionID : {{session.id}},
                     session : {
+                        current_period : 1,
+                        started : false,
                         parameter_set : {
                             number_of_buyers : 0,
                             number_of_sellers : 0,
@@ -28,10 +30,10 @@ var app = Vue.createApp({
                              }]
                          },
                      },
-                    current_period : 1,
+                    current_visible_period : 1,                //period visible on screen
                     downloadParametersetButtonText:'Download <i class="fas fa-download"></i>',
                     valuecost_modal_label:'Edit Value or Cost',
-                    current_valuecost:{
+                    current_valuecost:{                       //json attached to value/cost edit modal
                         id:0,
                         valuecost:0,
                         enabled:false,
@@ -79,17 +81,20 @@ var app = Vue.createApp({
                     app.takeImportParameters(messageData);
                     break;
                 case "download_parameters":
-                    app.takeDownloadParameters(messageData)
+                    app.takeDownloadParameters(messageData);
                     break;
                 case "start_experiment":
-                    app.takeStartExperiment(messageData)
+                    app.takeStartExperiment(messageData);
                     break;
                 case "reset_experiment":
-                    app.takeResetExperiment(messageData)
+                    app.takeResetExperiment(messageData);
                     break;
                 case "next_period":
-                    app.takeNextExperiment(messageData)
-                    break;                
+                    app.takeNextExperiment(messageData);
+                    break;   
+                case "submit_bid_offer":
+                    app.take_submit_bid_offer(messageData); 
+                    break;           
             }
 
             app.working = false;
@@ -136,6 +141,7 @@ var app = Vue.createApp({
         */
         sendUpdateSession(){
             app.$data.cancelModal = false;
+            app.$data.working = true;
             app.sendMessage("update_session",{"formData" : $("#sessionForm").serializeArray(),
                                               "sessionID" : app.$data.sessionID});
         },
@@ -161,6 +167,7 @@ var app = Vue.createApp({
         {%include "staff/staff_session/parameters_card.js"%}
         {%include "staff/staff_session/graph_card.js"%}
         {%include "staff/staff_session/control_card.js"%}
+        {%include "staff/staff_session/input_card.js"%}
         
         /** clear form error messages
         */

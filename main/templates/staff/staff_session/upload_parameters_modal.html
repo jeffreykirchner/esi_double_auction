@@ -21,7 +21,11 @@
                 </div>
                 <div class="row mt-2">
                     <div class = "col" style="text-align: center;">
-                        <button class="btn btn-outline-primary" v-on:click="uploadAction()"><span v-html="uploadParametersetButtonText"></span></button>
+                        <button class="btn btn-outline-primary"
+                                v-on:click="uploadAction()"
+                                v-bind:disabled="session.started || reconnecting || working">
+                            <span v-html="uploadParametersetButtonText"></span>
+                        </button>
                     </div>   
                 </div>
                 <div class="row mt-4">

@@ -53,7 +53,7 @@
                     <div class="input-group w-50">
                         <button class="btn btn-outline-secondary" 
                                 type="button" 
-                                v-bind:disabled="reconnecting || working || session.parameter_set.number_of_periods <= 1"
+                                v-bind:disabled="session.started || reconnecting || working || session.parameter_set.number_of_periods <= 1"
                                 v-on:click="sendUpdatePeriodCount(-1)"><i class="fas fa-minus"></i></button>
                         <input type="number"
                                id="period_count"  
@@ -62,7 +62,7 @@
                                style="background-color: white;"
                                v-model="session.parameter_set.number_of_periods">                    
                         <button class="btn btn-outline-secondary"
-                                v-bind:disabled="reconnecting || working"
+                                v-bind:disabled="session.started || reconnecting || working"
                                 v-on:click="sendUpdatePeriodCount(1)"
                                 type="button"><i class="fas fa-plus"></i></button>
                     </div>
@@ -74,16 +74,16 @@
                     <div class="input-group w-50">
                         <button class="btn btn-outline-secondary" 
                                 type="button" 
-                                v-bind:disabled="reconnecting || working || current_period <= 1"
+                                v-bind:disabled="session.started || reconnecting || working || current_visible_period <= 1"
                                 v-on:click="updateCurrentPeriod(-1)"><i class="fas fa-angle-double-left"></i></button>
                         <input type="number"
                                id="period_visible"
                                class="form-control text-center"
                                disabled=true
                                style="background-color: white;"
-                               v-model="current_period">                   
+                               v-model="current_visible_period">                   
                         <button class="btn btn-outline-secondary"
-                                v-bind:disabled="reconnecting || working || current_period == session.parameter_set.number_of_periods"
+                                v-bind:disabled="reconnecting || working || current_visible_period == session.parameter_set.number_of_periods"
                                 v-on:click="updateCurrentPeriod(1)"
                                 type="button"><i class="fas fa-angle-double-right"></i></button>
                     </div>
@@ -97,19 +97,19 @@
                 <button type="button"
                         class="btn btn-light"
                         v-on:click = "showEditPeriod()"
-                        v-bind:disabled="reconnecting || working" >
+                        v-bind:disabled="session.started || reconnecting || working" >
                     Price Cap 
-                        (<span v-if="session.parameter_set.periods[current_period-1].price_cap_enabled == 'True'">ON</span>
+                        (<span v-if="session.parameter_set.periods[current_visible_period-1].price_cap_enabled == 'True'">ON</span>
                         <span v-else>OFF</span>): 
-                    [[session.parameter_set.periods[current_period-1].price_cap]]
+                    [[session.parameter_set.periods[current_visible_period-1].price_cap]]
 
                     |
 
-                    Y Scale (Price): [[session.parameter_set.periods[current_period-1].y_scale_max]]
+                    Y Scale (Price): [[session.parameter_set.periods[current_visible_period-1].y_scale_max]]
 
                     |
 
-                    X Scale (Trades): [[session.parameter_set.periods[current_period-1].x_scale_max]]
+                    X Scale (Trades): [[session.parameter_set.periods[current_visible_period-1].x_scale_max]]
                 </button>
             </div>
         </div>
@@ -139,12 +139,15 @@
                         </tr>
                     </thead>
                     <tbody id="buyer_list">
-                        <tr v-for="(b, index) in session.parameter_set.periods[current_period-1].buyers" v-bind:key="b.id">
+                        <tr v-for="(b, index) in session.parameter_set.periods[current_visible_period-1].buyers" v-bind:key="b.id">
                             <td>
                                 [[b.id_number]]
                             </td>
                             <td v-for="(vc, index) in b.value_costs" v-bind:key="vc.id">
-                                <button type="button" class="btn btn-light btn-sm" v-on:click = "showEditValuecost(vc, 'value')" >
+                                <button type="button"
+                                        class="btn btn-light btn-sm"
+                                        v-bind:disabled="session.started"
+                                        v-on:click="showEditValuecost(vc, 'value')" >
                                     <span v-if="vc.enabled == 'True'">
                                         [[vc.value_cost]]
                                     </span>
@@ -160,14 +163,14 @@
                 <div class="btn-group" role="group" aria-label="Buyer parameters">
                     <button class="btn btn-outline-secondary"
                             type="button"
-                            v-bind:disabled="reconnecting || working"
+                            v-bind:disabled="session.started || reconnecting || working"
                             v-on:click="sendUpdateSubjectCount('BUYER', 1)"
                             title = "Add a buyer">
                         <i class="fas fa-plus"></i>
                     </button>
                     <button class="btn btn-outline-secondary"
                             type="button"
-                            v-bind:disabled="reconnecting || session.parameter_set.periods[current_period-1].buyers.length <= 1 || working"
+                            v-bind:disabled="session.started || reconnecting || session.parameter_set.periods[current_visible_period-1].buyers.length <= 1 || working"
                             v-on:click="sendUpdateSubjectCount('BUYER', -1)"
                             title = "Remove last Buyer">
                         <i class="fas fa-minus"></i>
@@ -175,21 +178,21 @@
                     <button type="button"
                             class="btn btn-outline-secondary"
                             v-on:click="shiftValueOrCost('value','up')"
-                            v-bind:disabled="reconnecting || working"
+                            v-bind:disabled="session.started || reconnecting || working"
                             title = "Shift values up">
                         <i class="fas fa-angle-double-up"></i>
                     </button>
                     <button type="button"
                             class="btn btn-outline-secondary"
                             v-on:click="shiftValueOrCost('value','down')"
-                            v-bind:disabled="reconnecting || working"
+                            v-bind:disabled="session.started || reconnecting || working"
                             title = "Shift values down">
                         <i class="fas fa-angle-double-down"></i>
                     </button>
                     <button type="button"
                             class="btn btn-outline-secondary"
                             v-on:click="copyValueOrCost('value')"
-                            v-bind:disabled="reconnecting || working || current_period <= 1"
+                            v-bind:disabled="session.started || session.startedreconnecting || working || current_visible_period <= 1"
                             title = "Copy values from previous period">
                         <i class="fas fa-copy"></i>
                     </button>
@@ -219,12 +222,15 @@
                         </tr>
                     </thead>
                     <tbody id="seller_list">
-                        <tr v-for="(s, index) in session.parameter_set.periods[current_period-1].sellers" v-bind:key="s.id">
+                        <tr v-for="(s, index) in session.parameter_set.periods[current_visible_period-1].sellers" v-bind:key="s.id">
                             <td>
                                 [[s.id_number]]
                             </td>
                             <td v-for="(vc, index) in s.value_costs" v-bind:key="vc.id">
-                                <button type="button" class="btn btn-light btn-sm" v-on:click = "showEditValuecost(vc, 'cost')" >
+                                <button type="button"
+                                        class="btn btn-light btn-sm"
+                                        v-bind:disabled="session.started"
+                                        v-on:click = "showEditValuecost(vc, 'cost')" >
                                     <span v-if="vc.enabled == 'True'">
                                         [[vc.value_cost]]
                                     </span>
@@ -241,14 +247,14 @@
                 <div class="btn-group" role="group" aria-label="Seller parameters">
                     <button class="btn btn-outline-secondary"
                             type="button"
-                            v-bind:disabled="reconnecting || working"
+                            v-bind:disabled="session.started || reconnecting || working"
                             v-on:click="sendUpdateSubjectCount('SELLER', 1)"
                             title = "Add a buyer">
                         <i class="fas fa-plus"></i>
                     </button>
                     <button class="btn btn-outline-secondary"
                             type="button"
-                            v-bind:disabled="reconnecting || session.parameter_set.periods[current_period-1].sellers.length <= 1 || working"
+                            v-bind:disabled="session.started || reconnecting || session.parameter_set.periods[current_visible_period-1].sellers.length <= 1 || working"
                             v-on:click="sendUpdateSubjectCount('SELLER', -1)"
                             title = "Remove last Buyer">
                         <i class="fas fa-minus"></i>
@@ -256,21 +262,21 @@
                     <button type="button"
                             class="btn btn-outline-secondary"
                             v-on:click="shiftValueOrCost('cost','up')"
-                            v-bind:disabled="reconnecting || working"
+                            v-bind:disabled="session.started || reconnecting || working"
                             title = "Shift values up">
                         <i class="fas fa-angle-double-up"></i>
                     </button>
                     <button type="button"
                             class="btn btn-outline-secondary"
                             v-on:click="shiftValueOrCost('cost','down')"
-                            v-bind:disabled="reconnecting || working"
+                            v-bind:disabled="session.started || reconnecting || working"
                             title = "Shift values down">
                         <i class="fas fa-angle-double-down"></i>
                     </button>
                     <button type="button"
                             class="btn btn-outline-secondary"
                             v-on:click="copyValueOrCost('cost')"
-                            v-bind:disabled="reconnecting || working || current_period <= 1"
+                            v-bind:disabled="session.started || reconnecting || working || current_visible_period <= 1"
                             title = "Copy costs from previous period">
                         <i class="fas fa-copy"></i>
                     </button>

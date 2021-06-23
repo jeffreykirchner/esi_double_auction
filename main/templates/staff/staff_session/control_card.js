@@ -10,6 +10,8 @@ start_experiment:function(){
 */
 takeStartExperiment(messageData){
     app.takeGetSession(messageData);
+    app.$data.current_visible_period = 1;
+    
 },
 
 /**reset experiment, remove all bids, asks and trades
@@ -24,6 +26,7 @@ reset_experiment:function(){
 */
 takeResetExperiment(messageData){
     app.takeGetSession(messageData);
+    app.$data.current_visible_period = 1;
 },
 
 /**advance to next period

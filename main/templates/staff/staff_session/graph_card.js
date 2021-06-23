@@ -6,7 +6,7 @@ update_sdgraph_canvas:function(){
     el.attr('width', parseInt(el.css('width')));
     el.attr('height', parseInt(el.css('height')));
 
-    period = app.$data.session.parameter_set.periods[app.$data.current_period-1];
+    period = app.$data.session.parameter_set.periods[app.$data.current_visible_period-1];
     value_list = period.demand;
     cost_list = period.supply;
 

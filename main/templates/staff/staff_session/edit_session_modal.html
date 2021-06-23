@@ -21,7 +21,10 @@
     </div>
     <div class="modal-footer">
         
-        <button type="button" class="btn btn-outline-primary" v-on:click = "sendUpdateSession()">
+        <button type="button"
+                class="btn btn-outline-primary"
+                v-bind:disabled="reconnecting || working"
+                v-on:click = "submit_bid_offer()">
             Update <i class="fas fa-sign-in-alt"></i>
         </button>
     </div>

@@ -12,21 +12,21 @@ class PeriodForm(forms.ModelForm):
     '''
     price_cap = forms.DecimalField(label='Price Cap',
                                     min_value=0,
-                                    widget=forms.NumberInput(attrs={"v-model":"session.parameter_set.periods[current_period-1].price_cap",
+                                    widget=forms.NumberInput(attrs={"v-model":"session.parameter_set.periods[current_visible_period-1].price_cap",
                                                                     "step":"0.25"}))
     
     price_cap_enabled = forms.ChoiceField(label='Enabled',
                                           choices=((True, 'Yes'), (False,'No' )),
-                                          widget=forms.Select(attrs={"v-model":"session.parameter_set.periods[current_period-1].price_cap_enabled"}))
+                                          widget=forms.Select(attrs={"v-model":"session.parameter_set.periods[current_visible_period-1].price_cap_enabled"}))
 
     y_scale_max = forms.DecimalField(label='Y Scale Max (Price)',
                                      min_value=1,
-                                     widget=forms.NumberInput(attrs={"v-model":"session.parameter_set.periods[current_period-1].y_scale_max",
+                                     widget=forms.NumberInput(attrs={"v-model":"session.parameter_set.periods[current_visible_period-1].y_scale_max",
                                                                      "step":"1"}))
 
     x_scale_max = forms.DecimalField(label='X Scale Max (Units Traded)',
                                      min_value=1,
-                                     widget=forms.NumberInput(attrs={"v-model":"session.parameter_set.periods[current_period-1].x_scale_max",
+                                     widget=forms.NumberInput(attrs={"v-model":"session.parameter_set.periods[current_visible_period-1].x_scale_max",
                                                                      "step":"1"}))
 
     class Meta:
