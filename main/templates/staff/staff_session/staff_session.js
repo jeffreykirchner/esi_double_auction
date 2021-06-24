@@ -45,6 +45,9 @@ var app = Vue.createApp({
                     uploadParametersetButtonText:'Upload  <i class="fas fa-upload"></i>',
                     uploadParametersetMessaage:'',
                     show_parameters:false,
+                    bid_offer_id:"",
+                    bid_offer_amount:"",
+                    bid_offer_message:"",
                 }},
     methods: {
 

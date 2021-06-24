@@ -277,6 +277,23 @@ class StaffSessionConsumer(SocketConsumerMixin):
         await self.send(text_data=json.dumps({
             'message': message
         }))
+    
+    async def submit_bid_offer(self, event):
+        '''
+        take bid or offer
+        '''
+        #update subject count
+        message_data = {}
+        message_data["result"] = await take_submit_bid_offer(event["message_text"])
+        
+        message = {}
+        message["messageType"] = event["type"]
+        message["messageData"] = message_data
+
+        # Send message to WebSocket
+        await self.send(text_data=json.dumps({
+            'message': message
+        }))
 
 #local sync_to_asyncs
 @sync_to_async
@@ -587,3 +604,21 @@ def take_next_period(data):
     status = "success"
     
     return {"status" : status}
+
+@sync_to_async
+def take_submit_bid_offer(data):
+    '''
+    take bid or offer
+    '''   
+
+    logger = logging.getLogger(__name__) 
+    logger.info(f"Take bid or offer: {data}")
+
+    session_id = data["sessionID"]
+    bid_offer_id = data["bid_offer_id"]
+    bid_offer_amount = data["bid_offer_id"]
+
+    status = "success"
+    
+    return {"status" : status}
+
