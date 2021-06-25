@@ -604,11 +604,7 @@ def take_reset_experiment(data):
         session.current_period = 1
 
         session.save()
-
-        #remove trades, bids and offers
-        for i in session.session_periods.all():
-            i.session_period_trades.all().delete()   
-            i.current_trade_number=1     
+        session.session_periods.all().delete()   
 
     status = "success"
     
