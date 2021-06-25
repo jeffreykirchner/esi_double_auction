@@ -2,16 +2,22 @@
 websocket session list
 '''
 from datetime import datetime
+from decimal import Decimal, DecimalException
+from main.models.session_period_trade_offer import SessionPeriodTradeOffer
+from asgiref.sync import sync_to_async
 
 import json
 import logging
-from main.forms import ValuecostForm
-from main.models import ParameterSetPeriodSubjectValuecost
-from main.models import ParameterSetPeriod
-
-from asgiref.sync import sync_to_async
 
 from django.core.exceptions import ObjectDoesNotExist
+
+from main.models import ParameterSetPeriodSubjectValuecost
+from main.models import ParameterSetPeriod
+from main.models import SessionPeriod
+from main.models import SessionPeriodTradeBid
+from main.models import SessionPeriodTradeOffer
+from main.models import SessionPeriodTrade
+
 
 from main.consumers import SocketConsumerMixin
 from main.consumers import get_session
@@ -20,6 +26,7 @@ from main.views import Session
 
 from main.forms import SessionForm
 from main.forms import PeriodForm
+from main.forms import ValuecostForm
 
 from main.globals import SubjectType
 
@@ -561,6 +568,21 @@ def take_start_experiment(data):
 
         session.save()
 
+        #create new periods
+        for i in range(session.parameter_set.parameter_set_periods.count()):
+            session_period = SessionPeriod()
+
+            session_period.session = session
+            session_period.period_number = i + 1
+            session_period.save()
+
+        #intialize earch period with first trade
+        for i in session.session_periods.all():
+            t = SessionPeriodTrade()
+            t.session_period = i
+            t.trade_number = 1
+            t.save()
+
     status = "success"
     
     return {"status" : status}
@@ -584,6 +606,9 @@ def take_reset_experiment(data):
         session.save()
 
         #remove trades, bids and offers
+        for i in session.session_periods.all():
+            i.session_period_trades.all().delete()   
+            i.current_trade_number=1     
 
     status = "success"
     
@@ -616,9 +641,63 @@ def take_submit_bid_offer(data):
 
     session_id = data["sessionID"]
     bid_offer_id = data["bid_offer_id"]
-    bid_offer_amount = data["bid_offer_id"]
+    bid_offer_amount = data["bid_offer_amount"]
+
+    session = Session.objects.get(id=session_id)
+    session_period = session.session_periods.get(period_number=session.current_period)
+    current_trade = session_period.session_period_trades.get(trade_number=session_period.current_trade_number)
 
     status = "success"
+    message = ""
+
+    logger.info(f'take_submit_bid_offer: bid_offer_id {bid_offer_id}, bid_offer_amount {bid_offer_amount}')
+
+    buyer_seller_id_1=None
+    buyer_seller_id_2=None
+
+    # get id
+    try:
+        buyer_seller_id_1 = bid_offer_id[0]
+    except IndexError: 
+        status = "fail"       
+        message = "Invalid ID, missing s or b."
+
+    logger.info(f'take_submit_bid_offer: buyer_seller_id_1 {buyer_seller_id_1}')
+
+    if status == "success": 
+        if buyer_seller_id_1 != "s" and buyer_seller_id_1 != "S" and \
+           buyer_seller_id_1 != "b" and buyer_seller_id_1 != "B":
+
+            status = "fail"       
+            message = "Invalid ID, missing s or b."
     
-    return {"status" : status}
+    if status == "success": 
+        try:
+            buyer_seller_id_2 = bid_offer_id[1:]
+        except IndexError: 
+            status = "fail"       
+            message = f"Invalid ID, incorrect number."
+    
+    if status == "success": 
+        try:
+            buyer_seller_id_2 = int(buyer_seller_id_2)
+        except ValueError: 
+            status = "fail"       
+            message = f"Invalid ID, incorrect number."
+
+    logger.info(f'take_submit_bid_offer: buyer_seller_id_1 {buyer_seller_id_1}, buyer_seller_id_2 {buyer_seller_id_2}')
+
+    #amount
+    if status == "success": 
+        try:
+            bid_offer_amount = Decimal(bid_offer_amount)
+        except DecimalException: 
+            status = "fail"       
+            message = f"Invalid amount, not a decimal."
+    
+    if status == "fail":
+        logger.warning(f'take_submit_bid_offer: {message}')
+
+    return {"status" : status, "message" : message}
+
 

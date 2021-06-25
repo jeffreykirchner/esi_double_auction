@@ -23,4 +23,6 @@ take_submit_bid_offer:function(messageData){
     {
 
     }
+
+    app.$data.bid_offer_message = messageData.result.message;
 },
