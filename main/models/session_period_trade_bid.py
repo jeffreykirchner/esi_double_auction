@@ -15,6 +15,7 @@ class SessionPeriodTradeBid(models.Model):
     '''
     session_period_trade = models.ForeignKey(SessionPeriodTrade, on_delete=models.CASCADE, related_name="session_period_trade_bids")
     value = models.ForeignKey(ParameterSetPeriodSubjectValuecost, on_delete=models.CASCADE, related_name="session_period_trade_bids_value")
+    session_subject_period =  models.ForeignKey('main.SessionSubjectPeriod', on_delete=models.CASCADE, related_name="session_period_trade_bids_b")
 
     amount = models.IntegerField()
 

@@ -15,4 +15,5 @@ from .session_period_trade import *
 from .session_period_trade_bid import *
 from .session_period_trade_offer import *
 from .session_subject import *
+from .session_subject_period import *
 

@@ -7,14 +7,24 @@ session period trade model
 from django.db import models
 
 from . import SessionPeriod
+# from . import SessionSubjectPeriod
+# from . import ParameterSetPeriodSubjectValuecost
+
+import main
 
 class SessionPeriodTrade(models.Model):
     '''
     session period trade model
     '''
-    session_period = models.ForeignKey(SessionPeriod, on_delete=models.CASCADE, related_name="session_period_trades")
+    session_period = models.ForeignKey(SessionPeriod, on_delete=models.CASCADE, related_name="session_period_trades_a")
 
     trade_number = models.IntegerField()
+
+    buyer = models.ForeignKey('main.SessionSubjectPeriod', on_delete=models.CASCADE, related_name="session_period_trades_b", blank=True, null=True)
+    buyer_value = models.ForeignKey('main.ParameterSetPeriodSubjectValuecost', on_delete=models.CASCADE, related_name="session_period_trades_c", blank=True, null=True)
+
+    seller = models.ForeignKey('main.SessionSubjectPeriod', on_delete=models.CASCADE, related_name="session_period_trades_d", blank=True, null=True)
+    seller_cost = models.ForeignKey('main.ParameterSetPeriodSubjectValuecost', on_delete=models.CASCADE, related_name="session_period_trades_e", blank=True, null=True)
 
     timestamp = models.DateTimeField(auto_now_add= True)
     updated = models.DateTimeField(auto_now= True)

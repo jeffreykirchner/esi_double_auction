@@ -11,13 +11,16 @@ import logging
 
 from django.core.exceptions import ObjectDoesNotExist
 
-from main.models import ParameterSetPeriodSubjectValuecost
+from main.models import ParameterSetPeriodSubjectValuecost, session_subject_period
+from main.models import ParameterSetPeriodSubject
 from main.models import ParameterSetPeriod
+
 from main.models import SessionPeriod
 from main.models import SessionPeriodTradeBid
 from main.models import SessionPeriodTradeOffer
 from main.models import SessionPeriodTrade
-
+from main.models import SessionSubject
+from main.models import SessionSubjectPeriod
 
 from main.consumers import SocketConsumerMixin
 from main.consumers import get_session
@@ -568,13 +571,45 @@ def take_start_experiment(data):
 
         session.save()
 
+        #intialize subjects
+        for i in range(session.parameter_set.number_of_buyers):
+            s = SessionSubject()
+
+            s.session = session
+            s.id_number = i + 1
+            s.subject_type = SubjectType.BUYER
+
+            s.save()
+
+        for i in range(session.parameter_set.number_of_sellers):
+            s = SessionSubject()
+
+            s.session = session
+            s.id_number = i + 1
+            s.subject_type = SubjectType.SELLER
+
+            s.save()
+
         #create new periods
-        for i in range(session.parameter_set.parameter_set_periods.count()):
+        counter = 1
+        for i in session.parameter_set.parameter_set_periods.all():
             session_period = SessionPeriod()
 
             session_period.session = session
-            session_period.period_number = i + 1
+            session_period.period_number = counter
             session_period.save()
+
+            for j in session.session_subjects.all():
+                s = SessionSubjectPeriod()
+                s.session_subject = j
+                s.session_period = session_period
+                s.parameter_set_period_subject = ParameterSetPeriodSubject.objects.get(parameter_set_period=i,
+                                                                                       id_number=j.id_number,
+                                                                                       subject_type=j.subject_type)
+                s.save()
+
+            counter += 1
+                
 
         #intialize earch period with first trade
         for i in session.session_periods.all():
@@ -582,6 +617,7 @@ def take_start_experiment(data):
             t.session_period = i
             t.trade_number = 1
             t.save()
+
 
     status = "success"
     
@@ -604,7 +640,8 @@ def take_reset_experiment(data):
         session.current_period = 1
 
         session.save()
-        session.session_periods.all().delete()   
+        session.session_periods.all().delete()  
+        session.session_subjects.all().delete() 
 
     status = "success"
     
@@ -641,7 +678,8 @@ def take_submit_bid_offer(data):
 
     session = Session.objects.get(id=session_id)
     session_period = session.session_periods.get(period_number=session.current_period)
-    current_trade = session_period.session_period_trades.get(trade_number=session_period.current_trade_number)
+    session_period_trade = session_period.session_period_trades_a.get(trade_number=session_period.current_trade_number)
+    parameter_set_period = session.parameter_set.parameter_set_periods.get(period_number=session.current_period)
 
     status = "success"
     message = ""
@@ -693,6 +731,33 @@ def take_submit_bid_offer(data):
     
     if status == "fail":
         logger.warning(f'take_submit_bid_offer: {message}')
+    else:
+        if buyer_seller_id_1 == "s" or buyer_seller_id_1 == "S":
+            # create offer
+            session_subject_period = session.session_subjects \
+                                            .get(id_number=buyer_seller_id_2, subject_type=SubjectType.SELLER) \
+                                            .get_session_subject_period(session_period)
+            offer = SessionPeriodTradeOffer()
+
+            offer.session_period_trade = session_period_trade
+            offer.cost = session_subject_period.get_current_value_cost()
+            offer.session_subject_period = session_subject_period
+            offer.amount = bid_offer_amount
+
+            offer.save()
+        else:
+            #create bid
+            session_subject_period = session.session_subjects \
+                                            .get(id_number=buyer_seller_id_2, subject_type=SubjectType.SELLER) \
+                                            .get_session_subject_period(session_period)
+            bid = SessionPeriodTradeBid()
+
+            bid.session_period_trade = session_period_trade
+            bid.value = session_subject_period.get_current_value_cost()
+            bid.session_subject_period = session_subject_period
+            bid.amount = bid_offer_amount
+
+            bid.save()
 
     return {"status" : status, "message" : message}
 
