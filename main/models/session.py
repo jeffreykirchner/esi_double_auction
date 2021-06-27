@@ -152,6 +152,7 @@ class Session(models.Model):
             "started":self.started,
             "current_period":self.current_period,
             "parameter_set":self.parameter_set.json(),
+            "session_periods":[i.json() for i in self.session_periods.all()]
         }
 
 

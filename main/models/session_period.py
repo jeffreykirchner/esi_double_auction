@@ -8,6 +8,8 @@ from django.db import models
 
 from . import Session
 
+import main
+
 class SessionPeriod(models.Model):
     '''
     session period model
@@ -30,12 +32,30 @@ class SessionPeriod(models.Model):
         verbose_name = 'Session Period'
         verbose_name_plural = 'Session Periods'
 
+    def get_bid_list_json(self):
+        '''
+        return a list of bids for this period in json format
+        '''
+        return list(main.models.SessionPeriodTradeBid.objects.filter(session_period_trade__in=self.session_period_trades_a.all())
+                                                             .values('amount','session_period_trade__trade_number')
+                                                             .order_by('-amount'))
+
+    def get_offer_list_json(self):
+        '''
+        return a list of offers for this period in json format
+        '''
+        return list(main.models.SessionPeriodTradeOffer.objects.filter(session_period_trade__in=self.session_period_trades_a.all())
+                                                             .values('amount','session_period_trade__trade_number')
+                                                             .order_by('amount'))
+
     #return json object of class
     def json(self):
         '''
         json object of model
         '''
         return{
-            "id" : self.id
+            "id" : self.id,
+            "bid_list" : self.get_bid_list_json(),
+            "offer_list" : self.get_bid_list_json(),
         }
         
