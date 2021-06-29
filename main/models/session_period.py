@@ -5,10 +5,13 @@ session period model
 #import logging
 
 from django.db import models
+from django.core.serializers.json import DjangoJSONEncoder
+from django.core.serializers import serialize
 
 from . import Session
 
 import main
+import json
 
 class SessionPeriod(models.Model):
     '''
@@ -37,7 +40,7 @@ class SessionPeriod(models.Model):
         return a list of bids for this period in json format
         '''
         return list(main.models.SessionPeriodTradeBid.objects.filter(session_period_trade__in=self.session_period_trades_a.all())
-                                                             .values('amount','session_period_trade__trade_number')
+                                                             .values('amount', 'session_period_trade__trade_number')
                                                              .order_by('-amount'))
 
     def get_offer_list_json(self):
@@ -45,7 +48,7 @@ class SessionPeriod(models.Model):
         return a list of offers for this period in json format
         '''
         return list(main.models.SessionPeriodTradeOffer.objects.filter(session_period_trade__in=self.session_period_trades_a.all())
-                                                             .values('amount','session_period_trade__trade_number')
+                                                             .values('amount', 'session_period_trade__trade_number')
                                                              .order_by('amount'))
 
     #return json object of class

@@ -3,6 +3,8 @@ websocket session list
 '''
 from datetime import datetime
 from decimal import Decimal, DecimalException
+
+from django.core.serializers.json import DjangoJSONEncoder
 from main.models.session_period_trade_offer import SessionPeriodTradeOffer
 from asgiref.sync import sync_to_async
 
@@ -54,9 +56,7 @@ class StaffSessionConsumer(SocketConsumerMixin):
         message["messageData"] = message_data
 
         # Send message to WebSocket
-        await self.send(text_data=json.dumps({
-            'message': message
-        }))
+        await self.send(text_data=json.dumps({'message': message,}, cls=DjangoJSONEncoder))
     
     async def update_session(self, event):
         '''
@@ -301,9 +301,7 @@ class StaffSessionConsumer(SocketConsumerMixin):
         message["messageData"] = message_data
 
         # Send message to WebSocket
-        await self.send(text_data=json.dumps({
-            'message': message
-        }))
+        await self.send(text_data=json.dumps({'message': message}, cls=DjangoJSONEncoder))
 
 #local sync_to_asyncs
 @sync_to_async

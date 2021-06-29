@@ -17,7 +17,7 @@ class SessionPeriodTradeBid(models.Model):
     value = models.ForeignKey(ParameterSetPeriodSubjectValuecost, on_delete=models.CASCADE, related_name="session_period_trade_bids_value")
     session_subject_period =  models.ForeignKey('main.SessionSubjectPeriod', on_delete=models.CASCADE, related_name="session_period_trade_bids_b")
 
-    amount = models.IntegerField()
+    amount = models.DecimalField(decimal_places=2, default=0, max_digits=4, verbose_name='Bid Amount')
 
     timestamp = models.DateTimeField(auto_now_add= True)
     updated = models.DateTimeField(auto_now= True)
