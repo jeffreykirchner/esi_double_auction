@@ -9,11 +9,22 @@ submit_bid_offer:function(){
 },
 
 /**take result of submiting bid or offer
+ * @param messageData {json} result of bid or offer
 */
 take_submit_bid_offer:function(messageData){
     
     if(messageData.result.status == "success")
     {
+
+        if (messageData.result.bid_list != null)
+        {
+            app.$data.session.session_periods[app.$data.session.current_period-1].bid_list = messageData.result.bid_list;
+        }
+        else if(messageData.result.offer_list != null)
+        {
+            app.$data.session.session_periods[app.$data.session.current_period-1].offer_list = messageData.result.offer_list;
+        }
+
         app.$data.bid_offer_id = "";
         app.$data.bid_offer_amount = "";
 

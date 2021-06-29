@@ -745,6 +745,10 @@ def take_submit_bid_offer(data):
             offer.amount = bid_offer_amount
 
             offer.save()
+
+            return {"status" : status,
+                    "message" : f'Seller {buyer_seller_id_2} offers to sell for ${bid_offer_amount:0.2f}.',
+                    "offer_list" : session_period.get_offer_list_json()}
         else:
             #create bid
             session_subject_period = session.session_subjects \
@@ -759,6 +763,10 @@ def take_submit_bid_offer(data):
 
             bid.save()
 
-    return {"status" : status, "message" : message}
+            return {"status" : status,
+                    "message" : f'Buyer {buyer_seller_id_2} bids to buy for ${bid_offer_amount:0.2f}.',
+                    "bid_list" : session_period.get_bid_list_json()}
+
+    return {"status" : "fail", "message" : "Invalid Message"}
 
 

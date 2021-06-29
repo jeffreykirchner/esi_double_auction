@@ -17,16 +17,19 @@ update_sdgraph_canvas:function(){
     var marginX=40;    //margin between bottom of canvas and X axis
     var marginTopAndRight=10;    // margin between top and right sides of canvas and graph
 
-    app.draw_axis("sd_graph", marginY, marginX, marginTopAndRight, 0, y_max, y_max, 0, x_max, x_max, "Price", "Units Traded");
+    app.draw_axis("sd_graph", marginY, marginX, marginTopAndRight, 0, y_max, y_max, 0, x_max, x_max, "Price ($)", "Units Traded");
 
     //supply
-    app.draw_sd_line("sd_graph", marginY, marginX, marginTopAndRight, 0, y_max, 0, x_max, 3, value_list, "blue");
+    app.draw_sd_line("sd_graph", marginY, marginX, marginTopAndRight, 0, y_max, 0, x_max, 3, value_list, "cornflowerblue");
 
     //demand
-    app.draw_sd_line("sd_graph", marginY, marginX, marginTopAndRight, 0, y_max, 0, x_max, 3, cost_list, "red");
+    app.draw_sd_line("sd_graph", marginY, marginX, marginTopAndRight, 0, y_max, 0, x_max, 3, cost_list, "crimson");
 
     //equilibrium
-    app.draw_eq_lines("sd_graph", marginY, marginX, marginTopAndRight, 0, y_max, 0, x_max, period)
+    app.draw_eq_lines("sd_graph", marginY, marginX, marginTopAndRight, 0, y_max, 0, x_max, period);
+
+    //bids and offers
+    app.draw_bids_and_offers("sd_graph", marginY, marginX, marginTopAndRight, 0, y_max, 0, x_max, period);
 },
 
 /**draw an x-y axis on a canvas
@@ -204,6 +207,15 @@ draw_sd_line: function(chartID, marginY, marginX, marginTopAndRight, yMin, yMax,
 },
 
 /**draw the equilibrium price and quantity lines
+ * @param chartID {string} dom ID name of canvas
+ * @param marginY {int} margin between Y axis and vertial edge of graph
+ * @param marginX {int} margin between X axis and horizontal edge of graph
+ * @param marginTopAndRight {int} margin between top and rights side of canvas and grap
+ * @param yMin {int} starting value on Y axis
+ * @param yMax {int} ending value on Y axis
+ * @param xMin {int} starting value on X axis
+ * @param xMax {int} ending value on X axis
+ * @param period {int} period from 1 to N of which equilibrium lines will be drawn
 */
 draw_eq_lines: function(chartID, marginY, marginX, marginTopAndRight, yMin, yMax, xMin, xMax, period){
 
@@ -245,6 +257,99 @@ draw_eq_lines: function(chartID, marginY, marginX, marginTopAndRight, yMin, yMax
 
     ctx.restore(); 
 },
+
+/**draw bids and offers
+ * @param chartID {string} dom ID name of canvas
+ * @param marginY {int} margin between Y axis and vertial edge of graph
+ * @param marginX {int} margin between X axis and horizontal edge of graph
+ * @param marginTopAndRight {int} margin between top and rights side of canvas and grap
+ * @param yMin {int} starting value on Y axis
+ * @param yMax {int} ending value on Y axis
+ * @param xMin {int} starting value on X axis
+ * @param xMax {int} ending value on X axis
+ * @param period {int} period from 1 to N of which bids will be drawn
+*/
+draw_bids_and_offers:function(chartID, marginY, marginX, marginTopAndRight, yMin, yMax, xMin, xMax, period){
+    if(period.eq_price == null) return;
+
+    var canvas = document.getElementById(chartID),
+        ctx = canvas.getContext('2d');
+
+    var w =  ctx.canvas.width;
+    var h = ctx.canvas.height;
+    
+    ctx.save();
+
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 1;
+    ctx.lineCap = "round";
+    //ctx.setLineDash([5, 5]);
+    ctx.font="14px Arial";
+    ctx.textAlign = "left";
+
+    ctx.translate(marginY, h-marginX);
+
+    current_period = app.$data.session.current_period;
+    bids = app.$data.session.session_periods[current_period-1].bid_list;
+    offers = app.$data.session.session_periods[current_period-1].offer_list;
+
+    //bids
+    ctx.fillStyle = "cornflowerblue";
+    for(i=0; i<bids.length; i++)
+    {
+        x1 = app.convertToX(bids[i].session_period_trade__trade_number, xMax, xMin, w-marginY-marginTopAndRight, 0);
+        x2 = app.convertToX(bids[i].session_period_trade__trade_number-1, xMax, xMin, w-marginY-marginTopAndRight, 0);
+        
+        width = (x1-x2) * 0.6;
+        centerX=(x1+x2)/2
+
+        y1 = app.convertToY(bids[i].amount, yMax, yMin, h-marginX-marginTopAndRight, 0);
+
+        //bid carrot
+        ctx.beginPath();        
+        
+        ctx.moveTo(centerX, y1);
+        ctx.lineTo(centerX - width/2, y1 - width);
+        ctx.lineTo(centerX - width/2, y1 - width);   
+
+        ctx.lineTo(centerX + width/2, y1 - width);
+        ctx.lineTo(centerX, y1);        
+
+        ctx.fill();
+        ctx.stroke();        
+
+    }
+
+    //offers
+    ctx.fillStyle = "crimson";
+    for(i=0; i<offers.length; i++)
+    {
+        x1 = app.convertToX(offers[i].session_period_trade__trade_number, xMax, xMin, w-marginY-marginTopAndRight, 0);
+        x2 = app.convertToX(offers[i].session_period_trade__trade_number-1, xMax, xMin, w-marginY-marginTopAndRight, 0);
+        
+        width = (x1-x2) * 0.6;
+        centerX=(x1+x2)/2
+
+        y1 = app.convertToY(offers[i].amount, yMax, yMin, h-marginX-marginTopAndRight, 0);
+
+        //bid carrot
+        ctx.beginPath();        
+        
+        ctx.moveTo(centerX, y1);
+        ctx.lineTo(centerX - width/2, y1 + width);
+        ctx.lineTo(centerX - width/2, y1 + width);   
+
+        ctx.lineTo(centerX + width/2, y1 + width);
+        ctx.lineTo(centerX, y1);        
+
+        ctx.fill();
+        ctx.stroke();        
+
+    }
+
+    ctx.restore(); 
+},
+
 
 /**convert value to X cordinate on the graph
  * @param value {float} value to be converted to X cordinate

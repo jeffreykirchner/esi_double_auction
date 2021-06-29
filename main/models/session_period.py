@@ -56,6 +56,6 @@ class SessionPeriod(models.Model):
         return{
             "id" : self.id,
             "bid_list" : self.get_bid_list_json(),
-            "offer_list" : self.get_bid_list_json(),
+            "offer_list" : self.get_offer_list_json(),
         }
         
