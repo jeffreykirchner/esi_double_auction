@@ -34,6 +34,7 @@ class SessionPeriod(models.Model):
         ]
         verbose_name = 'Session Period'
         verbose_name_plural = 'Session Periods'
+        ordering = ['period_number']
 
     def get_bid_list_json(self):
         '''
@@ -48,8 +49,8 @@ class SessionPeriod(models.Model):
         return a list of offers for this period in json format
         '''
         return list(main.models.SessionPeriodTradeOffer.objects.filter(session_period_trade__in=self.session_period_trades_a.all())
-                                                             .values('amount', 'session_period_trade__trade_number')
-                                                             .order_by('amount'))
+                                                               .values('amount', 'session_period_trade__trade_number')
+                                                               .order_by('amount'))
 
     #return json object of class
     def json(self):

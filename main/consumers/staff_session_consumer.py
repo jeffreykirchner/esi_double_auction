@@ -735,17 +735,54 @@ def take_submit_bid_offer(data):
             session_subject_period = session.session_subjects \
                                             .get(id_number=buyer_seller_id_2, subject_type=SubjectType.SELLER) \
                                             .get_session_subject_period(session_period)
+
             offer = SessionPeriodTradeOffer()
+
+            best_bid = session_period_trade.get_best_bid()
 
             offer.session_period_trade = session_period_trade
             offer.cost = session_subject_period.get_current_value_cost()
             offer.session_subject_period = session_subject_period
-            offer.amount = bid_offer_amount
 
+            # logger.info(f'best bid: {best_bid.amount} offer : {bid_offer_amount}')
+
+            if best_bid and best_bid.amount <= bid_offer_amount:
+                bid_offer_amount = best_bid.amount
+
+                #record trade
+                session_period_trade.buyer = best_bid.session_subject_period
+                session_period_trade.buyer_value = best_bid.session_subject_period.get_current_value_cost()
+
+                session_period_trade.seller = session_subject_period
+                session_period_trade.seller_cost = session_subject_period.get_current_value_cost()
+
+                session_period_trade.save()
+
+                #advance buyer and seller to next unit in schedule
+                best_bid.session_subject_period.current_unit_number += 1
+                best_bid.session_subject_period.save()
+
+                session_subject_period.current_unit_number += 1
+                session_subject_period.save()
+
+                #create new trade
+                session_period.current_trade_number += 1
+                session_period.save()
+
+                new_session_period_trade = SessionPeriodTrade()
+                new_session_period_trade.session_period = session_period
+                new_session_period_trade.trade_number = session_period.current_trade_number
+                new_session_period_trade.save()
+                
+                message = f'Buyer {best_bid.session_subject_period.session_subject.id_number} trades with Seller {session_subject_period.session_subject.id_number} for ${bid_offer_amount:0.2f}.'
+            else:    
+                message = f'Seller {buyer_seller_id_2} offers to sell for ${bid_offer_amount:0.2f}.'
+
+            offer.amount = bid_offer_amount
             offer.save()
 
             return {"status" : status,
-                    "message" : f'Seller {buyer_seller_id_2} offers to sell for ${bid_offer_amount:0.2f}.',
+                    "message" : message,
                     "offer_list" : session_period.get_offer_list_json()}
         else:
             #create bid

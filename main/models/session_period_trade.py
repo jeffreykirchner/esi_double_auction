@@ -39,6 +39,18 @@ class SessionPeriodTrade(models.Model):
         ordering = ['trade_number']
         verbose_name = 'Session Period Trade'
         verbose_name_plural = 'Session Period Trades'
+    
+    def get_best_bid(self):
+        '''
+        return the best bid
+        '''
+        return self.session_period_trade_bids.last()
+
+    def get_best_offer(self):
+        '''
+        return the best offer
+        '''
+        return self.session_period_trade_offers.last()
 
     #return json object of class
     def json(self):
