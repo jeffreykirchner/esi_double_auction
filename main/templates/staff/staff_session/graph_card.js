@@ -30,6 +30,9 @@ update_sdgraph_canvas:function(){
 
     //bids and offers
     app.draw_bids_and_offers("sd_graph", marginY, marginX, marginTopAndRight, 0, y_max, 0, x_max, period);
+
+    //key
+    app.draw_key("sd_graph", marginTopAndRight);
 },
 
 /**draw an x-y axis on a canvas
@@ -305,18 +308,7 @@ draw_bids_and_offers:function(chartID, marginY, marginX, marginTopAndRight, yMin
 
         y1 = app.convertToY(offers[i].amount, yMax, yMin, h-marginX-marginTopAndRight, 0);
 
-        //bid carrot
-        ctx.beginPath();        
-        
-        ctx.moveTo(centerX, y1);
-        ctx.lineTo(centerX - width/2, y1 - width);
-        ctx.lineTo(centerX - width/2, y1 - width);   
-
-        ctx.lineTo(centerX + width/2, y1 - width);
-        ctx.lineTo(centerX, y1);        
-
-        ctx.fill();
-        ctx.stroke();        
+        app.draw_offer_carrot(ctx, centerX, y1, width);               
     }
 
     //bids
@@ -331,24 +323,67 @@ draw_bids_and_offers:function(chartID, marginY, marginX, marginTopAndRight, yMin
 
         y1 = app.convertToY(bids[i].amount, yMax, yMin, h-marginX-marginTopAndRight, 0);
 
-        //bid carrot
-        ctx.beginPath();        
-        
-        ctx.moveTo(centerX, y1);
-        ctx.lineTo(centerX - width/2, y1 + width);
-        ctx.lineTo(centerX - width/2, y1 + width);   
-
-        ctx.lineTo(centerX + width/2, y1 + width);
-        ctx.lineTo(centerX, y1);        
-
-        ctx.fill();
-        ctx.stroke();        
-
+        app.draw_bid_carrot(ctx, centerX, y1, width);
     }
 
     ctx.restore(); 
 },
 
+/**draw a bid carrot at the specified location
+    @param ctx {canvas} canvas to draw on
+    @param x {double} x location of bid
+    @param y {double} y location of bid
+    @param width {double} width of bid in pixels
+*/
+draw_bid_carrot:function(ctx, x, y, width){
+    ctx.beginPath();        
+        
+    ctx.moveTo(x, y);
+    ctx.lineTo(x - width/2, y + width);
+    ctx.lineTo(x - width/2, y + width);   
+
+    ctx.lineTo(x + width/2, y + width);
+    ctx.lineTo(x, y);        
+
+    ctx.fill();
+    ctx.stroke();
+},
+
+/**draw a offer carrot at the specified location
+    @param ctx {canvas} canvas to draw on
+    @param x {double} x location of offer
+    @param y {double} y location of offer
+    @param width {double} width of offer in pixels
+*/
+draw_offer_carrot:function(ctx, x, y, width){
+    ctx.beginPath();        
+        
+    ctx.moveTo(x, y);
+    ctx.lineTo(x - width/2, y - width);
+    ctx.lineTo(x - width/2, y - width);   
+
+    ctx.lineTo(x + width/2, y - width);
+    ctx.lineTo(x, y);        
+
+    ctx.fill();
+    ctx.stroke(); 
+},
+
+/**draw key with bid ask spread
+ * @param chartID {string} dom ID name of canvas
+ */
+draw_key:function(chartID, marginTopAndRight){
+    var canvas = document.getElementById(chartID),
+        ctx = canvas.getContext('2d');
+
+    var w =  ctx.canvas.width/6;
+    var h = ctx.canvas.height/6;
+    
+    ctx.beginPath();
+    //ctx.rect(width*4, 10, width, height);
+    ctx.rect(w*5, marginTopAndRight, w - marginTopAndRight, h);
+    ctx.stroke();
+},
 
 /**convert value to X cordinate on the graph
  * @param value {float} value to be converted to X cordinate
