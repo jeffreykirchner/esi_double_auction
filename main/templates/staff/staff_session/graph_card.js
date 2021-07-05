@@ -293,17 +293,17 @@ draw_bids_and_offers:function(chartID, marginY, marginX, marginTopAndRight, yMin
     bids = app.$data.session.session_periods[current_period-1].bid_list;
     offers = app.$data.session.session_periods[current_period-1].offer_list;
 
-    //bids
-    ctx.fillStyle = "cornflowerblue";
-    for(i=0; i<bids.length; i++)
+    //offers
+    ctx.fillStyle = "crimson";
+    for(i=0; i<offers.length; i++)
     {
-        x1 = app.convertToX(bids[i].session_period_trade__trade_number, xMax, xMin, w-marginY-marginTopAndRight, 0);
-        x2 = app.convertToX(bids[i].session_period_trade__trade_number-1, xMax, xMin, w-marginY-marginTopAndRight, 0);
+        x1 = app.convertToX(offers[i].session_period_trade__trade_number, xMax, xMin, w-marginY-marginTopAndRight, 0);
+        x2 = app.convertToX(offers[i].session_period_trade__trade_number-1, xMax, xMin, w-marginY-marginTopAndRight, 0);
         
         width = (x1-x2) * 0.6;
         centerX=(x1+x2)/2
 
-        y1 = app.convertToY(bids[i].amount, yMax, yMin, h-marginX-marginTopAndRight, 0);
+        y1 = app.convertToY(offers[i].amount, yMax, yMin, h-marginX-marginTopAndRight, 0);
 
         //bid carrot
         ctx.beginPath();        
@@ -317,20 +317,19 @@ draw_bids_and_offers:function(chartID, marginY, marginX, marginTopAndRight, yMin
 
         ctx.fill();
         ctx.stroke();        
-
     }
 
-    //offers
-    ctx.fillStyle = "crimson";
-    for(i=0; i<offers.length; i++)
+    //bids
+    ctx.fillStyle = "cornflowerblue";
+    for(i=0; i<bids.length; i++)
     {
-        x1 = app.convertToX(offers[i].session_period_trade__trade_number, xMax, xMin, w-marginY-marginTopAndRight, 0);
-        x2 = app.convertToX(offers[i].session_period_trade__trade_number-1, xMax, xMin, w-marginY-marginTopAndRight, 0);
+        x1 = app.convertToX(bids[i].session_period_trade__trade_number, xMax, xMin, w-marginY-marginTopAndRight, 0);
+        x2 = app.convertToX(bids[i].session_period_trade__trade_number-1, xMax, xMin, w-marginY-marginTopAndRight, 0);
         
         width = (x1-x2) * 0.6;
         centerX=(x1+x2)/2
 
-        y1 = app.convertToY(offers[i].amount, yMax, yMin, h-marginX-marginTopAndRight, 0);
+        y1 = app.convertToY(bids[i].amount, yMax, yMin, h-marginX-marginTopAndRight, 0);
 
         //bid carrot
         ctx.beginPath();        
