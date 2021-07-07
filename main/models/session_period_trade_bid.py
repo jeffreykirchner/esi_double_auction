@@ -30,6 +30,12 @@ class SessionPeriodTradeBid(models.Model):
         verbose_name_plural = 'Session Period Trade Bids'
         ordering = ['-amount']
 
+    def get_bid_offer_string(self):
+        '''
+        return display string for bid-offer spread string
+        '''
+        return f'B-{self.session_subject_period.session_subject.id_number} ${self.amount:0.2f}'
+
     #return json object of class
     def json(self):
         '''

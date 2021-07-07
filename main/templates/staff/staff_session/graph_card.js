@@ -297,7 +297,6 @@ draw_bids_and_offers:function(chartID, marginY, marginX, marginTopAndRight, yMin
     offers = app.$data.session.session_periods[current_period-1].offer_list;
 
     //offers
-    ctx.fillStyle = "crimson";
     for(i=0; i<offers.length; i++)
     {
         x1 = app.convertToX(offers[i].session_period_trade__trade_number, xMax, xMin, w-marginY-marginTopAndRight, 0);
@@ -312,14 +311,13 @@ draw_bids_and_offers:function(chartID, marginY, marginX, marginTopAndRight, yMin
     }
 
     //bids
-    ctx.fillStyle = "cornflowerblue";
     for(i=0; i<bids.length; i++)
     {
         x1 = app.convertToX(bids[i].session_period_trade__trade_number, xMax, xMin, w-marginY-marginTopAndRight, 0);
         x2 = app.convertToX(bids[i].session_period_trade__trade_number-1, xMax, xMin, w-marginY-marginTopAndRight, 0);
         
-        width = (x1-x2) * 0.6;
-        centerX=(x1+x2)/2
+        width = (x1 - x2) * 0.6;
+        centerX=(x1 + x2) / 2;
 
         y1 = app.convertToY(bids[i].amount, yMax, yMin, h-marginX-marginTopAndRight, 0);
 
@@ -336,6 +334,8 @@ draw_bids_and_offers:function(chartID, marginY, marginX, marginTopAndRight, yMin
     @param width {double} width of bid in pixels
 */
 draw_bid_carrot:function(ctx, x, y, width){
+    ctx.fillStyle = "cornflowerblue";
+
     ctx.beginPath();        
         
     ctx.moveTo(x, y);
@@ -356,6 +356,8 @@ draw_bid_carrot:function(ctx, x, y, width){
     @param width {double} width of offer in pixels
 */
 draw_offer_carrot:function(ctx, x, y, width){
+    ctx.fillStyle = "crimson";
+
     ctx.beginPath();        
         
     ctx.moveTo(x, y);
@@ -376,13 +378,44 @@ draw_key:function(chartID, marginTopAndRight){
     var canvas = document.getElementById(chartID),
         ctx = canvas.getContext('2d');
 
-    var w =  ctx.canvas.width/6;
-    var h = ctx.canvas.height/6;
+    var w = ctx.canvas.width / 5;
+    var h = ctx.canvas.height / 6;
+
+    base_width = 216.2;
     
+    ctx.save();
+
+    ctx.translate(w*4, marginTopAndRight);
+
     ctx.beginPath();
     //ctx.rect(width*4, 10, width, height);
-    ctx.rect(w*5, marginTopAndRight, w - marginTopAndRight, h);
+    ctx.rect(0, 0, w - marginTopAndRight, h);
     ctx.stroke();
+
+    ctx.fillStyle = "white";
+    ctx.fill();
+
+    w_fraction = 1/6;
+
+    x = w * w_fraction;
+    y = h * 1 / 2;
+
+    app.draw_bid_carrot(ctx, x, y, w * w_fraction);
+    app.draw_offer_carrot(ctx, x, y, w * w_fraction);
+
+    font_size = 25 * w / base_width;
+
+    ctx.font= font_size + "px Georgia";
+    ctx.fillStyle = "black";
+    ctx.textAlign = "right";
+
+    ctx.textBaseline = "bottom";
+    ctx.fillText("Offer: ", x + w * w_fraction * 2.5, y);
+
+    ctx.textBaseline = "top";
+    ctx.fillText("Bid: ", x + w * w_fraction * 2.5, y);
+    
+    ctx.restore();
 },
 
 /**convert value to X cordinate on the graph
