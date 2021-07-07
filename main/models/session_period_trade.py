@@ -44,13 +44,13 @@ class SessionPeriodTrade(models.Model):
         '''
         return the best bid
         '''
-        return self.session_period_trade_bids.last()
+        return self.session_period_trade_bids.order_by('amount').last()
 
     def get_best_offer(self):
         '''
         return the best offer
         '''
-        return self.session_period_trade_offers.last()
+        return self.session_period_trade_offers.order_by('-amount').last()
 
     #return json object of class
     def json(self):

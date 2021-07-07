@@ -378,42 +378,53 @@ draw_key:function(chartID, marginTopAndRight){
     var canvas = document.getElementById(chartID),
         ctx = canvas.getContext('2d');
 
-    var w = ctx.canvas.width / 5;
-    var h = ctx.canvas.height / 6;
+    var w = 230;
+    var h = 100;
 
-    base_width = 216.2;
+    session_period = app.$data.session.session_periods[app.$data.session.current_period-1];
+
+    base_width = 1081;
+    base_height = 600;
+
+    w_fraction = ctx.canvas.width / base_width;
+    h_fraction = ctx.canvas.height / base_height;
     
     ctx.save();
 
-    ctx.translate(w*4, marginTopAndRight);
+    ctx.translate(840 * w_fraction, marginTopAndRight);
 
     ctx.beginPath();
     //ctx.rect(width*4, 10, width, height);
-    ctx.rect(0, 0, w - marginTopAndRight, h);
+    ctx.rect(0, 0, w * w_fraction, h * h_fraction);
     ctx.stroke();
 
     ctx.fillStyle = "white";
-    ctx.fill();
+    ctx.fill();    
 
-    w_fraction = 1/6;
+    x =  30 * w_fraction;
+    y = h * h_fraction * 1 / 2;
 
-    x = w * w_fraction;
-    y = h * 1 / 2;
+    app.draw_bid_carrot(ctx, x, y, 40 * w_fraction);
+    app.draw_offer_carrot(ctx, x, y, 40 * w_fraction);
 
-    app.draw_bid_carrot(ctx, x, y, w * w_fraction);
-    app.draw_offer_carrot(ctx, x, y, w * w_fraction);
-
-    font_size = 25 * w / base_width;
+    font_size = 25 * w_fraction;
 
     ctx.font= font_size + "px Georgia";
     ctx.fillStyle = "black";
     ctx.textAlign = "right";
 
-    ctx.textBaseline = "bottom";
-    ctx.fillText("Offer: ", x + w * w_fraction * 2.5, y);
+    x =  115 * w_fraction;
 
+    ctx.textBaseline = "bottom";
+    ctx.fillText("Offer: ", x, y - 2);
+    ctx.textAlign = "left";
+    ctx.fillText(session_period.current_best_offer, x, y - 2);
+
+    ctx.textAlign = "right";
     ctx.textBaseline = "top";
-    ctx.fillText("Bid: ", x + w * w_fraction * 2.5, y);
+    ctx.fillText("Bid: ", x, y + 2);
+    ctx.textAlign = "left";
+    ctx.fillText(session_period.current_best_bid, x, y + 2);
     
     ctx.restore();
 },

@@ -34,7 +34,7 @@ class SessionPeriodTradeOffer(models.Model):
         '''
         return display string for bid-offer spread string
         '''
-        return f'S-{self.session_subject_period.session_subject.id_number} ${self.amount:0.2f}'
+        return f'S{self.session_subject_period.session_subject.id_number} ${self.amount:0.2f}'
 
     #return json object of class
     def json(self):

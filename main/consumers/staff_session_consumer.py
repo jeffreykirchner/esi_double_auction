@@ -783,6 +783,7 @@ def take_submit_bid_offer(data):
 
             return {"status" : status,
                     "message" : message,
+                    "current_best_offer" : i.get_bid_offer_string() if (i:=session_period.get_current_best_offer()) else "---",
                     "offer_list" : session_period.get_offer_list_json()}
         else:
             #create bid
@@ -798,8 +799,6 @@ def take_submit_bid_offer(data):
             bid.session_subject_period = session_subject_period
 
             if best_offer and best_offer.amount <= bid_offer_amount:
-                bid_offer_amount = best_offer.amount
-
                 bid_offer_amount = best_offer.amount
 
                 #record trade
@@ -836,6 +835,7 @@ def take_submit_bid_offer(data):
 
             return {"status" : status,
                     "message" : message,
+                    "current_best_bid" : i.get_bid_offer_string() if (i:=session_period.get_current_best_bid()) else "---",
                     "bid_list" : session_period.get_bid_list_json()}
 
     return {"status" : "fail", "message" : "Invalid Message"}
