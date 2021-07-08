@@ -783,6 +783,7 @@ def take_submit_bid_offer(data):
 
             return {"status" : status,
                     "message" : message,
+                    "current_best_bid" : i.get_bid_offer_string() if (i:=session_period.get_current_best_bid()) else "---",
                     "current_best_offer" : i.get_bid_offer_string() if (i:=session_period.get_current_best_offer()) else "---",
                     "offer_list" : session_period.get_offer_list_json()}
         else:
@@ -835,6 +836,7 @@ def take_submit_bid_offer(data):
 
             return {"status" : status,
                     "message" : message,
+                    "current_best_offer" : i.get_bid_offer_string() if (i:=session_period.get_current_best_offer()) else "---",
                     "current_best_bid" : i.get_bid_offer_string() if (i:=session_period.get_current_best_bid()) else "---",
                     "bid_list" : session_period.get_bid_list_json()}
 
