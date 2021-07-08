@@ -4,6 +4,8 @@ websocket session list
 import json
 import logging
 
+from django.core.serializers.json import DjangoJSONEncoder
+
 from main.consumers import SocketConsumerMixin
 from main.consumers import get_session_list_json
 from main.consumers import create_new_session
@@ -36,9 +38,7 @@ class StaffHomeConsumer(SocketConsumerMixin):
         message["messageData"] = message_data
 
         # Send message to WebSocket
-        await self.send(text_data=json.dumps({
-            'message': message
-        }))
+        await self.send(text_data=json.dumps({'message': message,}, cls=DjangoJSONEncoder))
 
     async def create_session(self, event):
         '''
@@ -58,9 +58,7 @@ class StaffHomeConsumer(SocketConsumerMixin):
         message["messageData"] = message_data
 
         # Send message to WebSocket
-        await self.send(text_data=json.dumps({
-            'message': message
-        }))
+        await self.send(text_data=json.dumps({'message': message,}, cls=DjangoJSONEncoder))
     
     async def get_sessions(self, event):
         '''
@@ -78,6 +76,4 @@ class StaffHomeConsumer(SocketConsumerMixin):
         message["messageData"] = message_data
 
         # Send message to WebSocket
-        await self.send(text_data=json.dumps({
-            'message': message
-        }))
+        await self.send(text_data=json.dumps({'message': message,}, cls=DjangoJSONEncoder))
