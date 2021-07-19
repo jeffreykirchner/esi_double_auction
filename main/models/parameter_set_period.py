@@ -247,7 +247,7 @@ class ParameterSetPeriod(models.Model):
         supply = self.get_supply()
         demand = self.get_demand()
 
-        eq_price = None
+        eq_price = 0
         eq_quantity = None
 
         for i in range(len(supply)):
