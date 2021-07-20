@@ -18,7 +18,9 @@ class SessionPeriodTrade(models.Model):
     '''
     session_period = models.ForeignKey(SessionPeriod, on_delete=models.CASCADE, related_name="session_period_trades_a")
 
-    trade_number = models.IntegerField()
+    trade_number = models.IntegerField()                    #numbered from one to N
+    trade_complete = models.BooleanField(default=False)      #true once a trade is complete
+    trade_price = models.DecimalField(decimal_places=2, default=0, max_digits=4, verbose_name='Trade Price')         #price that trade was completed at
 
     buyer = models.ForeignKey('main.SessionSubjectPeriod', on_delete=models.CASCADE, related_name="session_period_trades_b", blank=True, null=True)
     buyer_value = models.ForeignKey('main.ParameterSetPeriodSubjectValuecost', on_delete=models.CASCADE, related_name="session_period_trades_c", blank=True, null=True)

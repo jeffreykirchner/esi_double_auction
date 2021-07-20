@@ -13,7 +13,8 @@ var app = Vue.createApp({
                     session : {
                         current_period : 1,
                         started : false,
-                        session_periods : [],
+                        session_periods : [{trade_list : []},
+                                          ],
                         parameter_set : {
                             number_of_buyers : 0,
                             number_of_sellers : 0,

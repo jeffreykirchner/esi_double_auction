@@ -70,6 +70,13 @@ class SessionPeriod(models.Model):
         '''
         return self.session_period_trades_a.get(trade_number=self.current_trade_number)
 
+    def get_trade_list_json(self):
+        '''
+        return a list if completed trades
+        '''
+        return list(self.session_period_trades_a.filter(trade_complete=True)
+                                                .values('id', 'trade_price', 'buyer__session_subject__id_number', 'seller__session_subject__id_number')
+                                                .order_by('trade_number'))
 
     #return json object of class
     def json(self):
@@ -79,13 +86,14 @@ class SessionPeriod(models.Model):
         #current_best_bid = self.get_current_best_bid()
         #current_best_offer = self.get_current_best_offer()
 
-        current_trade = self.get_current_trade()
+        #current_trade = self.get_current_trade()
 
         return{
             "id" : self.id,
             "current_trade_number" : self.current_trade_number,
             "bid_list" : self.get_bid_list_json(),
             "offer_list" : self.get_offer_list_json(),
+            "trade_list" : self.get_trade_list_json(),
             "current_best_bid" : i.get_bid_offer_string() if (i:=self.get_current_best_bid()) else "---",
             "current_best_offer" : i.get_bid_offer_string() if (i:=self.get_current_best_offer()) else "---",
         }

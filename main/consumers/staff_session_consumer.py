@@ -677,7 +677,7 @@ def take_submit_bid_offer(data):
     session = Session.objects.get(id=session_id)
     session_period = session.session_periods.get(period_number=session.current_period)
     session_period_trade = session_period.session_period_trades_a.get(trade_number=session_period.current_trade_number)
-    parameter_set_period = session.parameter_set.parameter_set_periods.get(period_number=session.current_period)
+    # parameter_set_period = session.parameter_set.parameter_set_periods.get(period_number=session.current_period)
 
     status = "success"
     message = ""
@@ -756,6 +756,9 @@ def take_submit_bid_offer(data):
                 session_period_trade.seller = session_subject_period
                 session_period_trade.seller_cost = session_subject_period.get_current_value_cost()
 
+                session_period_trade.trade_complete = True
+                session_period_trade.trade_price = bid_offer_amount
+
                 session_period_trade.save()
 
                 #advance buyer and seller to next unit in schedule
@@ -785,6 +788,7 @@ def take_submit_bid_offer(data):
                     "message" : message,
                     "current_best_bid" : i.get_bid_offer_string() if (i:=session_period.get_current_best_bid()) else "---",
                     "current_best_offer" : i.get_bid_offer_string() if (i:=session_period.get_current_best_offer()) else "---",
+                    "trade_list" : session_period.get_trade_list_json(),
                     "offer_list" : session_period.get_offer_list_json()}
         else:
             #create bid
@@ -803,11 +807,14 @@ def take_submit_bid_offer(data):
                 bid_offer_amount = best_offer.amount
 
                 #record trade
-                session_period_trade.buyer = best_offer.session_subject_period
-                session_period_trade.buyer_value = best_offer.session_subject_period.get_current_value_cost()
+                session_period_trade.buyer = session_subject_period 
+                session_period_trade.buyer_value = session_subject_period.get_current_value_cost()
 
-                session_period_trade.seller = session_subject_period
-                session_period_trade.seller_cost = session_subject_period.get_current_value_cost()
+                session_period_trade.seller = best_offer.session_subject_period
+                session_period_trade.seller_cost = best_offer.session_subject_period.get_current_value_cost()
+
+                session_period_trade.trade_complete = True
+                session_period_trade.trade_price = bid_offer_amount
 
                 session_period_trade.save()
 
@@ -838,6 +845,7 @@ def take_submit_bid_offer(data):
                     "message" : message,
                     "current_best_offer" : i.get_bid_offer_string() if (i:=session_period.get_current_best_offer()) else "---",
                     "current_best_bid" : i.get_bid_offer_string() if (i:=session_period.get_current_best_bid()) else "---",
+                    "trade_list" : session_period.get_trade_list_json(),            
                     "bid_list" : session_period.get_bid_list_json()}
 
     return {"status" : "fail", "message" : "Invalid Message"}

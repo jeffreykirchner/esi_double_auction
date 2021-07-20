@@ -29,6 +29,7 @@ take_submit_bid_offer:function(messageData){
 
         app.$data.session.session_periods[current_period].current_best_offer = messageData.result.current_best_offer;
         app.$data.session.session_periods[current_period].current_best_bid = messageData.result.current_best_bid;
+        app.$data.session.session_periods[current_period].trade_list = messageData.result.trade_list;
 
         app.$data.bid_offer_id = "";
         app.$data.bid_offer_amount = "";

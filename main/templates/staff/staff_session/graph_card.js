@@ -29,10 +29,16 @@ update_sdgraph_canvas:function(){
     app.draw_eq_lines("sd_graph", marginY, marginX, marginTopAndRight, 0, y_max, 0, x_max, period);
 
     //bids and offers
-    app.draw_bids_and_offers("sd_graph", marginY, marginX, marginTopAndRight, 0, y_max, 0, x_max, period);
+    if (app.$data.session.started)
+    {
+        app.draw_bids_and_offers("sd_graph", marginY, marginX, marginTopAndRight, 0, y_max, 0, x_max, period);
+    }
 
     //key
-    app.draw_key("sd_graph", marginTopAndRight);
+    if (app.$data.session.started)
+    {
+        app.draw_key("sd_graph", marginTopAndRight);
+    }
 },
 
 /**draw an x-y axis on a canvas
