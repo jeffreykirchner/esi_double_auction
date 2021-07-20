@@ -1,0 +1,46 @@
+<div class="card">                  
+    <div class="card-header">
+        <span class="align-middle">Trades</span>      
+        
+        <span class="float-end">                            
+           
+        </span>
+    </div>
+    <div class="card-body">    
+        <table class="table table-hover table-condensed table-responsive-md">                            
+
+            <thead>
+                <th scope="col">
+                   #
+                </th> 
+                <th scope="col" style="text-align: center;">
+                    Buyer                             
+                </th>
+                <th scope="col" style="text-align: center;">
+                    Seller
+                </th>
+                <th scope="col" style="text-align: center;">
+                    Price
+                </th>                                                      
+            </thead>
+
+            <tbody id="trade_list">                                                  
+                <tr v-for="(t,index) in sessions" v-bind:key="t.id">                                                                          
+                    <td> 
+                                                                
+                    </td>
+                    <td style="text-align: center;"> 
+                                                        
+                    </td>
+                    <td style="text-align: center;">    
+                                                                                    
+                    </td>
+                    <td style="text-align: center;">
+
+                    </td>
+                </tr>                                                    
+            </tbody>
+            
+        </table>
+    </div>                    
+</div>
