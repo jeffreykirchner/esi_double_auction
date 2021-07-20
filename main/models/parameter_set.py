@@ -16,7 +16,7 @@ class ParameterSet(models.Model):
     session parameters
     '''
     number_of_buyers = models.IntegerField(default=1, verbose_name="Number of buyers")       #number of buyers in the session
-    number_of_sellers = models.IntegerField(default=1, verbose_name="Number of sellers")     #number of buyers in the session
+    number_of_sellers = models.IntegerField(default=1, verbose_name="Number of sellers")     #number of sellers in the session
 
     timestamp = models.DateTimeField(auto_now_add= True)
     updated= models.DateTimeField(auto_now= True)
