@@ -49,7 +49,7 @@ var app = Vue.createApp({
                     show_parameters:false,
                     bid_offer_id:"",
                     bid_offer_amount:"",
-                    bid_offer_message:"",
+                    bid_offer_message:"",              //message shown in input card under bid/offer input
                 }},
     methods: {
 

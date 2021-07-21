@@ -27,6 +27,7 @@ reset_experiment:function(){
 takeResetExperiment(messageData){
     app.takeGetSession(messageData);
     app.$data.current_visible_period = 1;
+    app.$data.bid_offer_message = "";
 },
 
 /**advance to next period
