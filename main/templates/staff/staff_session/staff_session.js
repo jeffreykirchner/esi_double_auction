@@ -99,7 +99,10 @@ var app = Vue.createApp({
                     break;   
                 case "submit_bid_offer":
                     app.take_submit_bid_offer(messageData); 
-                    break;           
+                    break;       
+                case "undo_bid_offer":
+                    app.take_undo_bid_offer(messageData);
+                    break;
             }
 
             app.working = false;

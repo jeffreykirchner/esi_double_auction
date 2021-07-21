@@ -303,6 +303,20 @@ class StaffSessionConsumer(SocketConsumerMixin):
         # Send message to WebSocket
         await self.send(text_data=json.dumps({'message': message}, cls=DjangoJSONEncoder))
 
+    async def undo_bid_offer(self, event):
+        '''
+        undo last bid or offer
+        '''
+                #update subject count
+        message_data = {}
+        message_data["result"] = await take_undo_bid_offer(event["message_text"])
+        
+        message = {}
+        message["messageType"] = event["type"]
+        message["messageData"] = message_data
+
+        # Send message to WebSocket
+        await self.send(text_data=json.dumps({'message': message}, cls=DjangoJSONEncoder))
 #local sync_to_asyncs
 @sync_to_async
 def take_update_session_form(data):
@@ -793,7 +807,7 @@ def take_submit_bid_offer(data):
         else:
             #create bid
             session_subject_period = session.session_subjects \
-                                            .get(id_number=buyer_seller_id_2, subject_type=SubjectType.SELLER) \
+                                            .get(id_number=buyer_seller_id_2, subject_type=SubjectType.BUYER) \
                                             .get_session_subject_period(session_period)
             bid = SessionPeriodTradeBid()
 
@@ -850,4 +864,70 @@ def take_submit_bid_offer(data):
 
     return {"status" : "fail", "message" : "Invalid Message"}
 
+@sync_to_async
+def take_undo_bid_offer(data):
+    '''
+    take undo bid or offer
+    '''   
 
+    logger = logging.getLogger(__name__) 
+    logger.info(f"Take undo bid or offer: {data}")
+
+    session_id = data["sessionID"]
+
+    session = Session.objects.get(id=session_id)
+    session_period = session.session_periods.get(period_number=session.current_period)
+    session_period_trade = session_period.session_period_trades_a.get(trade_number=session_period.current_trade_number)
+
+    best_bid = session_period_trade.get_best_bid()
+    best_offer = session_period_trade.get_best_offer()
+
+    message = "Nothing to undo."
+
+    if not best_bid and not best_offer and session_period_trade.trade_number > 1:
+        # no bids for offers for this trade and this is not first trade
+
+        #remove current trade
+        session_period.current_trade_number -= 1
+        session_period.save()
+
+        session_period_trade.delete()
+
+        #open previous trade and its best bid and offer
+        session_period_trade = session_period.session_period_trades_a.get(trade_number=session_period.current_trade_number)
+        session_period_trade.trade_complete = False
+        session_period_trade.save()
+
+        session_period_trade.buyer.current_unit_number -= 1
+        session_period_trade.buyer.save()
+
+        session_period_trade.seller.current_unit_number -= 1
+        session_period_trade.seller.save()
+
+        best_bid = session_period_trade.get_best_bid()
+        best_offer = session_period_trade.get_best_offer()
+
+    if best_bid or best_offer:
+        if best_bid and not best_offer:
+            #no offers, remove best bid
+            message = f"Buyer {best_bid.session_subject_period.session_subject.id_number}'s bid removed."
+            best_bid.delete()
+        elif best_offer and not best_bid:
+            #no bids, remove best offer
+            message = f"Seller {best_offer.session_subject_period.session_subject.id_number}'s offer removed."
+            best_offer.delete()
+        elif best_bid.timestamp > best_offer.timestamp:
+            #bid is newer, remove it
+            message = f"Buyer {best_bid.session_subject_period.session_subject.id_number}'s bid removed."
+            best_bid.delete()
+        else:
+            #offer is newer, remove it
+            message = f"Seller {best_offer.session_subject_period.session_subject.id_number}'s offer removed."
+            best_offer.delete()
+
+    return {"current_best_offer" : i.get_bid_offer_string() if (i:=session_period.get_current_best_offer()) else "---",
+            "current_best_bid" : i.get_bid_offer_string() if (i:=session_period.get_current_best_bid()) else "---",
+            "trade_list" : session_period.get_trade_list_json(),  
+            "message" : message,          
+            "bid_list" : session_period.get_bid_list_json(),
+            "offer_list" : session_period.get_offer_list_json(),}

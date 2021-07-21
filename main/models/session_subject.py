@@ -15,7 +15,7 @@ class SessionSubject(models.Model):
     '''
     session = models.ForeignKey(Session, on_delete=models.CASCADE, related_name="session_subjects")
 
-    id_number = models.IntegerField(verbose_name='ID Number in Period')                                #local id number in the period
+    id_number = models.IntegerField(verbose_name='ID Number in Period')                                             #local id number in the period
     subject_type = models.CharField(max_length=100, choices=SubjectType.choices, default=SubjectType.BUYER)         #subject type of subject
 
     login_key = models.UUIDField(default=uuid.uuid4, editable=False, verbose_name = 'Login Key')                        #log in key used to ID subject for URL login

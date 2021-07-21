@@ -5,13 +5,10 @@ session period model
 #import logging
 
 from django.db import models
-from django.core.serializers.json import DjangoJSONEncoder
-from django.core.serializers import serialize
 
 from . import Session
 
 import main
-import json
 
 class SessionPeriod(models.Model):
     '''
