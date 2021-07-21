@@ -44,7 +44,7 @@
     </div>
     <div class="card-body" v-show="show_parameters"> 
 
-        <!-- change count -->
+        <!-- period count -->
         <div class="row mb-2 border-bottom pb-2">
             <div class="col-md text-center">
                 <label for="period_count">Number of Periods</label>
@@ -68,6 +68,7 @@
                     </div>
                 </div>
             </div>
+            <!-- period visible -->
             <div class="col-md text-center">
                 <label for="period_count">Period Visible</label>
                 <div class = "d-flex justify-content-center">
@@ -83,7 +84,7 @@
                                style="background-color: white;"
                                v-model="current_visible_period">                   
                         <button class="btn btn-outline-secondary"
-                                v-bind:disabled="reconnecting || working || current_visible_period == session.parameter_set.number_of_periods"
+                                v-bind:disabled="session.started || reconnecting || working || current_visible_period == session.parameter_set.number_of_periods"
                                 v-on:click="updateCurrentPeriod(1)"
                                 type="button"><i class="fas fa-angle-double-right"></i></button>
                     </div>

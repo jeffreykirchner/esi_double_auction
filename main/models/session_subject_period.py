@@ -43,7 +43,15 @@ class SessionSubjectPeriod(models.Model):
         '''
         return the ParameterSetPeriodSubjectValuecost at index
         '''
-        return self.parameter_set_period_subject.get_value_cost_list()[index]
+        if index >= 4:
+            return None
+        
+        value_cost = self.parameter_set_period_subject.get_value_cost_list()[index]
+
+        if not value_cost.enabled:
+            return None
+
+        return value_cost
 
     #return json object of class
     def json(self):

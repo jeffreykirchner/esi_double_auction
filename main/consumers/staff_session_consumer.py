@@ -766,14 +766,29 @@ def take_submit_bid_offer(data):
                 message = f"Error: Bid must be greater than ${best_bid.amount}."
                 logger.warning(f'take_submit_bid_offer: {message}')
                 status = "fail"
-
-    if status == "success": 
+    
+    #check that units remain for trading
+    if status == "success":
+        label = ""
         if buyer_seller_id_1 == "s":
-            # create offer
             session_subject_period = session.session_subjects \
                                             .get(id_number=buyer_seller_id_2, subject_type=SubjectType.SELLER) \
                                             .get_session_subject_period(session_period)
+            label = "Seller"
+        else:
+            session_subject_period = session.session_subjects \
+                                            .get(id_number=buyer_seller_id_2, subject_type=SubjectType.BUYER) \
+                                            .get_session_subject_period(session_period)
+            label = "Buyer"
+        
+        if not session_subject_period.get_current_value_cost():
+            message = f"Error: {label} {session_subject_period.session_subject.id_number} has no units available."
+            logger.warning(f'take_submit_bid_offer: {message}')
+            status = "fail"
 
+    if status == "success": 
+        if buyer_seller_id_1 == "s":
+            # create offer           
             offer = SessionPeriodTradeOffer()
 
             offer.session_period_trade = session_period_trade
@@ -828,9 +843,6 @@ def take_submit_bid_offer(data):
                     "offer_list" : session_period.get_offer_list_json()}
         else:
             #create bid
-            session_subject_period = session.session_subjects \
-                                            .get(id_number=buyer_seller_id_2, subject_type=SubjectType.BUYER) \
-                                            .get_session_subject_period(session_period)
             bid = SessionPeriodTradeBid()
 
             bid.session_period_trade = session_period_trade
