@@ -733,26 +733,48 @@ def take_submit_bid_offer(data):
 
     logger.info(f'take_submit_bid_offer: buyer_seller_id_1 {buyer_seller_id_1}, buyer_seller_id_2 {buyer_seller_id_2}')
 
-    #amount
+    #check amount is a decimal value
     if status == "success": 
         try:
             bid_offer_amount = Decimal(bid_offer_amount)
+            bid_offer_amount = round(bid_offer_amount, 2)
         except DecimalException: 
             status = "fail"       
             message = f"Invalid amount, not a decimal."
+            logger.warning(f'take_submit_bid_offer: {message}')
     
-    if status == "fail":
-        logger.warning(f'take_submit_bid_offer: {message}')
-    else:
-        if buyer_seller_id_1 == "s" or buyer_seller_id_1 == "S":
+    #check that bid and offer within valid range
+    if status == "success":
+        if bid_offer_amount <= 0 or bid_offer_amount > 99:
+            status = "fail"       
+            message = f"Error: 0 < Amount < 100 . "
+            logger.warning(f'take_submit_bid_offer: {message}')
+
+    best_bid = session_period_trade.get_best_bid()
+    best_offer = session_period_trade.get_best_offer()
+    buyer_seller_id_1 = buyer_seller_id_1.lower()
+
+    #check for improvment
+    if status == "success":
+        if buyer_seller_id_1 == "s":
+            if best_offer and bid_offer_amount >= best_offer.amount:
+                message = f"Error: Offer must be lower than ${best_offer.amount}."
+                logger.warning(f'take_submit_bid_offer: {message}')
+                status = "fail"
+        else:
+             if best_bid and bid_offer_amount <= best_bid.amount:
+                message = f"Error: Bid must be greater than ${best_bid.amount}."
+                logger.warning(f'take_submit_bid_offer: {message}')
+                status = "fail"
+
+    if status == "success": 
+        if buyer_seller_id_1 == "s":
             # create offer
             session_subject_period = session.session_subjects \
                                             .get(id_number=buyer_seller_id_2, subject_type=SubjectType.SELLER) \
                                             .get_session_subject_period(session_period)
 
             offer = SessionPeriodTradeOffer()
-
-            best_bid = session_period_trade.get_best_bid()
 
             offer.session_period_trade = session_period_trade
             offer.cost = session_subject_period.get_current_value_cost()
@@ -811,8 +833,6 @@ def take_submit_bid_offer(data):
                                             .get_session_subject_period(session_period)
             bid = SessionPeriodTradeBid()
 
-            best_offer = session_period_trade.get_best_offer()
-
             bid.session_period_trade = session_period_trade
             bid.value = session_subject_period.get_current_value_cost()
             bid.session_subject_period = session_subject_period
@@ -862,7 +882,7 @@ def take_submit_bid_offer(data):
                     "trade_list" : session_period.get_trade_list_json(),            
                     "bid_list" : session_period.get_bid_list_json()}
 
-    return {"status" : "fail", "message" : "Invalid Message"}
+    return {"status" : "fail", "message" : message}
 
 @sync_to_async
 def take_undo_bid_offer(data):
