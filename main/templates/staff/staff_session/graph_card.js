@@ -7,6 +7,8 @@ update_sdgraph_canvas:function(){
     el.attr('height', parseInt(el.css('height')));
 
     period = app.$data.session.parameter_set.periods[app.$data.current_visible_period-1];
+    period_result = app.$data.session.session_periods[app.$data.current_visible_period-1];
+
     value_list = period.demand;
     cost_list = period.supply;
 
@@ -28,12 +30,6 @@ update_sdgraph_canvas:function(){
         app.draw_sd_line("sd_graph", marginY, marginX, marginTopAndRight, 0, y_max, 0, x_max, 3, cost_list, "crimson");
     }
 
-    //trade line
-    if (app.$data.show_trade_line_graph)
-    {
-
-    }
-
     //equilibrium
     if (app.$data.show_equilibrium_price_graph)
     {
@@ -44,6 +40,12 @@ update_sdgraph_canvas:function(){
     if (app.$data.session.started && app.$data.show_bids_offers_graph)
     {
         app.draw_bids_and_offers("sd_graph", marginY, marginX, marginTopAndRight, 0, y_max, 0, x_max, period);
+    }
+
+    //trade line
+    if (app.$data.show_trade_line_graph)
+    {
+        app.draw_trade_line("sd_graph", marginY, marginX, marginTopAndRight, 0, y_max, 0, x_max, period_result);
     }
 
     //key
@@ -444,6 +446,64 @@ draw_key:function(chartID, marginTopAndRight){
     ctx.textAlign = "left";
     ctx.fillText(session_period.current_best_bid, x, y + 2);
     
+    ctx.restore();
+},
+
+/**draw line connecting all the trades
+ * @param chartID {string} dom ID name of canvas
+ * @param marginY {int} margin between Y axis and vertial edge of graph
+ * @param marginX {int} margin between X axis and horizontal edge of graph
+ * @param marginTopAndRight {int} margin between top and rights side of canvas and grap
+ * @param yMin {int} starting value on Y axis
+ * @param yMax {int} ending value on Y axis
+ * @param xMin {int} starting value on X axis
+ * @param xMax {int} ending value on X axis
+ * @param period {int} period from 1 to N of which equilibrium lines will be drawn
+*/
+draw_trade_line:function(chartID, marginY, marginX, marginTopAndRight, yMin, yMax, xMin, xMax, period)
+{
+    if (period == null)
+        return;
+
+    var canvas = document.getElementById(chartID),
+        ctx = canvas.getContext('2d');
+
+    var w =  ctx.canvas.width;
+    var h = ctx.canvas.height;
+    
+    lineWidth = 3;
+
+    ctx.save();
+
+    ctx.strokeStyle = "dimgrey";
+    ctx.lineWidth = lineWidth;
+    ctx.lineCap = "round";
+    ctx.font="12px Arial";
+    ctx.fillStyle = "black";
+    ctx.textAlign = "center";
+
+    ctx.translate(marginY, h-marginX);
+
+    for(i=1; i< period.trade_list.length; i++)
+    {
+        trade1 = period.trade_list[i-1];
+        trade2 = period.trade_list[i];
+
+        x1 = app.convertToX(i-1, xMax, xMin, w-marginY-marginTopAndRight, lineWidth);
+        y1 = app.convertToY(parseFloat(trade1.trade_price), yMax, yMin, h-marginX-marginTopAndRight, lineWidth);
+
+        x2 = app.convertToX(i, xMax, xMin, w-marginY-marginTopAndRight, lineWidth);
+        y2 = app.convertToY(parseFloat(trade2.trade_price), yMax, yMin, h-marginX-marginTopAndRight, lineWidth);
+
+        x3 = app.convertToX(i+1, xMax, xMin, w-marginY-marginTopAndRight, lineWidth);
+
+        ctx.beginPath();
+        ctx.moveTo((x1+x2)/2, y1);
+        ctx.lineTo((x2+x3)/2, y2);
+
+        ctx.stroke();
+    }
+
     ctx.restore();
 },
 
