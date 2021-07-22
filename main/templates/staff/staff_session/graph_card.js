@@ -19,17 +19,29 @@ update_sdgraph_canvas:function(){
 
     app.draw_axis("sd_graph", marginY, marginX, marginTopAndRight, 0, y_max, y_max, 0, x_max, x_max, "Price ($)", "Units Traded");
 
-    //supply
-    app.draw_sd_line("sd_graph", marginY, marginX, marginTopAndRight, 0, y_max, 0, x_max, 3, value_list, "cornflowerblue");
+    if (app.$data.show_supply_demand_graph)
+    {
+        //supply
+        app.draw_sd_line("sd_graph", marginY, marginX, marginTopAndRight, 0, y_max, 0, x_max, 3, value_list, "cornflowerblue");
 
-    //demand
-    app.draw_sd_line("sd_graph", marginY, marginX, marginTopAndRight, 0, y_max, 0, x_max, 3, cost_list, "crimson");
+        //demand
+        app.draw_sd_line("sd_graph", marginY, marginX, marginTopAndRight, 0, y_max, 0, x_max, 3, cost_list, "crimson");
+    }
+
+    //trade line
+    if (app.$data.show_trade_line_graph)
+    {
+
+    }
 
     //equilibrium
-    app.draw_eq_lines("sd_graph", marginY, marginX, marginTopAndRight, 0, y_max, 0, x_max, period);
+    if (app.$data.show_equilibrium_price_graph)
+    {
+        app.draw_eq_lines("sd_graph", marginY, marginX, marginTopAndRight, 0, y_max, 0, x_max, period);
+    }
 
     //bids and offers
-    if (app.$data.session.started)
+    if (app.$data.session.started && app.$data.show_bids_offers_graph)
     {
         app.draw_bids_and_offers("sd_graph", marginY, marginX, marginTopAndRight, 0, y_max, 0, x_max, period);
     }
@@ -474,4 +486,11 @@ convertToY:function(value, maxValue, minValue, canvasHeight, markerHeight){
     if(value>maxValue) value=maxValue;
 
     return(-1 * tempT * value - markerHeight/2)
+},
+
+/**refresh graph when display toggles are pressed
+ */
+graph_options_changed:function()
+{
+    app.update_sdgraph_canvas();
 },

@@ -7,12 +7,40 @@
         </span>
         
     </div>
-    <div class="card-body"> 
-        <canvas key="sd_graph" id="sd_graph" style="border-style: solid;border-width: 1px;"></canvas>
+    <div class="card-body">
         
+        <!-- graph -->
         <div class="row">
             <div class="col">
-                
+                <canvas key="sd_graph" id="sd_graph" style="border-style: solid;border-width: 1px;"></canvas>
+            </div>
+        </div>
+
+        <!-- control -->
+        <div class="row">
+            <div class="col-md">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="bids_offers_graph" v-model="show_bids_offers_graph" v-on:change="graph_options_changed()">
+                    <label class="form-check-label" for="equilibrium_price">Bids / Offers</label>
+                </div>
+            </div>
+            <div class="col-md">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="supply_demand_graph" v-model="show_supply_demand_graph" v-on:change="graph_options_changed()">
+                    <label class="form-check-label" for="supply_demand_graph">Supply / Demand</label>
+                </div>
+            </div>
+            <div class="col-md">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="equilibrium_price_graph" v-model="show_equilibrium_price_graph" v-on:change="graph_options_changed()">
+                    <label class="form-check-label" for="equilibrium_price_graph">Equilibrium Price</label>
+                </div>
+            </div>
+            <div class="col-md">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="trade_line_graph" v-model="show_trade_line_graph" v-on:change="graph_options_changed()">
+                    <label class="form-check-label" for="trade_line_graph">Trade Line</label>
+                </div>
             </div>
         </div>
         

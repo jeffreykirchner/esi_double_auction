@@ -50,6 +50,10 @@ var app = Vue.createApp({
                     bid_offer_id:"",
                     bid_offer_amount:"",
                     bid_offer_message:"",              //message shown in input card under bid/offer input
+                    show_bids_offers_graph : true,     //elements of graph to be shown
+                    show_supply_demand_graph : true,
+                    show_equilibrium_price_graph : true,
+                    show_trade_line_graph : true,
                 }},
     methods: {
 
