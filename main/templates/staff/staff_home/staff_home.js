@@ -71,6 +71,7 @@ var app = Vue.createApp({
             //process list of sessions
 
             app.sessions = messageData.sessions;
+            
         },
 
         sendDeleteSession(id){

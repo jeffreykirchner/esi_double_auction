@@ -11,6 +11,10 @@ start_experiment:function(){
 takeStartExperiment(messageData){
     app.takeGetSession(messageData);
     app.$data.current_visible_period = 1;
+    app.$data.show_bids_offers_graph = true;
+    app.$data.show_supply_demand_graph = false;
+    app.$data.show_equilibrium_price_graph = false;
+    app.$data.show_trade_line_graph = false;
 },
 
 /**reset experiment, remove all bids, asks and trades

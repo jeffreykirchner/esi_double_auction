@@ -50,10 +50,10 @@ var app = Vue.createApp({
                     bid_offer_id:"",
                     bid_offer_amount:"",
                     bid_offer_message:"",              //message shown in input card under bid/offer input
-                    show_bids_offers_graph : true,     //elements of graph to be shown
-                    show_supply_demand_graph : true,
-                    show_equilibrium_price_graph : true,
-                    show_trade_line_graph : true,
+                    show_bids_offers_graph : false,     //elements of graph to be shown
+                    show_supply_demand_graph : false,
+                    show_equilibrium_price_graph : false,
+                    show_trade_line_graph : false,
                 }},
     methods: {
 
@@ -136,10 +136,20 @@ var app = Vue.createApp({
             if(app.$data.session.started)
             {
                 app.$data.show_parameters = false;
+
+                app.$data.show_bids_offers_graph = true;
+                app.$data.show_supply_demand_graph = false;
+                app.$data.show_equilibrium_price_graph = false;
+                app.$data.show_trade_line_graph = false;
             }
             else
             {
                 app.$data.show_parameters = true;
+
+                app.$data.show_bids_offers_graph = false;
+                app.$data.show_supply_demand_graph = true;
+                app.$data.show_equilibrium_price_graph = true;
+                app.$data.show_trade_line_graph = false;
             }
         },
 
