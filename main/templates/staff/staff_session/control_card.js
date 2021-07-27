@@ -11,12 +11,15 @@ start_experiment:function(){
 takeStartExperiment(messageData){
     app.takeGetSession(messageData);
     app.$data.current_visible_period = 1;
-    
 },
 
 /**reset experiment, remove all bids, asks and trades
 */
 reset_experiment:function(){
+    if (!confirm('Reset session? All bids and offers will be removed.')) {
+        return;
+      }
+
     app.$data.working = true;
     app.sendMessage("reset_experiment", {"sessionID" : app.$data.sessionID});
 },
