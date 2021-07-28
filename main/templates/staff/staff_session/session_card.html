@@ -15,7 +15,7 @@
                 {{session_form.title.label}}:
             </div>
             <div class="col-md-8">
-                <span v-html="session.title"></span>
+                [[session.title]]
             </div>
         </div>
         <div class="row">
@@ -23,7 +23,7 @@
                 Run Date:
             </div>
             <div class="col-md-8">
-                <span v-html="session.start_date"></span>
+                [[session.start_date]]
             </div>
         </div>                    
         <div class="row">
@@ -31,7 +31,7 @@
                 Current Period:
             </div>
             <div class="col-md-8">
-                <span v-html="session.current_period"></span>
+                [[session.current_period]] / [[session.parameter_set.number_of_periods]]
             </div>
         </div>
 

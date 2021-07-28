@@ -18,7 +18,7 @@ var app = Vue.createApp({
                         parameter_set : {
                             number_of_buyers : 0,
                             number_of_sellers : 0,
-                            number_of_periods : 0,
+                            number_of_periods : 1,
                             periods : [ {
                                 period_number : 1,
                                 price_cap : "0.00",
@@ -54,6 +54,7 @@ var app = Vue.createApp({
                     show_supply_demand_graph : false,
                     show_equilibrium_price_graph : false,
                     show_trade_line_graph : false,
+                    move_to_next_period_text : 'Move to next period <i class="fas fa-fast-forward"></i>',
                 }},
     methods: {
 
@@ -99,7 +100,7 @@ var app = Vue.createApp({
                     app.takeResetExperiment(messageData);
                     break;
                 case "next_period":
-                    app.takeNextExperiment(messageData);
+                    app.takeNextPeriod(messageData);
                     break;   
                 case "submit_bid_offer":
                     app.take_submit_bid_offer(messageData); 

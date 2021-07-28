@@ -147,6 +147,11 @@ class ParameterSet(models.Model):
         else:
             return target_period.from_dict(source_period_json, False, True, False)
 
+    def get_number_of_periods(self):
+        '''
+        return the number of periods
+        '''
+        return self.parameter_set_periods.all().count()
 
     def json(self):
         '''
@@ -155,7 +160,7 @@ class ParameterSet(models.Model):
         return{
 
             "id" : self.id,
-            "number_of_periods" : self.parameter_set_periods.all().count(),
+            "number_of_periods" : self.get_number_of_periods(),
             "number_of_buyers" : self.number_of_buyers,
             "number_of_sellers" : self.number_of_sellers,
             "periods" : [p.json()  for p in self.parameter_set_periods.all()],

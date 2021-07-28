@@ -35,6 +35,7 @@ class Session(models.Model):
 
     started =  models.BooleanField(default=False)                                #starts session and filll in session
     current_period = models.IntegerField(default=0)                              #current period of the session
+    finished = models.BooleanField(default=False)                                #true after all session periods are complete
 
     invitations_sent = models.BooleanField(default=False)                        #true once invititations have been sent to subjects
     invitation_text =  models.CharField(max_length=10000, default="")            #text sent to subjects in experiment invititation
@@ -151,6 +152,7 @@ class Session(models.Model):
             "start_date":self.get_start_date_string(),
             "started":self.started,
             "current_period":self.current_period,
+            "finished":self.finished,
             "parameter_set":self.parameter_set.json(),
             "session_periods":[i.json() for i in self.session_periods.all()]
         }

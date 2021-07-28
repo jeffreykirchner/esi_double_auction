@@ -42,7 +42,7 @@
                         v-on:click = "next_period()"
                         title="Move to next period"
                         v-bind:disabled="reconnecting || working || session.started===false">
-                    Move to next period <i class="fas fa-fast-forward"></i>
+                    <span v-html="move_to_next_period_text"></span>
                 </button>
             </div>
         </div>

@@ -276,8 +276,7 @@ class StaffSessionConsumer(SocketConsumerMixin):
         '''
         #update subject count
         message_data = {}
-        message_data["status"] = await take_reset_experiment(event["message_text"])
-        message_data["session"] = await get_session(event["message_text"]["sessionID"])
+        message_data["data"] = await take_next_period(event["message_text"])
 
         message = {}
         message["messageType"] = event["type"]
@@ -671,9 +670,18 @@ def take_next_period(data):
     session_id = data["sessionID"]
     session = Session.objects.get(id=session_id)
 
+    if session.current_period == session.parameter_set.get_number_of_periods():
+        session.finished = True
+    else:
+        session.current_period += 1
+
+    session.save()
+
     status = "success"
     
-    return {"status" : status}
+    return {"status" : status,
+            "current_period" : session.current_period,
+            "finished" : session.finished}
 
 @sync_to_async
 def take_submit_bid_offer(data):
