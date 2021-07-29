@@ -648,6 +648,7 @@ def take_reset_experiment(data):
 
     if session.started:
         session.started = False
+        session.finished = False
         session.current_period = 1
 
         session.save()

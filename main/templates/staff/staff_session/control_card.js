@@ -1,6 +1,6 @@
 /**start the experiment
 */
-start_experiment:function(){
+start_experiment(){
     app.$data.working = true;
     app.sendMessage("start_experiment", {"sessionID" : app.$data.sessionID});
 },
@@ -19,7 +19,7 @@ takeStartExperiment(messageData){
 
 /**reset experiment, remove all bids, asks and trades
 */
-reset_experiment:function(){
+reset_experiment(){
     if (!confirm('Reset session? All bids and offers will be removed.')) {
         return;
     }
@@ -39,7 +39,7 @@ takeResetExperiment(messageData){
 
 /**advance to next period
 */
-next_period:function(){
+next_period(){
     if (app.$data.session.current_period == app.$data.session.parameter_set.number_of_periods)
     {
         if (!confirm('Complete experiment?')) {
@@ -68,8 +68,11 @@ takeNextPeriod(messageData){
     app.$data.current_visible_period = app.$data.session.current_period;
     app.$data.bid_offer_message = "";
 
-    if(app.$data.session.current_period == app.$data.session.parameter_set.number_of_periods)
+    app.updateMoveOnButtonText();
+
+    if(app.$data.session.finished)
     {
-        app.$data.move_to_next_period_text = 'Complete experiment <i class="fas fa-flag-checkered"></i>';
+        app.$data.current_visible_period = 1;
+        app.$data.session.current_period = 1;
     }
 },

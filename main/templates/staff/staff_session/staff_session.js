@@ -9,6 +9,7 @@ var app = Vue.createApp({
     data() {return {chatSocket : "",
                     reconnecting : true,
                     working : false,
+                    first_load_done : false,          //true after software is loaded for the first time
                     sessionID : {{session.id}},
                     session : {
                         current_period : 1,
@@ -54,7 +55,7 @@ var app = Vue.createApp({
                     show_supply_demand_graph : false,
                     show_equilibrium_price_graph : false,
                     show_trade_line_graph : false,
-                    move_to_next_period_text : 'Move to next period <i class="fas fa-fast-forward"></i>',
+                    move_to_next_period_text : '---',
                 }},
     methods: {
 
@@ -68,11 +69,12 @@ var app = Vue.createApp({
         *    @param data {json} incoming data from server, contains message and message type
         */
         takeMessage(data) {
+            app.first_load_done = true;
 
-           console.log(data);
+            console.log(data);
 
-           messageType = data.message.messageType;
-           messageData = data.message.messageData;
+            messageType = data.message.messageType;
+            messageData = data.message.messageData;
 
             switch(messageType) {                
                 case "get_session":
@@ -142,6 +144,16 @@ var app = Vue.createApp({
                 app.$data.show_supply_demand_graph = false;
                 app.$data.show_equilibrium_price_graph = false;
                 app.$data.show_trade_line_graph = false;
+
+                if(app.$data.session.finished)
+                {
+                    app.$data.current_visible_period = 1;
+                    app.$data.session.current_period = 1;
+                }
+                else
+                {
+                    app.$data.current_visible_period = app.$data.session.current_period;
+                }
             }
             else
             {
@@ -151,6 +163,28 @@ var app = Vue.createApp({
                 app.$data.show_supply_demand_graph = true;
                 app.$data.show_equilibrium_price_graph = true;
                 app.$data.show_trade_line_graph = false;
+            }
+
+            app.updateMoveOnButtonText();
+        },
+
+        /**update text of move on button based on current state
+         */
+        updateMoveOnButtonText(){
+            if(app.$data.session.finished)
+            {
+                app.$data.move_to_next_period_text = '** Experiment complete **';
+            }
+            else if(app.$data.session.started)
+            {
+                if(app.$data.session.current_period == app.$data.session.parameter_set.number_of_periods)
+                {
+                    app.$data.move_to_next_period_text = 'Complete experiment <i class="fas fa-flag-checkered"></i>';
+                }
+                else
+                {
+                    app.$data.move_to_next_period_text = 'Move to next period <i class="fas fa-fast-forward"></i>';
+                }
             }
         },
 
@@ -191,10 +225,11 @@ var app = Vue.createApp({
         {%include "staff/staff_session/graph_card.js"%}
         {%include "staff/staff_session/control_card.js"%}
         {%include "staff/staff_session/input_card.js"%}
+        {%include "staff/staff_session/replay_card.js"%}
         
         /** clear form error messages
         */
-        clearMainFormErrors:function(){
+        clearMainFormErrors(){
             
             for(var item in app.$data.session)
             {
@@ -219,7 +254,7 @@ var app = Vue.createApp({
 
         /** display form error messages
         */
-        displayErrors:function(errors){
+        displayErrors(errors){
             for(var e in errors)
             {
                 $("#id_" + e).attr("class","form-control is-invalid")

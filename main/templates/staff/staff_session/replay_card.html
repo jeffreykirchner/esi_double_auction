@@ -1,0 +1,37 @@
+<div class="card" v-show="first_load_done && session.finished">                  
+    <div class="card-header">                
+        <span class="align-middle">Replay</span>       
+            
+        <span class="float-end">
+             
+        </span>
+        
+    </div>
+    <div class="card-body"> 
+        <!-- Set period to display -->
+        <div class="row">
+            <div class="col-md text-center">
+                <label for="period_count">Period Visible</label>
+                <div class = "d-flex justify-content-center">
+                    <div class="input-group w-50">
+                        <button class="btn btn-outline-secondary" 
+                                type="button" 
+                                v-bind:disabled="session.finished==false || reconnecting || current_visible_period <= 1"
+                                v-on:click="updateCurrentPeriodReplay(-1)"><i class="fas fa-angle-double-left"></i></button>
+                        <input type="number"
+                               id="period_visible"
+                               class="form-control text-center"
+                               disabled=true
+                               style="background-color: white;"
+                               v-model="current_visible_period">                   
+                        <button class="btn btn-outline-secondary"
+                                v-bind:disabled="session.finished==false || reconnecting || current_visible_period == session.parameter_set.number_of_periods"
+                                v-on:click="updateCurrentPeriodReplay(1)"
+                                type="button"><i class="fas fa-angle-double-right"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>                    
+</div> 

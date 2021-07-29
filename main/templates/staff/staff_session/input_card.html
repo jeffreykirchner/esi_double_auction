@@ -1,6 +1,6 @@
 {% load crispy_forms_tags %}
 
-<div class="card">                  
+<div class="card" v-show="first_load_done && session.finished == false && session.started">                  
     <div class="card-header">                
         <span class="align-middle">Input</span>       
             

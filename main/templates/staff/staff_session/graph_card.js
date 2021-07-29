@@ -316,6 +316,8 @@ draw_bids_and_offers:function(chartID, marginY, marginX, marginTopAndRight, yMin
     bids = app.$data.session.session_periods[current_period-1].bid_list;
     offers = app.$data.session.session_periods[current_period-1].offer_list;
 
+    max_carrot_width = w / 20;  //max width carrot can be
+
     //offers
     for(i=0; i<offers.length; i++)
     {
@@ -323,6 +325,8 @@ draw_bids_and_offers:function(chartID, marginY, marginX, marginTopAndRight, yMin
         x2 = app.convertToX(offers[i].session_period_trade__trade_number-1, xMax, xMin, w-marginY-marginTopAndRight, 0);
         
         width = (x1-x2) * 0.6;
+        width = Math.min(width, max_carrot_width);
+
         centerX=(x1+x2)/2
 
         y1 = app.convertToY(offers[i].amount, yMax, yMin, h-marginX-marginTopAndRight, 0);
@@ -337,6 +341,8 @@ draw_bids_and_offers:function(chartID, marginY, marginX, marginTopAndRight, yMin
         x2 = app.convertToX(bids[i].session_period_trade__trade_number-1, xMax, xMin, w-marginY-marginTopAndRight, 0);
         
         width = (x1 - x2) * 0.6;
+        width = Math.min(width, max_carrot_width);
+
         centerX=(x1 + x2) / 2;
 
         y1 = app.convertToY(bids[i].amount, yMax, yMin, h-marginX-marginTopAndRight, 0);
@@ -403,7 +409,7 @@ draw_key:function(chartID, marginTopAndRight){
 
     session_period = app.$data.session.session_periods[app.$data.session.current_period-1];
 
-    base_width = 1081;
+    base_width = 1369;
     base_height = 600;
 
     w_fraction = ctx.canvas.width / base_width;
@@ -411,7 +417,7 @@ draw_key:function(chartID, marginTopAndRight){
     
     ctx.save();
 
-    ctx.translate(840 * w_fraction, marginTopAndRight);
+    ctx.translate(1129 * w_fraction, marginTopAndRight);
 
     ctx.beginPath();
     //ctx.rect(width*4, 10, width, height);
