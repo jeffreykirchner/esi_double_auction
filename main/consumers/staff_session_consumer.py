@@ -715,7 +715,7 @@ def take_submit_bid_offer(data):
         buyer_seller_id_1 = bid_offer_id[0]
     except IndexError: 
         status = "fail"       
-        message = "Invalid ID, missing s or b."
+        message = "Error: Invalid ID, missing s or b."
 
     logger.info(f'take_submit_bid_offer: buyer_seller_id_1 {buyer_seller_id_1}')
 
@@ -724,21 +724,21 @@ def take_submit_bid_offer(data):
            buyer_seller_id_1 != "b" and buyer_seller_id_1 != "B":
 
             status = "fail"       
-            message = "Invalid ID, missing s or b."
+            message = "Error: Invalid ID, missing s or b."
     
     if status == "success": 
         try:
             buyer_seller_id_2 = bid_offer_id[1:]
         except IndexError: 
             status = "fail"       
-            message = f"Invalid ID, incorrect number."
+            message = f"Error: Invalid ID, incorrect number."
     
     if status == "success": 
         try:
             buyer_seller_id_2 = int(buyer_seller_id_2)
         except ValueError: 
             status = "fail"       
-            message = f"Invalid ID, incorrect number."
+            message = f"Error: Invalid ID, incorrect number."
 
     logger.info(f'take_submit_bid_offer: buyer_seller_id_1 {buyer_seller_id_1}, buyer_seller_id_2 {buyer_seller_id_2}')
 
@@ -749,7 +749,7 @@ def take_submit_bid_offer(data):
             bid_offer_amount = round(bid_offer_amount, 2)
         except DecimalException: 
             status = "fail"       
-            message = f"Invalid amount, not a decimal."
+            message = f"Error: Invalid amount, not a decimal."
             logger.warning(f'take_submit_bid_offer: {message}')
     
     #check that bid and offer within valid range
@@ -761,7 +761,14 @@ def take_submit_bid_offer(data):
 
     best_bid = session_period_trade.get_best_bid()
     best_offer = session_period_trade.get_best_offer()
-    buyer_seller_id_1 = buyer_seller_id_1.lower()
+
+    if status == "success":
+        try:
+            buyer_seller_id_1 = buyer_seller_id_1.lower()
+        except TypeError: 
+            status = "fail"       
+            message = f"Error: Invalid ID, must be s or b."
+            logger.warning(f'take_submit_bid_offer: {message}')
 
     #check for improvment
     if status == "success":
@@ -773,6 +780,19 @@ def take_submit_bid_offer(data):
         else:
              if best_bid and bid_offer_amount <= best_bid.amount:
                 message = f"Error: Bid must be greater than ${best_bid.amount}."
+                logger.warning(f'take_submit_bid_offer: {message}')
+                status = "fail"
+    
+    #check for valid buyer or seller ID
+    if status == "success":
+        if buyer_seller_id_1 == "s":
+            if buyer_seller_id_2 > session.parameter_set.number_of_sellers:
+                message = f"Error: Seller {buyer_seller_id_2} does not exist."
+                logger.warning(f'take_submit_bid_offer: {message}')
+                status = "fail"
+        else:
+            if buyer_seller_id_2 > session.parameter_set.number_of_buyers:
+                message = f"Error: Buyer {buyer_seller_id_2} does not exist."
                 logger.warning(f'take_submit_bid_offer: {message}')
                 status = "fail"
     

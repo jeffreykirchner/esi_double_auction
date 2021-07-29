@@ -113,35 +113,6 @@ class Session(models.Model):
         '''
         return  self.start_date.strftime("%#m/%#d/%Y")
 
-    def send_invitations(self):
-        '''
-        send email invitations to subjects
-        '''
-        prm = Parameters.objects.first()
-        text = self.invitation_text
-
-        text = text.replace("[contact email]", prm.contactEmail)
-
-        return main.globals.send_mass_invitations(self.session_subjects.filter(soft_delete=False), self.invitation_text_subject, text)
-
-    def send_cancelation(self):
-        '''
-        send cancelation email to subjects
-        '''
-        prm = Parameters.objects.first()
-        text = self.cancelation_text
-
-        text = text.replace("[contact email]", prm.contactEmail)
-
-        return main.globals.send_mass_invitations(self.session_subjects.filter(soft_delete=False), self.cancelation_text_subject, text)
-
-    def complete(self):
-        '''
-        return true if session is complete
-        '''
-
-        return False
-
     def json(self):
         '''
         return json object of model
