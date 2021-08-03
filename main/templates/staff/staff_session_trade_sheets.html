@@ -63,59 +63,61 @@
                 Period {{period.id_number}}
             </div>
         </div>
-        <div class="row mt-0">
-            <div class = "col-2 h4 border mb-0 text-center align-self-center">
-                Unit
-            </div>
-            <div class = "col-3 h4 border mb-0 text-center">
-                Value
-            </div>
-            <div class = "col-3 h4 border mb-0 text-center">
-                Price Paid
-            </div>
-            <div class = "col-4 h4 border mb-0 text-center">
-                Profit on unit<br>
-                Value - Price Paid
-            </div>
-        </div>
 
-        {% for value in period.value_list %}
-            {%if value.enabled%}
-                <div class="row mt-0 mb-0 pt-0 pb-0">
-                    <div class = "col-2 h5 border pt-1 pb-1 mt-0 mb-0 text-center">
-                        
-                    </div>
-                    <div class = "col-3 h5 border pt-1 pb-1 mt-0 mb-0 text-center">
-                        {{value.value_cost}}
-                    </div>
-                    <div class = "col-3 h5 border pt-1 pb-1 mt-0 mb-0 text-center">
-                        
-                    </div>
-                    <div class = "col-4 h5 border  pt-1 pb-1 mt-0 mb-0 text-center">
-                        
-                    </div>
-                </div>
-            {%endif%}
-        {% endfor %}
+        <div class="row">
+            <div class="col">
+                <table class="table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Unit</th>
+                        <th scope="col">Value</th>
+                        <th scope="col">Price Paid</th>
+                        <th scope="col">Profit on unit<br>Value - Price Paid</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                        {% for value in period.value_list %}
+                            {%if value.enabled%}
+                                <tr>
+                                    <td>
 
-        <div class="row mt-0 mb-0 pt-0 pb-0">
-            <div class = "col-2 h5">
-                
+                                    </td>
+                                    <td>
+                                        {{value.value_cost}}
+                                    </td>
+                                    <td>
+                                        
+                                    </td>
+                                    <td>
+                                        
+                                    </td>
+                                </tr>
+                            {%endif%}
+                        {% endfor %}
+                    </tbody>
+                    <!-- <tfoot>
+                        <tr>
+                            <td>
+
+                            </td>
+                            <td>
+
+                            </td>
+                            <td>
+                                Period Profit:
+                            </td>
+                            <td>
+
+                            </td>
+                        </tr>
+                    </tfoot> -->
+                </table>
             </div>
-            <div class = "col-3 h5">
-               
-            </div>
-            <div class = "col-3 h5 border pt-1 pb-1 mt-0 mb-0 text-end">
-                Period Profit:
-            </div>
-            <div class = "col-4 h5 border  pt-1 pb-1 mt-0 mb-0">
-                
-            </div>
-        </div>
+        </div>        
     {% endfor %}
 
     <div class="row" style="page-break-after: always;">
-        <div class = "col h3">
+        <div class = "col">
             
         </div>
     </div>
