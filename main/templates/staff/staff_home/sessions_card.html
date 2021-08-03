@@ -24,18 +24,12 @@
                         <span v-html="titleSortButtonText" class="table_header"></span>
                     </button>
                 </th> 
-                <th scope="col" style="text-align: center;">
+                <th scope="col" class="text-center">
                     <button type="button" class="btn btn-outline-link btn-sm" v-on:click = "sortByDate()">
                         <span v-html="dateSortButtonText" class="table_header"></span>
                     </button>                             
-                </th>
-                <th scope="col" style="text-align: center;">
-                    Current Period
-                </th>
-                <th scope="col" style="text-align: center;">
-                    Treatment
-                </th>                                                      
-                <th scope="col" style="text-align: center;">
+                </th>                                                              
+                <th scope="col" class="text-center">
                     Control
                 </th>
             </thead>
@@ -45,18 +39,16 @@
                     <td> 
                         <a :href="'/staff-session/' + s.id + '/' "><span v-html="s.title"></span></a>                                        
                     </td>
-                    <td style="text-align: center;"> 
+                    <td class="text-center"> 
                         <span v-html="s.start_date"></span>                                 
                     </td>
-                    <td style="text-align: center;">    
-                        <span v-html="s.current_visible_period"></span>                                                             
-                    </td>
-                    <td style="text-align: center;">
-
-                    </td>
-                    <td style="text-align: center;">
-                        <button v-bind:id="'deleteSession' + s.id" type="button" class="btn btn-outline-danger btn-sm"
-                                v-on:click = "sendDeleteSession(s.id)" v-bind:disabled = "reconnecting || working">
+                    <td class="text-center">
+                        <button v-bind:id="'deleteSession' + s.id"
+                                type="button"
+                                class="btn btn-outline-danger btn-sm"
+                                v-on:click = "sendDeleteSession(s.id)"
+                                title = "Delete session and its data."
+                                v-bind:disabled = "reconnecting || working">
                             Delete <i class="fas fa-user-minus fa-xs"></i>  
                         </button>
                     </td>
