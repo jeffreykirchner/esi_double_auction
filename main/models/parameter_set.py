@@ -153,6 +153,42 @@ class ParameterSet(models.Model):
         '''
         return self.parameter_set_periods.all().count()
 
+    def get_buyer_list_json(self):
+        '''
+        return a json object of buyers
+        '''
+
+        buyer_list = []
+
+        for i in range(1, self.number_of_buyers+1):
+            buyer = {'id_number' : i,
+                     'periods' : []}
+
+            period_subject_list = main.models.ParameterSetPeriodSubject.objects.all() \
+                                                                  .filter(id_number=i) \
+                                                                  .filter(subject_type=main.globals.SubjectType.BUYER) \
+                                                                  .filter(parameter_set_period__parameter_set=self) \
+                                                                  .order_by('parameter_set_period__period_number')
+            
+            for period_subject in period_subject_list:
+                period = {'id_number':period_subject.parameter_set_period.period_number,
+                          'value_list':period_subject.get_value_cost_list()}
+                
+                buyer['periods'].append(period)
+
+            buyer_list.append(buyer)
+
+        return buyer_list
+
+    def get_seller_list_json(self):
+        '''
+        return a json object of buyers
+        '''
+
+        seller_list = []
+
+        return seller_list
+
     def json(self):
         '''
         return json object of model

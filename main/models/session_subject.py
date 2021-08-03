@@ -32,6 +32,7 @@ class SessionSubject(models.Model):
         
         verbose_name = 'Session Subject'
         verbose_name_plural = 'Session Subjects'
+        ordering = ['subject_type', 'id_number']
     
     def get_session_subject_period(self, session_period):
         '''

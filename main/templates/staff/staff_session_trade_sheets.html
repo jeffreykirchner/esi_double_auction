@@ -14,18 +14,112 @@
     canvas {
         background-color: white; 
         width: 100%;
-        height: 600px;
+        height
+        : 600px;
+    }
+
+    @media print {
+    h2 { 
+        page-break-before: always;
+    }
+    h3, h4 {
+        page-break-after: avoid;
+    }
+    pre, blockquote {
+        page-break-inside: avoid;
+    }
     }
 </style>
 
 {%endblock head%}
 
 {% block content %}
-<div class="row print-none">
+<div class="row d-print-none mb-4">
     <div class="col">
-        Trade printouts for session: {{session.title}}
+        Record sheet printouts for session: <a href="/staff-session/{{session.id}}/">{{session.title}}</a>
     </div>
 </div>
+
+{% for buyer in buyer_list %}
+    <div class="row">
+        <div class = "col-7 h2">
+            Name(s):
+        </div>
+        <div class = "col-5 h2">
+            Total Profit:
+        </div>
+    </div>
+
+    <div class="row mt-2">
+        <div class = "col h3">
+            Record sheet for Buyer {{buyer.id_number}}
+        </div>
+    </div>
+
+    {% for period in buyer.periods %}
+     
+        <div class="row mt-4">
+            <div class = "col h4">
+                Period {{period.id_number}}
+            </div>
+        </div>
+        <div class="row mt-0">
+            <div class = "col-2 h4 border mb-0 text-center align-self-center">
+                Unit
+            </div>
+            <div class = "col-3 h4 border mb-0 text-center">
+                Value
+            </div>
+            <div class = "col-3 h4 border mb-0 text-center">
+                Price Paid
+            </div>
+            <div class = "col-4 h4 border mb-0 text-center">
+                Profit on unit<br>
+                Value - Price Paid
+            </div>
+        </div>
+
+        {% for value in period.value_list %}
+            {%if value.enabled%}
+                <div class="row mt-0 mb-0 pt-0 pb-0">
+                    <div class = "col-2 h5 border pt-1 pb-1 mt-0 mb-0 text-center">
+                        
+                    </div>
+                    <div class = "col-3 h5 border pt-1 pb-1 mt-0 mb-0 text-center">
+                        {{value.value_cost}}
+                    </div>
+                    <div class = "col-3 h5 border pt-1 pb-1 mt-0 mb-0 text-center">
+                        
+                    </div>
+                    <div class = "col-4 h5 border  pt-1 pb-1 mt-0 mb-0 text-center">
+                        
+                    </div>
+                </div>
+            {%endif%}
+        {% endfor %}
+
+        <div class="row mt-0 mb-0 pt-0 pb-0">
+            <div class = "col-2 h5">
+                
+            </div>
+            <div class = "col-3 h5">
+               
+            </div>
+            <div class = "col-3 h5 border pt-1 pb-1 mt-0 mb-0 text-end">
+                Period Profit:
+            </div>
+            <div class = "col-4 h5 border  pt-1 pb-1 mt-0 mb-0">
+                
+            </div>
+        </div>
+    {% endfor %}
+
+    <div class="row" style="page-break-after: always;">
+        <div class = "col h3">
+            
+        </div>
+    </div>
+{% endfor %}
 
 
 {% endblock %}

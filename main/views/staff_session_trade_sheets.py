@@ -13,7 +13,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.http import JsonResponse
 
-from main.models import Parameters
+from main.models import Parameters, parameter_set
 from main.models import Session
 
 from main.forms import SessionForm
@@ -38,10 +38,14 @@ class StaffSessionTradeSheetsView(SingleObjectMixin, View):
 
         parameters = Parameters.objects.first()
         session = self.get_object()
+        
+        buyer_list = session.parameter_set.get_buyer_list_json()
 
         return render(request=request,
                       template_name=self.template_name,
                       context={"parameters" : parameters,
                                "id" : session.id,
-                               "session" : session})
+                               "session" : session,
+                               "buyer_list" : buyer_list,
+                               "parameter_set" : parameter_set})
     
