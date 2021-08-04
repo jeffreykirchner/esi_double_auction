@@ -40,6 +40,7 @@ class StaffSessionTradeSheetsView(SingleObjectMixin, View):
         session = self.get_object()
         
         buyer_list = session.parameter_set.get_buyer_list_json()
+        seller_list = session.parameter_set.get_seller_list_json()
 
         return render(request=request,
                       template_name=self.template_name,
@@ -47,5 +48,6 @@ class StaffSessionTradeSheetsView(SingleObjectMixin, View):
                                "id" : session.id,
                                "session" : session,
                                "buyer_list" : buyer_list,
+                               "seller_list" : seller_list,
                                "parameter_set" : parameter_set})
     

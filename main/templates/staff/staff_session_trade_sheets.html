@@ -1,5 +1,6 @@
 {%extends "base.html"%}
 {% load crispy_forms_tags %}
+{% load humanize %}
 
 {%block head%}
 <script type="text/javascript">
@@ -7,6 +8,11 @@
     $(document).ready(function(){
         {%include "staff/staff_session_trade_sheets/staff_session_trade_sheets.js"%}
     });
+
+    /** Add pleural suffix to integer
+     * @param integer to add pleural suffix to
+    */
+    function nth(n){return["st","nd","rd"][(((n<0?-n:n)+90)%100-10)%10-1]||"th"}
 
 </script>
 <style>
@@ -40,18 +46,19 @@
     </div>
 </div>
 
+<!-- buyer printouts -->
 {% for buyer in buyer_list %}
     <div class="row">
-        <div class = "col-7 h2">
+        <div class = "col-7 h5">
             Name(s):
         </div>
-        <div class = "col-5 h2">
-            Total Profit:
+        <div class = "col-5 h5">
+            Total Experiment Profit:
         </div>
     </div>
 
     <div class="row mt-2">
-        <div class = "col h3">
+        <div class = "col h5" style="color: cornflowerblue;">
             Record sheet for Buyer {{buyer.id_number}}
         </div>
     </div>
@@ -59,34 +66,42 @@
     {% for period in buyer.periods %}
      
         <div class="row mt-4">
-            <div class = "col h4">
+            <div class = "col h6 mb-0">
                 Period {{period.id_number}}
             </div>
         </div>
 
-        <div class="row">
+        <div class="row mt-0">
             <div class="col">
                 <table class="table">
                     <thead>
                       <tr>
-                        <th scope="col">Unit</th>
-                        <th scope="col">Value</th>
-                        <th scope="col">Price Paid</th>
-                        <th scope="col">Profit on unit<br>Value - Price Paid</th>
+                        <th scope="col" class="text-center">Unit</th>
+                        <th scope="col" class="text-center">Value</th>
+                        <th scope="col" class="text-center">-</th>
+                        <th scope="col" class="text-center">Price Paid</th>
+                        <th scope="col" class="text-center">=</th>
+                        <th scope="col" class="text-center">Profit From Trade</th>
                       </tr>
                     </thead>
                     <tbody>
                         {% for value in period.value_list %}
                             {%if value.enabled%}
                                 <tr>
-                                    <td>
-
+                                    <td class="text-center">
+                                        {{forloop.counter | ordinal}}
                                     </td>
-                                    <td>
+                                    <td class="text-center">
                                         {{value.value_cost}}
+                                    </td>
+                                    <td class="text-center">
+                                        -
                                     </td>
                                     <td>
                                         
+                                    </td>
+                                    <td class="text-center">
+                                        =
                                     </td>
                                     <td>
                                         
@@ -95,23 +110,15 @@
                             {%endif%}
                         {% endfor %}
                     </tbody>
-                    <!-- <tfoot>
-                        <tr>
-                            <td>
-
-                            </td>
-                            <td>
-
-                            </td>
-                            <td>
-                                Period Profit:
-                            </td>
-                            <td>
-
-                            </td>
-                        </tr>
-                    </tfoot> -->
                 </table>
+            </div>
+            <div class="row">
+                <div class="col-10 text-end h6">
+                    Total profit for period {{period.id_number}}:
+                </div>
+                <div class="col-2">
+
+                </div>
             </div>
         </div>        
     {% endfor %}
@@ -123,5 +130,88 @@
     </div>
 {% endfor %}
 
+<!-- seller printouts -->
+{% for seller in seller_list %}
+    <div class="row">
+        <div class = "col-7 h5">
+            Name(s):
+        </div>
+        <div class = "col-5 h5">
+            Total Experiment Profit:
+        </div>
+    </div>
+
+    <div class="row mt-2">
+        <div class = "col h5" style="color: crimson;">
+            Record sheet for Seller {{seller.id_number}}
+        </div>
+    </div>
+
+    {% for period in seller.periods %}
+     
+        <div class="row mt-4">
+            <div class = "col h6 mb-0">
+                Period {{period.id_number}}
+            </div>
+        </div>
+
+        <div class="row mt-0">
+            <div class="col">
+                <table class="table">
+                    <thead>
+                      <tr>
+                        <th scope="col" class="text-center">Unit</th>
+                        <th scope="col" class="text-center">Price Received</th>
+                        <th scope="col" class="text-center">-</th>
+                        <th scope="col" class="text-center">Cost</th>
+                        <th scope="col" class="text-center">=</th>
+                        <th scope="col" class="text-center">Profit From Trade</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                        {% for value in period.value_list %}
+                            {%if value.enabled%}
+                                <tr>
+                                    <td class="text-center">
+                                        {{forloop.counter | ordinal}}
+                                    </td>
+                                    <td class="text-center">
+                                        
+                                    </td>
+                                    <td class="text-center">
+                                        -
+                                    </td>
+                                    <td class="text-center">
+                                        {{value.value_cost}}
+                                    </td>
+                                    <td class="text-center">
+                                        =
+                                    </td>
+                                    <td>
+                                        
+                                    </td>
+                                </tr>
+                            {%endif%}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="row">
+                <div class="col-10 text-end h6">
+                    Total profit for period {{period.id_number}}:
+                </div>
+                <div class="col-2">
+
+                </div>
+            </div>
+        </div>        
+    {% endfor %}
+
+    <div class="row" style="page-break-after: always;">
+        <div class = "col">
+            
+        </div>
+    </div>
+{% endfor %}
 
 {% endblock %}

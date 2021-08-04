@@ -182,10 +182,28 @@ class ParameterSet(models.Model):
 
     def get_seller_list_json(self):
         '''
-        return a json object of buyers
+        return a json object of sellers
         '''
 
         seller_list = []
+
+        for i in range(1, self.number_of_sellers+1):
+            seller = {'id_number' : i,
+                     'periods' : []}
+
+            period_subject_list = main.models.ParameterSetPeriodSubject.objects.all() \
+                                                                  .filter(id_number=i) \
+                                                                  .filter(subject_type=main.globals.SubjectType.SELLER) \
+                                                                  .filter(parameter_set_period__parameter_set=self) \
+                                                                  .order_by('parameter_set_period__period_number')
+            
+            for period_subject in period_subject_list:
+                period = {'id_number':period_subject.parameter_set_period.period_number,
+                          'value_list':period_subject.get_value_cost_list()}
+                
+                seller['periods'].append(period)
+
+            seller_list.append(seller)
 
         return seller_list
 
