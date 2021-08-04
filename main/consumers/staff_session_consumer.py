@@ -361,7 +361,6 @@ def take_update_subject_count(data):
     subject_type = data["type"]
     adjustment = data["adjustment"]
     session_id = data["sessionID"]
-    period_number = data["current_period"]
 
     session = Session.objects.get(id=session_id)
 
