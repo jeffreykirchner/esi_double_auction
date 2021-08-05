@@ -2,25 +2,7 @@
     <div class="card-header">                
         <span class="align-middle">Parameters</span>       
             
-        <span class="float-end">
-            <span v-show="reconnecting" class="me-1">
-                Connecting <i class="fas fa-cog fa-spin fa-1x"></i>
-            </span>
-            <a href="/staff-session-paddles/{{session.id}}/Seller/"
-               class="link-primary me-1"
-               title="Open trade sheet printouts.">
-                Seller Paddle Printouts
-            </a>
-            <a href="/staff-session-paddles/{{session.id}}/Buyer/"
-               class="link-primary me-1"
-               title="Open trade sheet printouts.">
-                Buyer Paddle Printouts
-            </a>
-            <a href="/staff-session-trade-sheets/{{session.id}}/"
-               class="link-primary me-1"
-               title="Open trade sheet printouts.">
-                Record Sheet Printouts
-            </a>
+        <span class="float-end">            
             <button class="btn btn-outline-primary me-1"
                     type="button"
                     v-bind:disabled="reconnecting || working" 
@@ -131,7 +113,7 @@
         </div>
 
         <!-- edit values and costs -->
-        <div class="row">
+        <div class="row mb-2 border-bottom pb-4">
             <div class="col-md text-center">
                 <table class="table table-hover table-condensed table-responsive-lg"> 
                     <caption class="text-center" style="caption-side:top;">Buyers ([[session.parameter_set.number_of_buyers]])</caption>
@@ -301,23 +283,38 @@
             </div>
         </div>                                  
         
-        <!-- shift values and costs -->
-        <div class="row mt-4">
+        <!-- print outs -->
+        <div class="row mt-2 text-muted">
             <div class="col-md text-center">
-                
+                Printouts
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md text-end">
+                <a href="/staff-session-paddles/{{session.id}}/Seller/"
+                   class="link-primary me-1"
+                   title="Open trade sheet printouts.">
+                    Seller Paddles
+                </a>
             </div>
 
             <div class="col-md text-center">
+                <a href="/staff-session-paddles/{{session.id}}/Buyer/"
+                   class="link-primary me-1"
+                   title="Open trade sheet printouts.">
+                    Buyer Paddles
+                </a>
+            </div>
+
+            <div class="col-md text-start">
+                <a href="/staff-session-trade-sheets/{{session.id}}/"
+                   class="link-primary me-1"
+                   title="Open trade sheet printouts.">
+                    Record Sheets
+                </a>
             </div>
         </div>
 
-        <!-- copy values and costs -->
-        <div class="row mt-4">
-            <div class="col-md text-center">
-            </div>
-
-            <div class="col-md text-center">
-            </div>
-        </div>
+       
     </div>                    
 </div> 

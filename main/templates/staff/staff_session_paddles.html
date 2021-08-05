@@ -16,13 +16,7 @@
 
 </script>
 <style>
-
-    canvas {
-        background-color: white; 
-        width: 100%;
-        height
-        : 600px;
-    }
+    @media print{@page {size: landscape}}
 </style>
 
 {%endblock head%}
@@ -37,12 +31,28 @@
 <!-- auction paddle printouts -->
 {% for r in rows %}
     <div class="row">
-        {% for c in r.rows %}
-            <div class="row">
-                {{c.value}}
+        {% for c in r %}
+            <div class="col-6 text-center" style="font-size: 225px;">
+                {{c}}
             </div>
         {% endfor %}
+
+        <!-- filler if odd number
+        {%if foorloop.revcounter|divisibleby:2 != 0 and forloop.last%}
+            <div class="col text-center">
+                
+            </div>
+        {%endif%} -->
     </div>
+
+    {%if forloop.counter|divisibleby:2 != 0 and forloop.last == False%}
+        <div class="row" style="page-break-after: always;">
+            <div class = "col">
+                
+            </div>
+        </div>
+    {%endif%}
+
 {% endfor %}
    
 {% endblock %}
