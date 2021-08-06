@@ -74,9 +74,7 @@ class StaffSessionConsumer(SocketConsumerMixin):
         message["messageData"] = message_data
 
         # Send message to WebSocket
-        await self.send(text_data=json.dumps({
-            'message': message
-        }))
+        await self.send(text_data=json.dumps({'message': message}, cls=DjangoJSONEncoder))
     
     async def update_subject_count(self, event):
         '''
@@ -97,17 +95,12 @@ class StaffSessionConsumer(SocketConsumerMixin):
         message["messageData"] = message_data
 
         # Send message to WebSocket
-        await self.send(text_data=json.dumps({
-            'message': message
-        }))
+        await self.send(text_data=json.dumps({'message': message}, cls=DjangoJSONEncoder))
     
     async def update_period_count(self, event):
         '''
         change the number of periods in a session
         '''
-
-        
-        
         #update subject count
         message_data = {}
         message_data["status"] = await take_update_period_count(event["message_text"])
@@ -119,9 +112,7 @@ class StaffSessionConsumer(SocketConsumerMixin):
         message["messageData"] = message_data
 
         # Send message to WebSocket
-        await self.send(text_data=json.dumps({
-            'message': message
-        }))
+        await self.send(text_data=json.dumps({'message': message}, cls=DjangoJSONEncoder))
     
     async def update_valuecost(self, event):
         '''
@@ -138,9 +129,7 @@ class StaffSessionConsumer(SocketConsumerMixin):
         message["messageData"] = message_data
 
         # Send message to WebSocket
-        await self.send(text_data=json.dumps({
-            'message': message
-        }))
+        await self.send(text_data=json.dumps({'message': message}, cls=DjangoJSONEncoder))
     
     async def shift_value_or_cost(self, event):
         '''
@@ -158,9 +147,7 @@ class StaffSessionConsumer(SocketConsumerMixin):
         message["messageData"] = message_data
 
         # Send message to WebSocket
-        await self.send(text_data=json.dumps({
-            'message': message
-        }))
+        await self.send(text_data=json.dumps({'message': message}, cls=DjangoJSONEncoder))
     
     async def copy_value_or_cost(self, event):
         '''
@@ -178,9 +165,7 @@ class StaffSessionConsumer(SocketConsumerMixin):
         message["messageData"] = message_data
 
         # Send message to WebSocket
-        await self.send(text_data=json.dumps({
-            'message': message
-        }))
+        await self.send(text_data=json.dumps({'message': message}, cls=DjangoJSONEncoder))
 
     async def update_period(self, event):
         '''
@@ -197,9 +182,7 @@ class StaffSessionConsumer(SocketConsumerMixin):
         message["messageData"] = message_data
 
         # Send message to WebSocket
-        await self.send(text_data=json.dumps({
-            'message': message
-        }))
+        await self.send(text_data=json.dumps({'message': message}, cls=DjangoJSONEncoder))
     
     async def import_parameters(self, event):
         '''
@@ -216,9 +199,7 @@ class StaffSessionConsumer(SocketConsumerMixin):
         message["messageData"] = message_data
 
         # Send message to WebSocket
-        await self.send(text_data=json.dumps({
-            'message': message
-        }))
+        await self.send(text_data=json.dumps({'message': message}, cls=DjangoJSONEncoder))
     
     async def download_parameters(self, event):
         '''
@@ -230,9 +211,7 @@ class StaffSessionConsumer(SocketConsumerMixin):
         message["messageData"] = await take_download_parameters(event["message_text"])
 
         # Send message to WebSocket
-        await self.send(text_data=json.dumps({
-            'message': message
-        }))
+        await self.send(text_data=json.dumps({'message': message}, cls=DjangoJSONEncoder))
 
     async def start_experiment(self, event):
         '''
@@ -248,9 +227,7 @@ class StaffSessionConsumer(SocketConsumerMixin):
         message["messageData"] = message_data
 
         # Send message to WebSocket
-        await self.send(text_data=json.dumps({
-            'message': message
-        }))
+        await self.send(text_data=json.dumps({'message': message}, cls=DjangoJSONEncoder))
     
     async def reset_experiment(self, event):
         '''
@@ -266,9 +243,7 @@ class StaffSessionConsumer(SocketConsumerMixin):
         message["messageData"] = message_data
 
         # Send message to WebSocket
-        await self.send(text_data=json.dumps({
-            'message': message
-        }))
+        await self.send(text_data=json.dumps({'message': message}, cls=DjangoJSONEncoder))
     
     async def next_period(self, event):
         '''
@@ -283,9 +258,7 @@ class StaffSessionConsumer(SocketConsumerMixin):
         message["messageData"] = message_data
 
         # Send message to WebSocket
-        await self.send(text_data=json.dumps({
-            'message': message
-        }))
+        await self.send(text_data=json.dumps({'message': message}, cls=DjangoJSONEncoder))
     
     async def submit_bid_offer(self, event):
         '''

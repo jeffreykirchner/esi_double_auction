@@ -529,7 +529,7 @@ draw_trade_line:function(chartID, marginY, marginX, marginTopAndRight, yMin, yMa
 */
 draw_price_cap:function(chartID, marginY, marginX, marginTopAndRight, yMin, yMax, xMin, xMax, period)
 {
-    if(!period.price_cap_enabled) return;
+    if(period.price_cap_enabled == "False") return;
 
     var canvas = document.getElementById(chartID),
         ctx = canvas.getContext('2d');
