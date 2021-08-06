@@ -751,12 +751,20 @@ def take_submit_bid_offer(data):
             message = f"Error: Invalid amount, not a decimal."
             logger.warning(f'take_submit_bid_offer: {message}')
     
-    #check that bid and offer within valid range
+    #check that bid / offer within valid range
     if status == "success":
         if bid_offer_amount <= 0 or bid_offer_amount > 99:
             status = "fail"       
             message = f"Error: 0 < Amount < 100 . "
             logger.warning(f'take_submit_bid_offer: {message}')
+    
+    #check bid / offer is under price cap, if applicable
+    if status == "success":
+        if session_period.get_price_cap_enabled():
+            if bid_offer_amount > session_period.get_price_cap():
+                status = "fail"       
+                message = f"Error: Amount exceeds price cap."
+                logger.warning(f'take_submit_bid_offer: {message}')
 
     best_bid = session_period_trade.get_best_bid()
     best_offer = session_period_trade.get_best_offer()

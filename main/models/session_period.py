@@ -75,6 +75,18 @@ class SessionPeriod(models.Model):
                                                 .values('id', 'trade_price', 'buyer__session_subject__id_number', 'seller__session_subject__id_number')
                                                 .order_by('trade_number'))
 
+    def get_price_cap(self):
+        '''
+        return price cap for this period
+        '''
+        return self.session.parameter_set.parameter_set_periods.get(period_number=self.period_number).price_cap
+
+    def get_price_cap_enabled(self):
+        '''
+        return true if price cap is enabled for this period
+        '''
+        return self.session.parameter_set.parameter_set_periods.get(period_number=self.period_number).price_cap_enabled
+
     #return json object of class
     def json(self):
         '''
@@ -91,6 +103,8 @@ class SessionPeriod(models.Model):
             "bid_list" : self.get_bid_list_json(),
             "offer_list" : self.get_offer_list_json(),
             "trade_list" : self.get_trade_list_json(),
+            "price_cap" : self.get_price_cap(),
+            "price_cap_enabled" : self.get_price_cap_enabled(),
             "current_best_bid" : i.get_bid_offer_string() if (i:=self.get_current_best_bid()) else "---",
             "current_best_offer" : i.get_bid_offer_string() if (i:=self.get_current_best_offer()) else "---",
         }

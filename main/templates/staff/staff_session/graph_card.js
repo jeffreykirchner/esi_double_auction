@@ -6,8 +6,8 @@ update_sdgraph_canvas:function(){
     el.attr('width', parseInt(el.css('width')));
     el.attr('height', parseInt(el.css('height')));
 
-    period = app.$data.session.parameter_set.periods[app.$data.current_visible_period-1];
-    period_result = app.$data.session.session_periods[app.$data.current_visible_period-1];
+    period = app.$data.session.parameter_set.periods[app.$data.current_visible_period-1];  //parameter set period
+    period_result = app.$data.session.session_periods[app.$data.current_visible_period-1]; //session results period
 
     value_list = period.demand;
     cost_list = period.supply;
@@ -39,7 +39,7 @@ update_sdgraph_canvas:function(){
     //bids and offers
     if (app.$data.session.started && app.$data.show_bids_offers_graph)
     {
-        app.draw_bids_and_offers("sd_graph", marginY, marginX, marginTopAndRight, 0, y_max, 0, x_max, period);
+        app.draw_bids_and_offers("sd_graph", marginY, marginX, marginTopAndRight, 0, y_max, 0, x_max, period_result);
     }
 
     //trade line
@@ -53,6 +53,9 @@ update_sdgraph_canvas:function(){
     {
         app.draw_key("sd_graph", marginTopAndRight);
     }
+
+    //price cap
+    app.draw_price_cap("sd_graph", marginY, marginX, marginTopAndRight, 0, y_max, 0, x_max, period);
 },
 
 /**draw an x-y axis on a canvas
@@ -256,7 +259,7 @@ draw_eq_lines: function(chartID, marginY, marginX, marginTopAndRight, yMin, yMax
     ctx.lineWidth = 1;
     ctx.lineCap = "round";
     ctx.setLineDash([5, 5]);
-    ctx.font="14px Arial";
+    ctx.font="18px Arial";
     ctx.fillStyle = "black";
     ctx.textAlign = "left";
 
@@ -276,7 +279,7 @@ draw_eq_lines: function(chartID, marginY, marginX, marginTopAndRight, yMin, yMax
 
     ctx.stroke();
 
-    ctx.fillText(period.eq_price, x1+5, y1-5);
+    ctx.fillText("Equilibrium Price: " + period.eq_price, x1+5, y1-5);
 
     ctx.restore(); 
 },
@@ -292,8 +295,8 @@ draw_eq_lines: function(chartID, marginY, marginX, marginTopAndRight, yMin, yMax
  * @param xMax {int} ending value on X axis
  * @param period {int} period from 1 to N of which bids will be drawn
 */
-draw_bids_and_offers:function(chartID, marginY, marginX, marginTopAndRight, yMin, yMax, xMin, xMax, period){
-    if(period.eq_price == null) return;
+draw_bids_and_offers:function(chartID, marginY, marginX, marginTopAndRight, yMin, yMax, xMin, xMax, period_result){
+    //if(period.eq_price == null) return;
 
     var canvas = document.getElementById(chartID),
         ctx = canvas.getContext('2d');
@@ -312,9 +315,9 @@ draw_bids_and_offers:function(chartID, marginY, marginX, marginTopAndRight, yMin
 
     ctx.translate(marginY, h-marginX);
 
-    current_period = app.$data.session.current_period;
-    bids = app.$data.session.session_periods[current_period-1].bid_list;
-    offers = app.$data.session.session_periods[current_period-1].offer_list;
+    //current_period = app.$data.session.current_period;
+    bids = period_result.bid_list;
+    offers = period_result.offer_list;
 
     max_carrot_width = w / 20;  //max width carrot can be
 
@@ -509,6 +512,57 @@ draw_trade_line:function(chartID, marginY, marginX, marginTopAndRight, yMin, yMa
 
         ctx.stroke();
     }
+
+    ctx.restore();
+},
+
+/**if price cap is active draw line
+ * @param chartID {string} dom ID name of canvas
+ * @param marginY {int} margin between Y axis and vertial edge of graph
+ * @param marginX {int} margin between X axis and horizontal edge of graph
+ * @param marginTopAndRight {int} margin between top and rights side of canvas and grap
+ * @param yMin {int} starting value on Y axis
+ * @param yMax {int} ending value on Y axis
+ * @param xMin {int} starting value on X axis
+ * @param xMax {int} ending value on X axis
+ * @param period {int} period from 1 to N of which equilibrium lines will be drawn
+*/
+draw_price_cap:function(chartID, marginY, marginX, marginTopAndRight, yMin, yMax, xMin, xMax, period)
+{
+    if(!period.price_cap_enabled) return;
+
+    var canvas = document.getElementById(chartID),
+        ctx = canvas.getContext('2d');
+
+    var w =  ctx.canvas.width;
+    var h = ctx.canvas.height;
+    
+    ctx.save();
+
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 1;
+    ctx.lineCap = "round";
+    ctx.setLineDash([15, 3, 3, 3]);
+    ctx.font="18px Arial";
+    ctx.fillStyle = "black";
+    ctx.textAlign = "right";
+
+    ctx.translate(marginY, h-marginX);
+
+    ctx.beginPath();
+
+    y1 = app.convertToY(period.price_cap, yMax, yMin, h-marginX-marginTopAndRight, 1);
+    x1 = app.convertToX(0, xMax, xMin, w-marginY-marginTopAndRight, 1);
+
+    x2 = app.convertToX(period.x_scale_max, xMax, xMin, w-marginY-marginTopAndRight, 1);
+
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y1); 
+    ctx.lineTo(x2, y1); 
+
+    ctx.stroke();
+
+    ctx.fillText("Max Bid/Offer: " + period.price_cap, x2, y1-7);
 
     ctx.restore();
 },
