@@ -1,7 +1,6 @@
 '''
-staff session trade sheets view
+staff session subject earnings view
 '''
-
 from django.views import View
 from django.shortcuts import render
 from django.views.generic.detail import SingleObjectMixin
@@ -11,12 +10,12 @@ from django.utils.decorators import method_decorator
 from main.models import Parameters
 from main.models import Session
 
-class StaffSessionTradeSheetsView(SingleObjectMixin, View):
+class StaffSessionSubjectEarnings(SingleObjectMixin, View):
     '''
-    class based staff session payout view
+    class based staff session subject earnings view
     '''
-    template_name = "staff/staff_session_trade_sheets.html"
-    websocket_path = "staff-session-trade-sheets"
+    template_name = "staff/staff_session_subject_earnings.html"
+    websocket_path = "staff-session-subject-earnings"
     model = Session
     
     @method_decorator(login_required)
@@ -27,15 +26,10 @@ class StaffSessionTradeSheetsView(SingleObjectMixin, View):
 
         parameters = Parameters.objects.first()
         session = self.get_object()
-        
-        buyer_list = session.parameter_set.get_buyer_list_json()
-        seller_list = session.parameter_set.get_seller_list_json()
 
         return render(request=request,
                       template_name=self.template_name,
                       context={"parameters" : parameters,
                                "id" : session.id,
-                               "session" : session,
-                               "buyer_list" : buyer_list,
-                               "seller_list" : seller_list})
+                               "session" : session})
     

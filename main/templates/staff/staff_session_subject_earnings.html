@@ -1,0 +1,22 @@
+{%extends "base.html"%}
+{% load crispy_forms_tags %}
+{% load humanize %}
+
+{%block head%}
+<script type="text/javascript">
+
+</script>
+<style>
+    
+</style>
+
+{%endblock head%}
+
+{% block content %}
+<div class="row d-print-none mb-4">
+    <div class="col">
+        Subject earnings for session: <a href="/staff-session/{{session.id}}/">{{session.title}}</a>
+    </div>
+</div>
+   
+{% endblock %}

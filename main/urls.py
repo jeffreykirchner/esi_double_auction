@@ -23,6 +23,7 @@ urlpatterns = [
     path('staff-session/<int:pk>/', views.StaffSessionView.as_view(), name='staff_session'),
     path('staff-session-trade-sheets/<int:pk>/', views.StaffSessionTradeSheetsView.as_view(), name='staff_session_trade_sheets'),
     path('staff-session-paddles/<int:pk>/<str:buyer_or_seller>/', views.StaffSessionPaddles.as_view(), name='staff_session_paddles'),
+    path('staff-session-subject-earnings/<int:pk>/', views.StaffSessionSubjectEarnings.as_view(), name='staff_session_subject_earnings'),
 
     #txt
     path('robots.txt', views.RobotsTxt, name='robotsTxt'),

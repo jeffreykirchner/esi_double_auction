@@ -1,6 +1,6 @@
 <div class="card" v-show="first_load_done && session.finished">                  
     <div class="card-header">                
-        <span class="align-middle">Replay</span>       
+        <span class="align-middle">Results</span>       
             
         <span class="float-end">
              
@@ -33,5 +33,15 @@
             </div>
         </div>
 
+        <!-- subject earnings -->
+        <div class="row">
+            <div class="col-md text-center">
+                <a href="/staff-session-subject-earnings/{{session.id}}/"
+                   class="link-primary"
+                   title="Printout of total earnings.">
+                    Earnings Printout
+                </a>
+            </div>
+        </div>
     </div>                    
 </div> 
