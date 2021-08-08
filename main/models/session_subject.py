@@ -8,6 +8,8 @@ from django.db import models
 from main.models import Session
 from main.globals import SubjectType
 
+import main
+
 #subject in session
 class SessionSubject(models.Model):
     '''
@@ -45,7 +47,34 @@ class SessionSubject(models.Model):
         return the total profit in the experiment
         '''
 
-        return 0
+        earnings = 0
+
+        my_trades = self.get_my_trades()  
+
+        for trade in my_trades:
+            if self.subject_type == SubjectType.BUYER:  
+                earnings += trade.buyer_value.value_cost
+                earnings -= trade.trade_price
+            else:
+                earnings -= trade.seller_cost.value_cost
+                earnings += trade.trade_price
+
+        return f'{earnings:.2f}'
+    
+    def get_my_trades(self):
+        '''
+        return a list of all subject's trades
+        '''
+
+        if self.subject_type == SubjectType.BUYER:
+            my_trades = main.models.SessionPeriodTrade.objects.filter(buyer__session_subject=self) \
+                                                              .filter(trade_complete=True)
+        else:
+            my_trades = main.models.SessionPeriodTrade.objects.filter(seller__session_subject=self) \
+                                                              .filter(trade_complete=True)
+
+        return my_trades
+
     #return json object of class
     def json(self):
         '''
