@@ -40,6 +40,12 @@ class SessionSubject(models.Model):
         '''
         return self.session_subject_periods_a.get(session_period=session_period)
 
+    def get_total_profit(self):
+        '''
+        return the total profit in the experiment
+        '''
+
+        return 0
     #return json object of class
     def json(self):
         '''

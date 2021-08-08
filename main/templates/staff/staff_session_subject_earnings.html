@@ -18,5 +18,31 @@
         Subject earnings for session: <a href="/staff-session/{{session.id}}/">{{session.title}}</a>
     </div>
 </div>
-   
+
+<div class="row mt-4">
+    <div class="col">
+        <table class="table">
+            <thead>
+              <tr>
+                <th scope="col" class="text-start">Player</th>
+                <th scope="col" class="text-center">Earnings</th>
+              </tr>
+            </thead>
+            <tbody>
+                {% for session_subject in session.session_subjects.all %}                    
+                    <tr>
+                        <td class="text-start">
+                            {{session_subject.subject_type}} {{session_subject.id_number}}
+                        </td>
+                        <td class="text-center">
+                            {{session_subject.get_total_profit}}
+                        </td>                            
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+</div>
+
 {% endblock %}
