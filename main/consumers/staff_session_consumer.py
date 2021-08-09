@@ -726,7 +726,7 @@ def take_submit_bid_offer(data):
     
     #check that bid / offer within valid range
     if status == "success":
-        if bid_offer_amount <= 0 or bid_offer_amount > 99:
+        if bid_offer_amount <= 0 or bid_offer_amount > 99.999:
             status = "fail"       
             message = f"Error: 0 < Amount < 100 . "
             logger.warning(f'take_submit_bid_offer: {message}')
