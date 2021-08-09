@@ -407,7 +407,7 @@ draw_key:function(chartID, marginTopAndRight){
     var canvas = document.getElementById(chartID),
         ctx = canvas.getContext('2d');
 
-    var w = 230;
+    var w = 300;
     var h = 100;
 
     session_period = app.$data.session.session_periods[app.$data.session.current_period-1];
@@ -420,7 +420,7 @@ draw_key:function(chartID, marginTopAndRight){
     
     ctx.save();
 
-    ctx.translate(1129 * w_fraction, marginTopAndRight);
+    ctx.translate(1059 * w_fraction, marginTopAndRight);
 
     ctx.beginPath();
     //ctx.rect(width*4, 10, width, height);
@@ -430,7 +430,7 @@ draw_key:function(chartID, marginTopAndRight){
     ctx.fillStyle = "white";
     ctx.fill();    
 
-    x =  30 * w_fraction;
+    x =  25 * w_fraction;
     y = h * h_fraction * 1 / 2;
 
     app.draw_bid_carrot(ctx, x, y, 40 * w_fraction);
@@ -442,16 +442,16 @@ draw_key:function(chartID, marginTopAndRight){
     ctx.fillStyle = "black";
     ctx.textAlign = "right";
 
-    x =  115 * w_fraction;
+    x =  185 * w_fraction;
 
     ctx.textBaseline = "bottom";
-    ctx.fillText("Offer: ", x, y - 2);
+    ctx.fillText("Offer to Sell:", x, y - 2);
     ctx.textAlign = "left";
     ctx.fillText(session_period.current_best_offer, x, y - 2);
 
     ctx.textAlign = "right";
     ctx.textBaseline = "top";
-    ctx.fillText("Bid: ", x, y + 2);
+    ctx.fillText("Bid to Buy:", x, y + 2);
     ctx.textAlign = "left";
     ctx.fillText(session_period.current_best_bid, x, y + 2);
     
