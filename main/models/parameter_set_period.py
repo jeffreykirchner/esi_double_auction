@@ -238,6 +238,26 @@ class ParameterSetPeriod(models.Model):
                                                                         .order_by('value_cost')
 
         return [i.json() for i in cost_qs]
+    
+    def get_possible_gains_from_trade(self):
+        '''
+        return the possible gains from trade
+        '''
+
+        total = 0
+
+        supply = self.get_supply()
+        demand = self.get_demand()
+
+        for i in range(min(len(supply), len(demand))):
+            s = Decimal(supply[i]["value_cost"])
+            d = Decimal(demand[i]["value_cost"])
+
+            if s < d:
+                total += d -s
+
+        return total        
+        
 
     def json(self):
         '''
@@ -278,4 +298,5 @@ class ParameterSetPeriod(models.Model):
             "supply" : supply,
             "eq_price" : eq_price,
             "eq_quantity" : eq_quantity,
+            "possible_gains_from_trade" : self.get_possible_gains_from_trade(),
         }

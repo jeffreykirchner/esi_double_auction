@@ -87,6 +87,22 @@ class SessionPeriod(models.Model):
         '''
         return self.session.parameter_set.parameter_set_periods.get(period_number=self.period_number).price_cap_enabled
 
+    def get_period_efficancy(self):
+        '''
+        return periods efficancy (realized gains / max possible gains)
+        '''
+
+        max_gains_from_trade = self.get_period_parameter_set().get_possible_gains_from_trade()
+
+        return 0
+
+    def get_period_parameter_set(self):
+        '''
+        return the parameter set associcated with this period
+        '''
+
+        return self.session.parameter_set.parameter_set_periods.get(period_number=self.period_number)
+
     #return json object of class
     def json(self):
         '''
