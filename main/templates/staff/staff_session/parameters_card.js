@@ -86,6 +86,24 @@ shiftValueOrCost(valueOrCost, direction){
                                             "direction" : direction,});
 },
 
+/** shift the values or costs in the current period from one buyer or seller to the next
+ * @param valueOrCost : 'value' or 'cost'
+ * @param valueOrCost : 'up' or 'down'
+*/
+addToValueOrCost(valueOrCost){
+    app.$data.working = true;
+    amount = 0;
+    if (valueOrCost == 'value')
+        amount = app.$data.add_to_value_amount;
+    else
+        amount = app.$data.add_to_cost_amount;
+
+    app.sendMessage("shift_value_or_cost", {"sessionID" : app.$data.sessionID,
+                                            "currentPeriod" : app.$data.current_visible_period,
+                                            "valueOrCost" : valueOrCost,
+                                            "amount" : amount,});
+},
+
 /** copy values or costs from pervious period
  * @param valueOrCost : 'value' or 'cost'
  * @param valueOrCost : 'up' or 'down'

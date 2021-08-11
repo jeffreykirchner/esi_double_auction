@@ -57,6 +57,8 @@ var app = Vue.createApp({
                     show_trade_line_graph : false,
                     show_gains_from_trade_graph : false,
                     move_to_next_period_text : '---',
+                    add_to_value_amount : 0,
+                    add_to_cost_amount : 0,
                 }},
     methods: {
 

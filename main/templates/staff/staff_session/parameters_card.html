@@ -177,14 +177,14 @@
                             class="btn btn-outline-secondary"
                             v-on:click="shiftValueOrCost('value','up')"
                             v-bind:disabled="session.started || reconnecting || working"
-                            title = "Shift values up">
+                            title = "Rotate values up">
                         <i class="fas fa-angle-double-up"></i>
                     </button>
                     <button type="button"
                             class="btn btn-outline-secondary"
                             v-on:click="shiftValueOrCost('value','down')"
                             v-bind:disabled="session.started || reconnecting || working"
-                            title = "Shift values down">
+                            title = "Rotate values down">
                         <i class="fas fa-angle-double-down"></i>
                     </button>
                     <button type="button"
@@ -247,28 +247,28 @@
                             type="button"
                             v-bind:disabled="session.started || reconnecting || working"
                             v-on:click="sendUpdateSubjectCount('SELLER', 1)"
-                            title = "Add a buyer">
+                            title = "Add a seller">
                         <i class="fas fa-plus"></i>
                     </button>
                     <button class="btn btn-outline-secondary"
                             type="button"
                             v-bind:disabled="session.started || reconnecting || session.parameter_set.periods[current_visible_period-1].sellers.length <= 1 || working"
                             v-on:click="sendUpdateSubjectCount('SELLER', -1)"
-                            title = "Remove last Buyer">
+                            title = "Remove last seller">
                         <i class="fas fa-minus"></i>
                     </button>
                     <button type="button"
                             class="btn btn-outline-secondary"
                             v-on:click="shiftValueOrCost('cost','up')"
                             v-bind:disabled="session.started || reconnecting || working"
-                            title = "Shift values up">
+                            title = "Rotate costs up">
                         <i class="fas fa-angle-double-up"></i>
                     </button>
                     <button type="button"
                             class="btn btn-outline-secondary"
                             v-on:click="shiftValueOrCost('cost','down')"
                             v-bind:disabled="session.started || reconnecting || working"
-                            title = "Shift values down">
+                            title = "Rotate costs down">
                         <i class="fas fa-angle-double-down"></i>
                     </button>
                     <button type="button"
@@ -280,6 +280,17 @@
                     </button>
                 </div>
 
+                <div class="row justify-content-md-center mt-2">
+                    <div class = "col-md-auto">
+                        <div class="input-group">
+                            <button class="btn btn-outline-secondary"
+                                    title="Add amount to all costs"
+                                    type="button"
+                                    id="add_to_all_costs"><i class="far fa-plus-square"></i></button>
+                            <input type="text" class="form-control" title="Add amount to all costs" placeholder="Amount" aria-label="Add to all costs" aria-describedby="add_to_all_costs">
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>                                  
         

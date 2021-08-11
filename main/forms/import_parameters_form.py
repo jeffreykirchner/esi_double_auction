@@ -8,7 +8,7 @@ import re
 #form
 class ImportParametersForm(forms.Form):
     
-    session =  forms.ModelChoiceField(label="Select session to copy.",
+    session =  forms.ModelChoiceField(label="Select session to import.",
                                       queryset=Session.objects.filter(soft_delete=False),
                                       empty_label=None,
                                       widget=forms.Select(attrs={}))

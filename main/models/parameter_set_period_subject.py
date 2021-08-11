@@ -53,6 +53,17 @@ class ParameterSetPeriodSubject(models.Model):
         else:
             return [c for c in self.parameter_set_period_subject_valuecosts.all().order_by('-enabled', 'value_cost')]
 
+    def add_to_values_or_costs(self, amount):
+        '''
+        add to all values or costs in the amount specficied
+        value_or_cost : string 'value' or 'cost'
+        amount: decimal
+        '''
+
+        for i in self.get_value_cost_list():
+            i.value_cost += amount
+            i.save()
+
     def from_dict(self, source):
         '''
         load values from dict

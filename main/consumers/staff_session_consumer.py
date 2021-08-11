@@ -289,6 +289,23 @@ class StaffSessionConsumer(SocketConsumerMixin):
 
         # Send message to WebSocket
         await self.send(text_data=json.dumps({'message': message}, cls=DjangoJSONEncoder))
+
+    async def add_to_all_values_or_costs(self, event):
+        '''
+        add to all values or costs by a specified amount
+        '''
+                #update subject count
+        message_data = {}
+        message_data["status"] = await take_add_to_all_values_or_costs(event["message_text"])
+
+        message_data["session"] = await get_session(event["message_text"]["sessionID"])
+        
+        message = {}
+        message["messageType"] = event["type"]
+        message["messageData"] = message_data
+
+        # Send message to WebSocket
+        await self.send(text_data=json.dumps({'message': message}, cls=DjangoJSONEncoder))
 #local sync_to_asyncs
 @sync_to_async
 def take_update_session_form(data):
@@ -988,3 +1005,34 @@ def take_undo_bid_offer(data):
             "message" : message,          
             "bid_list" : session_period.get_bid_list_json(),
             "offer_list" : session_period.get_offer_list_json(),}
+
+@sync_to_async
+def take_add_to_all_values_or_costs(data):
+    '''
+    take add to all values or costs
+    '''   
+
+    logger = logging.getLogger(__name__) 
+    logger.info(f"Take shift all values or costs: {data}")
+
+    session_id = data["sessionID"]
+    period = data["currentPeriod"]
+    values_or_costs = data["valueOrCost"]
+    amount = data["amount"]
+
+    session = Session.objects.get(id=session_id)
+    parameter_set = session.parameter_set
+
+    #check amount is a valid deciamal amount
+    try:
+        amount = Decimal(amount)
+    except DecimalException: 
+              
+        message = f"Error: Invalid amount, not a decimal."
+        logger.warning(f'take_submit_bid_offer: {message}')
+
+        return "fail"
+
+    status = parameter_set.shift_values_or_costs(values_or_costs, period, amount)
+
+    return status

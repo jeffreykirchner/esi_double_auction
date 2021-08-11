@@ -145,8 +145,6 @@ class ParameterSetPeriod(models.Model):
         value_or_cost : string 'value' or 'cost'
         direction: string 'up' or 'down'
         '''
-
-
         if value_or_cost == 'value':
             user_list = self.get_buyer_list()
         else:
@@ -176,6 +174,23 @@ class ParameterSetPeriod(models.Model):
             user_list[len(user_list)-1].save()
 
         return "success"
+    
+    def add_to_values_or_costs(self, value_or_cost, amount):
+        '''
+        add to all values or costs in the amount specficied
+        value_or_cost : string 'value' or 'cost'
+        amount: decimal
+        '''
+        if value_or_cost == 'value':
+            user_list = self.get_buyer_list()
+        else:
+            user_list = self.get_seller_list()
+        
+        for u in user_list:
+            u.add_to_values_or_costs(amount)
+        
+        return "success"
+
 
     def from_dict(self, source, copy_buyers, copy_sellers, copy_price_cap):
         '''

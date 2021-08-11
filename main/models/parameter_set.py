@@ -129,6 +129,18 @@ class ParameterSet(models.Model):
 
         return parameter_set_period.shift_values_or_costs(value_or_cost, direction)
     
+    def add_to_values_or_costs(self, value_or_cost, period_number, amount):
+        '''
+        add to all values or costs for a period by the amount specified
+        value_or_cost : string 'value' or 'cost'
+        period : int 1 to N
+        amount: decimal
+        '''
+
+        parameter_set_period = self.parameter_set_periods.get(period_number = period_number)
+
+        return parameter_set_period.shift_values_or_costs(value_or_cost, amount)
+    
     def copy_values_or_costs(self, value_or_cost, period_number):
         '''
         copy values or costs from previous period

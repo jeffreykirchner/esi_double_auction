@@ -37,10 +37,6 @@ class Session(models.Model):
     current_period = models.IntegerField(default=0)                              #current period of the session
     finished = models.BooleanField(default=False)                                #true after all session periods are complete
 
-    invitations_sent = models.BooleanField(default=False)                        #true once invititations have been sent to subjects
-    invitation_text =  models.CharField(max_length=10000, default="")            #text sent to subjects in experiment invititation
-    invitation_text_subject = models.CharField(max_length=1000, default="")      #email subject text for experiment invititation
-
     soft_delete =  models.BooleanField(default=False)                            #hide session if true
 
     timestamp = models.DateTimeField(auto_now_add=True)
