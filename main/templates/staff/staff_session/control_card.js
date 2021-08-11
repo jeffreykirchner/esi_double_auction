@@ -15,6 +15,7 @@ takeStartExperiment(messageData){
     app.$data.show_supply_demand_graph = false;
     app.$data.show_equilibrium_price_graph = false;
     app.$data.show_trade_line_graph = false;
+    app.$data.show_gains_from_trade_graph = false;
 },
 
 /**reset experiment, remove all bids, asks and trades

@@ -19,6 +19,16 @@ update_sdgraph_canvas:function(){
     var marginX=40;    //margin between bottom of canvas and X axis
     var marginTopAndRight=10;    // margin between top and right sides of canvas and graph
 
+    //clear canvas
+    app.clear_canvas();
+
+    //gains from trade fill
+    if (app.$data.session.started && app.$data.show_gains_from_trade_graph)
+    {
+        app.draw_gain_from_trade_fill("sd_graph", marginY, marginX, marginTopAndRight, 0, y_max, 0, x_max, period, period_result.realized_gains_from_trade);
+    }
+
+    //axis
     app.draw_axis("sd_graph", marginY, marginX, marginTopAndRight, 0, y_max, y_max, 0, x_max, x_max, "Price ($)", "Units Traded");
 
     //bids and offers
@@ -51,17 +61,31 @@ update_sdgraph_canvas:function(){
     //key
     if (!app.$data.session.finished)
     {
-        app.draw_key("sd_graph", marginTopAndRight);
+        app.draw_key("sd_graph", marginTopAndRight, period_result);
     }
 
-    //gains from trade
+    //gains from trade key
     if (app.$data.show_gains_from_trade_graph)
     {
-        app.draw_grains_from_trade("sd_graph", marginTopAndRight);
+        app.draw_grains_from_trade("sd_graph", marginTopAndRight, period_result);
     }
 
     //price cap
     app.draw_price_cap("sd_graph", marginY, marginX, marginTopAndRight, 0, y_max, 0, x_max, period);
+},
+
+/** clear canvas of current image to be re-drawn
+ */
+clear_canvas: function(chartID){
+    if(document.getElementById(chartID) == null)
+    {
+        return;
+    }
+
+    var canvas = document.getElementById(chartID),
+        ctx = canvas.getContext('2d');
+
+    ctx.clearRect(0,0,w,h);
 },
 
 /**draw an x-y axis on a canvas
@@ -104,9 +128,6 @@ draw_axis: function (chartID, marginY, marginX, marginTopAndRight, yMin, yMax, y
     ctx.moveTo(0,0);
 
     //clear screen
-    // ctx.fillStyle = "white";
-    // ctx.fillRect(0,0,w,h);
-    ctx.clearRect(0,0,w,h);
     ctx.strokeStyle="black";
     ctx.lineWidth=3;
 
@@ -409,14 +430,14 @@ draw_offer_carrot:function(ctx, x, y, width){
 /**draw key with bid ask spread
  * @param chartID {string} dom ID name of canvas
  */
-draw_key:function(chartID, marginTopAndRight){
+draw_key:function(chartID, marginTopAndRight, session_period){
     var canvas = document.getElementById(chartID),
         ctx = canvas.getContext('2d');
 
     var w = 300;
     var h = 100;
 
-    session_period = app.$data.session.session_periods[app.$data.session.current_period-1];
+    //session_period = app.$data.session.session_periods[app.$data.session.current_period-1];
 
     base_width = 1369;
     base_height = 600;
@@ -467,14 +488,14 @@ draw_key:function(chartID, marginTopAndRight){
 /**draw box with gains from trade
  * @param chartID {string} dom ID name of canvas
  */
-draw_grains_from_trade(chartID, marginTopAndRight){
+draw_grains_from_trade(chartID, marginTopAndRight, session_period){
     var canvas = document.getElementById(chartID),
         ctx = canvas.getContext('2d');
 
     var w = 300;
     var h = 100;
 
-    session_period = app.$data.session.session_periods[app.$data.session.current_period-1];
+    //session_period = app.$data.session.session_periods[app.$data.session.current_period-1];
 
     base_width = 1369;
     base_height = 600;
@@ -537,6 +558,66 @@ draw_grains_from_trade(chartID, marginTopAndRight){
                     + session_period.possible_gains_from_trade  
                     + "=" 
                     + session_period.efficiency, x, y);
+
+    ctx.restore();
+},
+
+/**fill supply and demand in with gains from trade shading
+ * @param chartID {string} dom ID name of canvas
+ * @param marginY {int} margin between Y axis and vertial edge of graph
+ * @param marginX {int} margin between X axis and horizontal edge of graph
+ * @param marginTopAndRight {int} margin between top and rights side of canvas and grap
+ * @param yMin {int} starting value on Y axis
+ * @param yMax {int} ending value on Y axis
+ * @param xMin {int} starting value on X axis
+ * @param xMax {int} ending value on X axis
+ * @param period {session_period} session_period visible on the graph
+*/
+draw_gain_from_trade_fill(chartID, marginY, marginX, marginTopAndRight, yMin, yMax, xMin, xMax, period, gains_from_trade)
+{
+    var canvas = document.getElementById(chartID),
+        ctx = canvas.getContext('2d');
+
+    var w =  ctx.canvas.width;
+    var h = ctx.canvas.height;
+    
+    ctx.save();
+
+    ctx.fillStyle = "lightgreen";
+    ctx.strokeStyle = "lightgreen";
+
+    ctx.translate(marginY, h-marginX);
+
+    count = Math.min(period.supply.length, period.demand.length);
+
+    gains_remaining = gains_from_trade;
+
+    for(i=0; i<count; i++)
+    {
+        
+        var multiplier = 1;
+        var value = parseFloat(period.demand[i].value_cost);
+        var cost = parseFloat(period.supply[i].value_cost);
+        
+        if(cost >= value) break;
+        if(gains_remaining <=0) break;
+
+        if(value-cost > gains_remaining) multiplier = gains_remaining/(value-cost);
+
+        xStart = app.convertToX(i, xMax, xMin, w-marginY-marginTopAndRight, 0);
+        xEnd = app.convertToX(i+1, xMax, xMin, w-marginY-marginTopAndRight, 0);
+
+        yValue = app.convertToY(value, yMax, yMin, h-marginX-marginTopAndRight, 0);
+        yCost = app.convertToY(cost, yMax, yMin, h-marginX-marginTopAndRight, 0);
+
+        ctx.beginPath();
+        //ctx.rect(width*4, 10, width, height);
+        ctx.rect(xStart, yCost, xEnd-xStart, (yValue-yCost) * multiplier);
+        ctx.fill();
+        ctx.stroke();
+
+        gains_remaining -= (value-cost);
+    }
 
     ctx.restore();
 },
