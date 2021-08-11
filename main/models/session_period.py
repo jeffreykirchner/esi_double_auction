@@ -87,14 +87,31 @@ class SessionPeriod(models.Model):
         '''
         return self.session.parameter_set.parameter_set_periods.get(period_number=self.period_number).price_cap_enabled
 
-    def get_period_efficancy(self):
+    def get_total_gains_from_trade(self):
+        '''
+        return the total gains from trade for this period
+        '''
+        realized_gains_from_trade = 0
+
+        for session_period_trade in self.session_period_trades_a.all():
+            realized_gains_from_trade += session_period_trade.get_total_gains_from_trade()
+
+        return realized_gains_from_trade
+
+
+    def get_period_efficiency(self):
         '''
         return periods efficancy (realized gains / max possible gains)
         '''
 
-        max_gains_from_trade = self.get_period_parameter_set().get_possible_gains_from_trade()
+        possible_gains_from_trade = self.get_period_parameter_set().get_possible_gains_from_trade()
 
-        return 0
+        if possible_gains_from_trade == 0:
+            return "0.00"
+
+        period_efficiency = self.get_total_gains_from_trade() / possible_gains_from_trade    
+
+        return f'{round(period_efficiency, 2):.2f}'
 
     def get_period_parameter_set(self):
         '''
@@ -121,6 +138,9 @@ class SessionPeriod(models.Model):
             "trade_list" : self.get_trade_list_json(),
             "price_cap" : self.get_price_cap(),
             "price_cap_enabled" : self.get_price_cap_enabled(),
+            "efficiency" : self.get_period_efficiency(),
+            "possible_gains_from_trade" : self.get_period_parameter_set().get_possible_gains_from_trade(),
+            "realized_gains_from_trade" : self.get_total_gains_from_trade(),
             "current_best_bid" : i.get_bid_offer_string() if (i:=self.get_current_best_bid()) else "---",
             "current_best_offer" : i.get_bid_offer_string() if (i:=self.get_current_best_offer()) else "---",
         }

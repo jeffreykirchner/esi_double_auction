@@ -837,15 +837,23 @@ def take_submit_bid_offer(data):
                 new_session_period_trade.trade_number = session_period.current_trade_number
                 new_session_period_trade.save()
                 
-                message = f'Buyer {best_bid.session_subject_period.session_subject.id_number} trades with Seller {session_subject_period.session_subject.id_number} for ${bid_offer_amount:0.2f}.'
+                message = f'Buyer {best_bid.session_subject_period.session_subject.id_number} \
+                            trades with Seller {session_subject_period.session_subject.id_number} for ${bid_offer_amount:0.2f}.'
+
+                realized_gains_from_trade = session_period.get_total_gains_from_trade()
+                efficiency = session_period.get_period_efficiency()
             else:    
                 message = f'Seller {buyer_seller_id_2} offers to sell for ${bid_offer_amount:0.2f}.'
+                realized_gains_from_trade = -1
+                efficiency = -1
 
             offer.amount = bid_offer_amount
             offer.save()
 
             return {"status" : status,
                     "message" : message,
+                    "realized_gains_from_trade" : realized_gains_from_trade,
+                    "efficiency" : efficiency,
                     "current_best_bid" : i.get_bid_offer_string() if (i:=session_period.get_current_best_bid()) else "---",
                     "current_best_offer" : i.get_bid_offer_string() if (i:=session_period.get_current_best_offer()) else "---",
                     "trade_list" : session_period.get_trade_list_json(),
@@ -889,15 +897,23 @@ def take_submit_bid_offer(data):
                 new_session_period_trade.trade_number = session_period.current_trade_number
                 new_session_period_trade.save()
 
-                message = f'Buyer {session_subject_period.session_subject.id_number} trades with Seller {best_offer.session_subject_period.session_subject.id_number} for ${bid_offer_amount:0.2f}.'
+                message = f'Buyer {session_subject_period.session_subject.id_number} \
+                            trades with Seller {best_offer.session_subject_period.session_subject.id_number} for ${bid_offer_amount:0.2f}.'
+
+                realized_gains_from_trade = session_period.get_total_gains_from_trade()
+                efficiency = session_period.get_period_efficiency()
             else:
                 message = f'Buyer {buyer_seller_id_2} bids to buy for ${bid_offer_amount:0.2f}.'
+                realized_gains_from_trade = -1
+                efficiency = -1
 
             bid.amount = bid_offer_amount
             bid.save()
 
             return {"status" : status,
                     "message" : message,
+                    "realized_gains_from_trade" : realized_gains_from_trade,
+                    "efficiency" : efficiency,
                     "current_best_offer" : i.get_bid_offer_string() if (i:=session_period.get_current_best_offer()) else "---",
                     "current_best_bid" : i.get_bid_offer_string() if (i:=session_period.get_current_best_bid()) else "---",
                     "trade_list" : session_period.get_trade_list_json(),            

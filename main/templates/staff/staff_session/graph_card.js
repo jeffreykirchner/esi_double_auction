@@ -21,6 +21,12 @@ update_sdgraph_canvas:function(){
 
     app.draw_axis("sd_graph", marginY, marginX, marginTopAndRight, 0, y_max, y_max, 0, x_max, x_max, "Price ($)", "Units Traded");
 
+    //bids and offers
+    if (app.$data.session.started && app.$data.show_bids_offers_graph)
+    {
+        app.draw_bids_and_offers("sd_graph", marginY, marginX, marginTopAndRight, 0, y_max, 0, x_max, period_result);
+    }
+
     if (app.$data.show_supply_demand_graph)
     {
         //supply
@@ -36,12 +42,6 @@ update_sdgraph_canvas:function(){
         app.draw_eq_lines("sd_graph", marginY, marginX, marginTopAndRight, 0, y_max, 0, x_max, period);
     }
 
-    //bids and offers
-    if (app.$data.session.started && app.$data.show_bids_offers_graph)
-    {
-        app.draw_bids_and_offers("sd_graph", marginY, marginX, marginTopAndRight, 0, y_max, 0, x_max, period_result);
-    }
-
     //trade line
     if (app.$data.show_trade_line_graph)
     {
@@ -49,9 +49,15 @@ update_sdgraph_canvas:function(){
     }
 
     //key
-    if (app.$data.session.started)
+    if (!app.$data.session.finished)
     {
         app.draw_key("sd_graph", marginTopAndRight);
+    }
+
+    //gains from trade
+    if (app.$data.show_gains_from_trade_graph)
+    {
+        app.draw_grains_from_trade("sd_graph", marginTopAndRight);
     }
 
     //price cap
@@ -319,7 +325,7 @@ draw_bids_and_offers:function(chartID, marginY, marginX, marginTopAndRight, yMin
     bids = period_result.bid_list;
     offers = period_result.offer_list;
 
-    max_carrot_width = w / 20;  //max width carrot can be
+    max_carrot_width = w / 25;  //max width carrot can be
 
     //offers
     for(i=0; i<offers.length; i++)
@@ -447,14 +453,91 @@ draw_key:function(chartID, marginTopAndRight){
     ctx.textBaseline = "bottom";
     ctx.fillText("Offer to Sell:", x, y - 2);
     ctx.textAlign = "left";
-    ctx.fillText(session_period.current_best_offer, x, y - 2);
+    if (app.$data.session.started) ctx.fillText(session_period.current_best_offer, x, y - 2);
 
     ctx.textAlign = "right";
     ctx.textBaseline = "top";
     ctx.fillText("Bid to Buy:", x, y + 2);
     ctx.textAlign = "left";
-    ctx.fillText(session_period.current_best_bid, x, y + 2);
+    if (app.$data.session.started) ctx.fillText(session_period.current_best_bid, x, y + 2);
     
+    ctx.restore();
+},
+
+/**draw box with gains from trade
+ * @param chartID {string} dom ID name of canvas
+ */
+draw_grains_from_trade(chartID, marginTopAndRight){
+    var canvas = document.getElementById(chartID),
+        ctx = canvas.getContext('2d');
+
+    var w = 300;
+    var h = 100;
+
+    session_period = app.$data.session.session_periods[app.$data.session.current_period-1];
+
+    base_width = 1369;
+    base_height = 600;
+
+    w_fraction = ctx.canvas.width / base_width;
+    h_fraction = ctx.canvas.height / base_height;
+    
+    ctx.save();
+
+    if(app.$data.session.finished)
+        ctx.translate(1059 * w_fraction, marginTopAndRight);
+    else
+        ctx.translate((1059 - w - marginTopAndRight) * w_fraction, marginTopAndRight);
+
+    ctx.beginPath();
+    //ctx.rect(width*4, 10, width, height);
+    ctx.rect(0, 0, w * w_fraction, h * h_fraction);
+    ctx.stroke();
+
+    ctx.fillStyle = "white";
+    ctx.fill();    
+
+    font_size = 16 * w_fraction;
+
+    ctx.font= font_size + "px Georgia";
+    ctx.fillStyle = "black";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "top";
+
+    x =  w / 2 * w_fraction;
+    y = 5 * w_fraction;
+
+    ctx.fillText("Gains from Trade:", x, y);
+
+    font_size = 21 * w_fraction;
+
+    ctx.font= font_size + "px Georgia";
+    ctx.fillStyle = "black";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "top";
+
+    x =  w / 2 * w_fraction;
+    y = 28 * w_fraction;
+
+    ctx.fillText("Realized / Possible = Efficiency", x, y);
+
+    font_size = 32 * w_fraction;
+
+    ctx.font= font_size + "px Georgia";
+    ctx.fillStyle = "black";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "top";
+
+    x =  w / 2 * w_fraction;
+    y = 55 * w_fraction;
+
+    if (app.$data.session.started)
+        ctx.fillText(session_period.realized_gains_from_trade
+                    + "/" 
+                    + session_period.possible_gains_from_trade  
+                    + "=" 
+                    + session_period.efficiency, x, y);
+
     ctx.restore();
 },
 

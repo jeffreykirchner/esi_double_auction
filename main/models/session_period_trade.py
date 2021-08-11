@@ -53,6 +53,20 @@ class SessionPeriodTrade(models.Model):
         return the best offer
         '''
         return self.session_period_trade_offers.order_by('-amount').last()
+    
+    def get_total_gains_from_trade(self):
+        '''
+        return the gains from this trade
+        '''
+        
+        if not self.trade_complete:
+            return 0
+        
+        total_gains = self.buyer_value.value_cost - self.trade_price
+        total_gains += self.trade_price - self.seller_cost.value_cost
+
+        return total_gains
+
 
     #return json object of class
     def json(self):

@@ -55,6 +55,7 @@ var app = Vue.createApp({
                     show_supply_demand_graph : false,
                     show_equilibrium_price_graph : false,
                     show_trade_line_graph : false,
+                    show_gains_from_trade_graph : true,
                     move_to_next_period_text : '---',
                 }},
     methods: {
