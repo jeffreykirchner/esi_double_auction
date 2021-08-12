@@ -301,7 +301,7 @@ class StaffSessionConsumer(SocketConsumerMixin):
         message_data["session"] = await get_session(event["message_text"]["sessionID"])
         
         message = {}
-        message["messageType"] = event["type"]
+        message["messageType"] = "update_session"
         message["messageData"] = message_data
 
         # Send message to WebSocket
@@ -1013,7 +1013,7 @@ def take_add_to_all_values_or_costs(data):
     '''   
 
     logger = logging.getLogger(__name__) 
-    logger.info(f"Take shift all values or costs: {data}")
+    logger.info(f"Take add to all values or costs: {data}")
 
     session_id = data["sessionID"]
     period = data["currentPeriod"]
@@ -1033,6 +1033,6 @@ def take_add_to_all_values_or_costs(data):
 
         return "fail"
 
-    status = parameter_set.shift_values_or_costs(values_or_costs, period, amount)
+    status = parameter_set.add_to_values_or_costs(values_or_costs, period, amount)
 
     return status

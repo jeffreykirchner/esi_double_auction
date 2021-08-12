@@ -98,7 +98,7 @@ addToValueOrCost(valueOrCost){
     else
         amount = app.$data.add_to_cost_amount;
 
-    app.sendMessage("shift_value_or_cost", {"sessionID" : app.$data.sessionID,
+    app.sendMessage("add_to_all_values_or_costs", {"sessionID" : app.$data.sessionID,
                                             "currentPeriod" : app.$data.current_visible_period,
                                             "valueOrCost" : valueOrCost,
                                             "amount" : amount,});

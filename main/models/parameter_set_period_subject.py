@@ -62,6 +62,10 @@ class ParameterSetPeriodSubject(models.Model):
 
         for i in self.get_value_cost_list():
             i.value_cost += amount
+
+            if i.value_cost < 0:
+                i.value_cost = 0
+
             i.save()
 
     def from_dict(self, source):

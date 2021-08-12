@@ -139,7 +139,7 @@ class ParameterSet(models.Model):
 
         parameter_set_period = self.parameter_set_periods.get(period_number = period_number)
 
-        return parameter_set_period.shift_values_or_costs(value_or_cost, amount)
+        return parameter_set_period.add_to_values_or_costs(value_or_cost, amount)
     
     def copy_values_or_costs(self, value_or_cost, period_number):
         '''
