@@ -1,7 +1,6 @@
 '''
 websocket session list
 '''
-from datetime import datetime
 from decimal import Decimal, DecimalException
 
 from django.core.serializers.json import DjangoJSONEncoder
@@ -266,7 +265,7 @@ class StaffSessionConsumer(SocketConsumerMixin):
         '''
         #update subject count
         message_data = {}
-        message_data["result"] = await take_submit_bid_offer(event["message_text"])
+        message_data["result"] = await sync_to_async(take_submit_bid_offer)(event["message_text"])
         
         message = {}
         message["messageType"] = event["type"]
@@ -565,59 +564,7 @@ def take_start_experiment(data):
     session = Session.objects.get(id=session_id)
 
     if not session.started:
-        session.started = True
-        session.current_period = 1
-        session.start_date = datetime.now()
-
-        session.save()
-
-        #intialize subjects
-        for i in range(session.parameter_set.number_of_buyers):
-            s = SessionSubject()
-
-            s.session = session
-            s.id_number = i + 1
-            s.subject_type = SubjectType.BUYER
-
-            s.save()
-
-        for i in range(session.parameter_set.number_of_sellers):
-            s = SessionSubject()
-
-            s.session = session
-            s.id_number = i + 1
-            s.subject_type = SubjectType.SELLER
-
-            s.save()
-
-        #create new periods
-        counter = 1
-        for i in session.parameter_set.parameter_set_periods.all():
-            session_period = SessionPeriod()
-
-            session_period.session = session
-            session_period.period_number = counter
-            session_period.save()
-
-            for j in session.session_subjects.all():
-                s = SessionSubjectPeriod()
-                s.session_subject = j
-                s.session_period = session_period
-                s.parameter_set_period_subject = ParameterSetPeriodSubject.objects.get(parameter_set_period=i,
-                                                                                       id_number=j.id_number,
-                                                                                       subject_type=j.subject_type)
-                s.save()
-
-            counter += 1
-                
-
-        #intialize earch period with first trade
-        for i in session.session_periods.all():
-            t = SessionPeriodTrade()
-            t.session_period = i
-            t.trade_number = 1
-            t.save()
-
+        session.start_experiment()
 
     status = "success"
     
@@ -673,7 +620,6 @@ def take_next_period(data):
             "current_period" : session.current_period,
             "finished" : session.finished}
 
-@sync_to_async
 def take_submit_bid_offer(data):
     '''
     take bid or offer

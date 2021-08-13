@@ -35,7 +35,7 @@ class SessionPeriod(models.Model):
 
     def get_bid_list_json(self):
         '''
-        return a list of bids for this period in json format
+        return a list of bids for this period in json format, highest last
         '''
         return list(main.models.SessionPeriodTradeBid.objects.filter(session_period_trade__in=self.session_period_trades_a.all())
                                                              .values('amount', 'session_period_trade__trade_number')
@@ -43,7 +43,7 @@ class SessionPeriod(models.Model):
 
     def get_offer_list_json(self):
         '''
-        return a list of offers for this period in json format
+        return a list of offers for this period in json format, lowest last
         '''
         return list(main.models.SessionPeriodTradeOffer.objects.filter(session_period_trade__in=self.session_period_trades_a.all())
                                                                .values('amount', 'session_period_trade__trade_number')

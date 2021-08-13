@@ -2,6 +2,8 @@
 session model
 '''
 
+from datetime import datetime
+
 import logging
 import uuid
 
@@ -18,6 +20,8 @@ import main
 
 from main.models import ParameterSet
 from main.models import Parameters
+
+from main.globals import SubjectType
 
 #experiment sessoin
 class Session(models.Model):
@@ -61,53 +65,70 @@ class Session(models.Model):
         except ObjectDoesNotExist:
             return None
 
-    def add_session_subjects(self):
-        '''
-        add subjects to session
-        '''
-
-        for sub in range(self.parameter_set.number_of_subjects):
-            self.add_session_subject(sub+1)
-
-    def add_session_subject(self, id_number):
-        '''
-        add single subject to session
-        '''
-
-        new_subject = main.models.SessionSubject()
-
-        new_subject.session = self
-        new_subject.id_number = id_number
-
-        new_subject.save()
-
-    def add_session_periods(self):
-        '''
-        create set of session periods
-        '''
-        #logger = logging.getLogger(__name__)
-
-        for prd in range(self.parameter_set.number_of_periods):
-            self.add_session_period(prd+1)
-
-    def add_session_period(self, new_period):
-        '''
-        add new period to session
-        '''
-        logger = logging.getLogger(__name__)
-        logger.info(f"add_session_period add period: {new_period} ")
-
-        new_sd = main.models.SessionPeriod()
-
-        new_sd.session = self
-        new_sd.period_number = new_period
-        new_sd.save()
-
     def get_start_date_string(self):
         '''
         get a formatted string of start date
         '''
         return  self.start_date.strftime("%#m/%#d/%Y")
+
+    def start_experiment(self):
+        '''
+        setup and start experiment
+        '''
+
+        self.started = True
+        self.current_period = 1
+        self.start_date = datetime.now()
+
+        self.save()
+
+        #initialize buyers
+        for i in range(self.parameter_set.number_of_buyers):
+            s = main.models.SessionSubject()
+
+            s.session = self
+            s.id_number = i + 1
+            s.subject_type = SubjectType.BUYER
+
+            s.save()
+
+        #initialize sellers
+        for i in range(self.parameter_set.number_of_sellers):
+            s = main.models.SessionSubject()
+
+            s.session = self
+            s.id_number = i + 1
+            s.subject_type = SubjectType.SELLER
+
+            s.save()
+
+        #create new periods
+        counter = 1
+        for i in self.parameter_set.parameter_set_periods.all():
+            session_period = main.models.SessionPeriod()
+
+            session_period.session = self
+            session_period.period_number = counter
+            session_period.save()
+
+            for j in self.session_subjects.all():
+                s = main.models.SessionSubjectPeriod()
+                s.session_subject = j
+                s.session_period = session_period
+                s.parameter_set_period_subject = main.models.ParameterSetPeriodSubject.objects.get(parameter_set_period=i,
+                                                                                                   id_number=j.id_number,
+                                                                                                   subject_type=j.subject_type)
+                s.save()
+
+            counter += 1
+                
+
+        #intialize earch period with first trade
+        for i in self.session_periods.all():
+            t = main.models.SessionPeriodTrade()
+            t.session_period = i
+            t.trade_number = 1
+            t.save()
 
     def json(self):
         '''
