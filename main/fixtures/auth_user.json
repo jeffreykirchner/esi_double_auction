@@ -1,0 +1,1 @@
+[{"model": "auth.user", "pk": 1, "fields": {"password": "go panthers", "last_login": "2021-08-05T21:59:57.423Z", "is_superuser": true, "username": "adamsmith@chapman.edu", "first_name": "", "last_name": "", "email": "adamsmith@chapman.edu", "is_staff": true, "is_active": true, "date_joined": "2021-05-05T23:18:42.550Z", "groups": [], "user_permissions": []}}]

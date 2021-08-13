@@ -15,20 +15,6 @@ class Parameters(models.Model):
     site_url = models.CharField(max_length = 200, default="https://www.google.com/")       #site URL used for display in emails
     test_email_account = models.CharField(max_length=1000, default="")                     #email account used for debug mode emails
 
-    invitation_text_subject = models.CharField(max_length=1000, default="")             #email subject text for the single day invitation
-    invitation_text = models.CharField(max_length=10000, default="")                    #email text for the single day invitation
-
-    cancelation_text_subject = models.CharField(max_length=1000, default="")            #email subject text when an experiment is canceled
-    cancelation_text = models.CharField(max_length=10000, default="")                   #email text when an experiment is canceled
-
-    questionnaire1_required = models.BooleanField(default=True)                             #enable pre experiment questionnaire
-    questionnaire2_required = models.BooleanField(default=True)                             #enable post experiment questionnaire
-
-    consent_form_required = models.BooleanField(default=True)                               #require subjects to sign custom consent form
-
-    staff_session_help_text = models.CharField(max_length=5000, default="")                # help text shown to staff
-    staff_home_help_text = models.CharField(max_length=5000, default="")                   # help text shown to staff home page
-
     channel_key = models.UUIDField(default=uuid.uuid4, verbose_name = 'Channel Key')     #unique channel to communicate on
 
     timestamp = models.DateTimeField(auto_now_add=True)
