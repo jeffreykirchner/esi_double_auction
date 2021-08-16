@@ -191,7 +191,6 @@ class ParameterSetPeriod(models.Model):
         
         return "success"
 
-
     def from_dict(self, source, copy_buyers, copy_sellers, copy_price_cap):
         '''
         copy source values into this period
