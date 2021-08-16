@@ -1,13 +1,7 @@
 '''
-unit tests for session model
+unit tests for bid and offer input
 '''
-import decimal
-from main.models import parameter_set_period
-from asgiref.sync import async_to_sync
-from decimal import Decimal
-
 import logging
-import asyncio
 
 from unittest import main
 from django.test import TestCase

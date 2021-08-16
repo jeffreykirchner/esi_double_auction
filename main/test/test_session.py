@@ -1,12 +1,9 @@
 '''
 unit tests for session model
 '''
-import decimal
-from asgiref.sync import async_to_sync
 from decimal import Decimal
 
 import logging
-import asyncio
 
 from unittest import main
 from django.test import TestCase
