@@ -8,15 +8,25 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
     </div>
     <div class="modal-body">
-        <form id="importParametersForm">
-            {% for i in import_parameters_form %}
-            <div class="row">
-                <div class = "col col-md-10 offset-md-1">  
-                    {{ i|as_crispy_field }}         
-                </div>            
-            </div> 
-            {% endfor %}
-        </form>
+        <div class="row">
+            <div class="col">
+                <form id="importParametersForm">
+                    {% for i in import_parameters_form %}
+                    <div class="row">
+                        <div class = "col col-md-10 offset-md-1">  
+                            {{ i|as_crispy_field }}         
+                        </div>            
+                    </div> 
+                    {% endfor %}
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col text-center">
+                [[import_parameters_message]]
+            </div>
+        </div>
+        
     </div>
     <div class="modal-footer">
         

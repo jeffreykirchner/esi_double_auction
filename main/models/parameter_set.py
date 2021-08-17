@@ -35,6 +35,7 @@ class ParameterSet(models.Model):
         logger = logging.getLogger(__name__) 
 
         message = "Parameters loaded successfully."
+        status = "success"
 
         try:
             self.number_of_buyers = new_ps.get("number_of_buyers")
@@ -60,9 +61,10 @@ class ParameterSet(models.Model):
 
         except IntegrityError as exp:
             message = f"Failed to load parameter set: {exp}"
+            status = "fail"
             logger.warning(message)
 
-        return message
+        return {"status" : status, "message" :  message}
 
     def add_session_period(self):
         '''

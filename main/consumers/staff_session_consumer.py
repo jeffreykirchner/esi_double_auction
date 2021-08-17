@@ -12,16 +12,12 @@ import logging
 
 from django.core.exceptions import ObjectDoesNotExist
 
-from main.models import ParameterSetPeriodSubjectValuecost, session_subject_period
-from main.models import ParameterSetPeriodSubject
+from main.models import ParameterSetPeriodSubjectValuecost
 from main.models import ParameterSetPeriod
 
-from main.models import SessionPeriod
 from main.models import SessionPeriodTradeBid
 from main.models import SessionPeriodTradeOffer
 from main.models import SessionPeriodTrade
-from main.models import SessionSubject
-from main.models import SessionSubjectPeriod
 
 from main.consumers import SocketConsumerMixin
 from main.consumers import get_session
@@ -86,7 +82,7 @@ class StaffSessionConsumer(SocketConsumerMixin):
         
         #update subject count
         message_data = {}
-        message_data["status"] = await take_update_subject_count(event["message_text"])
+        message_data["status"] = await sync_to_async(take_update_subject_count)(event["message_text"])
         message_data["session"] = await get_session(event["message_text"]["sessionID"])
 
         message = {}
@@ -119,7 +115,7 @@ class StaffSessionConsumer(SocketConsumerMixin):
         '''
         #update subject count
         message_data = {}
-        message_data["status"] = await take_update_valuecost(event["message_text"])
+        message_data["status"] = sync_to_async(take_update_valuecost)(event["message_text"])
 
         message_data["session"] = await get_session(event["message_text"]["sessionID"])
 
@@ -137,7 +133,7 @@ class StaffSessionConsumer(SocketConsumerMixin):
         #update subject count
 
         message_data = {}
-        message_data["status"] = await take_shift_value_or_cost(event["message_text"])
+        message_data["status"] = await sync_to_async(take_shift_value_or_cost)(event["message_text"])
 
         message_data["session"] = await get_session(event["message_text"]["sessionID"])
 
@@ -189,7 +185,7 @@ class StaffSessionConsumer(SocketConsumerMixin):
         '''
         #update subject count
         message_data = {}
-        message_data["status"] = await take_import_parameters(event["message_text"])
+        message_data["status"] = await sync_to_async(take_import_parameters)(event["message_text"])
 
         message_data["session"] = await get_session(event["message_text"]["sessionID"])
 
@@ -340,7 +336,6 @@ def take_update_session_form(data):
     logger.info("Invalid session form")
     return {"status":"fail", "errors":dict(form.errors.items())}
 
-@sync_to_async
 def take_update_subject_count(data):
     '''
     take update to buyer or seller count for sessio
@@ -398,7 +393,6 @@ def take_update_period_count(data):
     else:
         return parameter_set.remove_session_period()
 
-@sync_to_async
 def take_update_valuecost(data):
     '''
     update a value or cost for session
@@ -433,10 +427,9 @@ def take_update_valuecost(data):
     logger.info("Invalid session form")
     return {"value" : "fail", "errors" : dict(form.errors.items())}
 
-@sync_to_async
 def take_shift_value_or_cost(data):
     '''
-    shift values or costs up or down
+    rotate values or costs up or down
     '''   
 
     logger = logging.getLogger(__name__) 
@@ -514,7 +507,6 @@ def take_update_period(data):
     logger.info("Invalid session form")
     return {"value" : "fail", "errors" : dict(form.errors.items())}
 
-@sync_to_async
 def take_import_parameters(data):
     '''
     import parameters from another session
@@ -533,9 +525,10 @@ def take_import_parameters(data):
     source_session = Session.objects.get(id=form_data_dict["session"])
     target_session = Session.objects.get(id=session_id)
 
-    target_session.parameter_set.from_dict(source_session.parameter_set.json())          
+    return target_session.parameter_set.from_dict(source_session.parameter_set.json())          
 
-    return {"value" : "success"}
+    # return {"value" : "fail" if "Failed" in message else "success",
+    #         "message" : message}
 
 @sync_to_async
 def take_download_parameters(data):

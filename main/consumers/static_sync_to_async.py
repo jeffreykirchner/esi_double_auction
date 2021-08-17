@@ -1,9 +1,8 @@
 '''
 static snyc_to_async methods
 '''
-from datetime import datetime
 
-import pytz
+
 import logging
 
 from asgiref.sync import sync_to_async
@@ -11,9 +10,7 @@ from asgiref.sync import sync_to_async
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 
-from main.models import Session, session_subject
-
-from main.globals import create_new_session_parameterset
+from main.models import Session
 
 @sync_to_async
 def get_session_list_json():
@@ -21,25 +18,6 @@ def get_session_list_json():
     get list of sessions
     '''
     return [i.json() for i in Session.objects.filter(soft_delete=False)]
-
-@sync_to_async
-def create_new_session(auth_user):
-    '''
-    create an emtpy session and return it
-    '''
-    
-    session = Session()
-
-    session.parameter_set = create_new_session_parameterset()
-    session.start_date = datetime.now(pytz.UTC)
-    session.creator = auth_user
-
-    session.save()
-
-    logger = logging.getLogger(__name__) 
-    logger.info(f"Create New Session {session}")
-
-    return session
 
 @sync_to_async
 def delete_session(id_):

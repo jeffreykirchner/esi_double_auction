@@ -1,15 +1,21 @@
 '''
 websocket session list
 '''
+from asgiref.sync import sync_to_async
+from datetime import datetime
+
 import json
 import logging
+import pytz
 
 from django.core.serializers.json import DjangoJSONEncoder
 
 from main.consumers import SocketConsumerMixin
 from main.consumers import get_session_list_json
-from main.consumers import create_new_session
 from main.consumers import delete_session
+
+from main.models import Session
+from main.globals import create_new_session_parameterset
 
 class StaffHomeConsumer(SocketConsumerMixin):
     '''
@@ -47,7 +53,7 @@ class StaffHomeConsumer(SocketConsumerMixin):
         logger = logging.getLogger(__name__) 
         logger.info(f"Create Session {event}")
 
-        await create_new_session(self.scope["user"])
+        await sync_to_async(create_new_session)(self.scope["user"])
         
         #build response
         message_data = {}
@@ -77,3 +83,22 @@ class StaffHomeConsumer(SocketConsumerMixin):
 
         # Send message to WebSocket
         await self.send(text_data=json.dumps({'message': message,}, cls=DjangoJSONEncoder))
+
+
+def create_new_session(auth_user):
+    '''
+    create an emtpy session and return it
+    '''
+    
+    session = Session()
+
+    session.parameter_set = create_new_session_parameterset()
+    session.start_date = datetime.now(pytz.UTC)
+    session.creator = auth_user
+
+    session.save()
+
+    logger = logging.getLogger(__name__) 
+    logger.info(f"Create New Session {session}")
+
+    return session

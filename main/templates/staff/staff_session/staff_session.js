@@ -59,6 +59,7 @@ var app = Vue.createApp({
                     move_to_next_period_text : '---',
                     add_to_value_amount : 0,
                     add_to_cost_amount : 0,
+                    import_parameters_message : "",
                 }},
     methods: {
 

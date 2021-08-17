@@ -156,18 +156,19 @@ sendImportParameters(){
 /** show parameters copied from another period 
 */
 takeImportParameters(){
-    app.$data.cancelModal=false;
-    app.clearMainFormErrors();
+    //app.$data.cancelModal=false;
+    //app.clearMainFormErrors();
 
-    if(messageData.status.value == "success")
+    if(messageData.status.status == "success")
     {
+        app.$data.current_visible_period = 1;
         app.takeGetSession(messageData);       
-        $('#importParametersModal').modal('hide');    
+        app.$data.import_parameters_message = messageData.status.message;
+        //$('#importParametersModal').modal('hide');    
     } 
     else
     {
-        app.$data.cancelModal=true;                           
-        app.displayErrors(messageData.errors);
+        app.$data.import_parameters_message = messageData.status.message;
     } 
 },
 
@@ -219,7 +220,7 @@ uploadParameterset:function(){
             )
             .then(function (response) {     
 
-                app.$data.uploadParametersetMessaage = response.data.message;
+                app.$data.uploadParametersetMessaage = response.data.message.message;
                 app.$data.session = response.data.session;
                 app.$data.uploadParametersetButtonText= 'Upload <i class="fas fa-upload"></i>';
 
