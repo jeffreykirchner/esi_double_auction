@@ -74,12 +74,7 @@ class StaffSessionConsumer(SocketConsumerMixin):
     async def update_subject_count(self, event):
         '''
         add or remove a buyer or seller
-        '''
-
-        logger = logging.getLogger(__name__) 
-        logger.info(f"Update Buyer or Seller count: {event}")
-
-        
+        '''                
         #update subject count
         message_data = {}
         message_data["status"] = await sync_to_async(take_update_subject_count)(event["message_text"])
@@ -98,7 +93,7 @@ class StaffSessionConsumer(SocketConsumerMixin):
         '''
         #update subject count
         message_data = {}
-        message_data["status"] = await take_update_period_count(event["message_text"])
+        message_data["status"] = await sync_to_async(take_update_period_count)(event["message_text"])
 
         message_data["session"] = await get_session(event["message_text"]["sessionID"])
 
@@ -115,7 +110,7 @@ class StaffSessionConsumer(SocketConsumerMixin):
         '''
         #update subject count
         message_data = {}
-        message_data["status"] = sync_to_async(take_update_valuecost)(event["message_text"])
+        message_data["status"] = await sync_to_async(take_update_valuecost)(event["message_text"])
 
         message_data["session"] = await get_session(event["message_text"]["sessionID"])
 
@@ -151,7 +146,7 @@ class StaffSessionConsumer(SocketConsumerMixin):
         #update subject count
 
         message_data = {}
-        message_data["status"] = await take_copy_value_or_cost(event["message_text"])
+        message_data["status"] = await sync_to_async(take_copy_value_or_cost)(event["message_text"])
 
         message_data["session"] = await get_session(event["message_text"]["sessionID"])
 
@@ -168,7 +163,7 @@ class StaffSessionConsumer(SocketConsumerMixin):
         '''
         #update subject count
         message_data = {}
-        message_data["status"] = await take_update_period(event["message_text"])
+        message_data["status"] = await sync_to_async(take_update_period)(event["message_text"])
 
         message_data["session"] = await get_session(event["message_text"]["sessionID"])
 
@@ -291,7 +286,7 @@ class StaffSessionConsumer(SocketConsumerMixin):
         '''
                 #update subject count
         message_data = {}
-        message_data["status"] = await take_add_to_all_values_or_costs(event["message_text"])
+        message_data["status"] = await sync_to_async(take_add_to_all_values_or_costs)(event["message_text"])
 
         message_data["session"] = await get_session(event["message_text"]["sessionID"])
         
@@ -341,6 +336,8 @@ def take_update_subject_count(data):
     take update to buyer or seller count for sessio
     param: data {"type":"buyer or seller","adjustment":"-1 or 1"} update to buyer or seller count
     '''
+    logger = logging.getLogger(__name__) 
+    logger.info(f"Update Buyer or Seller count: {data}")
 
     subject_type = data["type"]
     adjustment = data["adjustment"]
@@ -372,7 +369,6 @@ def take_update_subject_count(data):
     
     return parameter_set.update_subject_counts()
 
-@sync_to_async
 def take_update_period_count(data):
     '''
     update the number of periods
@@ -448,14 +444,13 @@ def take_shift_value_or_cost(data):
     
     return status
 
-@sync_to_async
 def take_copy_value_or_cost(data):
     '''
     copy values or costs from previous periods
     '''   
 
     logger = logging.getLogger(__name__) 
-    logger.info(f"shift values up or down: {data}")
+    logger.info(f"Copy values or costs from previous period: {data}")
 
     status = "success"
     session_id = data["sessionID"]
@@ -468,11 +463,10 @@ def take_copy_value_or_cost(data):
     session = Session.objects.get(id=session_id)
     parameter_set = session.parameter_set
 
-    status = parameter_set.copy_values_or_costs(value_or_cost, period)
+    message = parameter_set.copy_values_or_costs(value_or_cost, period)
     
-    return "success"
+    return status
 
-@sync_to_async
 def take_update_period(data):
     '''
     update period parameters
@@ -945,7 +939,6 @@ def take_undo_bid_offer(data):
             "bid_list" : session_period.get_bid_list_json(),
             "offer_list" : session_period.get_offer_list_json(),}
 
-@sync_to_async
 def take_add_to_all_values_or_costs(data):
     '''
     take add to all values or costs

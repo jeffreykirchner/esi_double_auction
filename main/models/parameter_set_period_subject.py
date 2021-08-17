@@ -67,6 +67,8 @@ class ParameterSetPeriodSubject(models.Model):
                 i.value_cost = 0
 
             i.save()
+        
+        return "success"
 
     def from_dict(self, source):
         '''
