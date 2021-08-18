@@ -46,7 +46,7 @@ takeUpdateValuecost(messageData){
     else
     {
         app.$data.cancelModal=true;                           
-        app.displayErrors(messageData.errors);
+        app.displayErrors(messageData.status.errors);
     } 
 },
 
@@ -121,11 +121,11 @@ sendUpdatePeriod(){
     
     app.$data.working = true;
     app.sendMessage("update_period", {"sessionID" : app.$data.sessionID,
-                                        "periodID" : app.$data.session.parameter_set.periods[app.$data.current_visible_period-1].id,
-                                        "formData" : $("#periodForm").serializeArray(),});
+                                      "periodID" : app.$data.session.parameter_set.periods[app.$data.current_visible_period-1].id,
+                                      "formData" : $("#periodForm").serializeArray(),});
 },
 
-/** take update valuecost
+/** take update period
  * @param messageData {json} result of update, either sucess or fail with errors
 */
 takeUpdatePeriod(messageData){
@@ -140,7 +140,7 @@ takeUpdatePeriod(messageData){
     else
     {
         app.$data.cancelModal=true;                           
-        app.displayErrors(messageData.errors);
+        app.displayErrors(messageData.status.errors);
     } 
 },
 
