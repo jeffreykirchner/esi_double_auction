@@ -13,7 +13,8 @@ class ValuecostForm(forms.ModelForm):
     value_cost = forms.DecimalField(label='Amount',
                                     min_value=0,
                                     widget=forms.NumberInput(attrs={"v-model":"current_valuecost.value_cost",
-                                                                    "step":"0.25"}))
+                                                                    "v-on:keyup.enter":"sendUpdateValuecost()",
+                                                                    "step":"0.01"}))
     
     enabled = forms.ChoiceField(label='Enabled',
                                 choices=((True, 'Yes'), (False,'No' )),

@@ -10,7 +10,7 @@
     <div class="modal-body">
         <div class="row">
             <div class="col">
-                <form id="importParametersForm">
+                <form id="importParametersForm" v-on:submit.prevent="onSubmit">
                     {% for i in import_parameters_form %}
                     <div class="row">
                         <div class = "col col-md-10 offset-md-1">  

@@ -27,8 +27,8 @@ sendUpdateValuecost(){
     
     app.$data.working = true;
     app.sendMessage("update_valuecost", {"sessionID" : app.$data.sessionID,
-                                            "id" : app.$data.current_valuecost.id,
-                                            "formData" : $("#valuecostForm").serializeArray(),});
+                                         "id" : app.$data.current_valuecost.id,
+                                         "formData" : $("#valuecostForm").serializeArray(),});
 },
 
 /** take update valuecost

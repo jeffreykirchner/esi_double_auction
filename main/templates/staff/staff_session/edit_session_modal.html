@@ -9,7 +9,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
     </div>
     <div class="modal-body">
-        <form id="sessionForm">
+        <form id="sessionForm" v-on:submit.prevent="onSubmit">
             {% for i in session_form %}
             <div class="row">
                 <div class = "col col-md-10 offset-md-1">  

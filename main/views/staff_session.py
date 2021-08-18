@@ -20,7 +20,6 @@ from main.forms import SessionForm
 from main.forms import ValuecostForm
 from main.forms import PeriodForm
 from main.forms import ImportParametersForm
-from main.forms import SubmitBidOfferStaffForm
 
 class StaffSessionView(SingleObjectMixin, View):
     '''
@@ -56,8 +55,7 @@ class StaffSessionView(SingleObjectMixin, View):
                                "valuecost_form_ids" : valuecost_form_ids,
                                "period_form" : PeriodForm(),
                                "period_form_ids" : period_form_ids,
-                               "import_parameters_form" : ImportParametersForm(),
-                               "submit_bid_offer_form" : SubmitBidOfferStaffForm(),
+                               "import_parameters_form" : ImportParametersForm(),                               
                                "websocket_path" : self.websocket_path,
                                "page_key" : f'{self.websocket_path}-{session.id}',
                                "session" : session})

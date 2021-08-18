@@ -11,7 +11,8 @@ class SessionForm(forms.ModelForm):
     session edit form
     '''
     title = forms.CharField(label='Title',
-                            widget=forms.TextInput(attrs={"v-model":"session.title"}))
+                            widget=forms.TextInput(attrs={"v-model":"session.title",
+                                                           "v-on:keyup.enter":"sendUpdateSession()"}))
 
     class Meta:
         model=Session
