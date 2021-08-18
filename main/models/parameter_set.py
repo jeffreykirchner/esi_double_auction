@@ -213,7 +213,7 @@ class ParameterSet(models.Model):
             
             for period_subject in period_subject_list:
                 period = {'id_number':period_subject.parameter_set_period.period_number,
-                          'value_list':period_subject.get_value_cost_list()}
+                          'cost_list':period_subject.get_value_cost_list()}
                 
                 seller['periods'].append(period)
 

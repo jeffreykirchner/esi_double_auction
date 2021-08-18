@@ -20,10 +20,11 @@ urlpatterns = [
     #main
     path('', login_required(views.StaffHomeView.as_view()), name='home'),
     path('subject', views.SubjectView.as_view(), name='subject'),
-    path('staff-session/<int:pk>/', views.StaffSessionView.as_view(), name='staff_session'),
-    path('staff-session-trade-sheets/<int:pk>/', views.StaffSessionTradeSheetsView.as_view(), name='staff_session_trade_sheets'),
-    path('staff-session-paddles/<int:pk>/<str:buyer_or_seller>/', views.StaffSessionPaddles.as_view(), name='staff_session_paddles'),
-    path('staff-session-subject-earnings/<int:pk>/', views.StaffSessionSubjectEarnings.as_view(), name='staff_session_subject_earnings'),
+    path('staff-demo/', login_required(views.StaffDemo.as_view()), name='staff_demo'),
+    path('staff-session/<int:pk>/', login_required(views.StaffSessionView.as_view()), name='staff_session'),
+    path('staff-session-trade-sheets/<int:pk>/', login_required(views.StaffSessionTradeSheetsView.as_view()), name='staff_session_trade_sheets'),
+    path('staff-session-paddles/<int:pk>/<str:buyer_or_seller>/', login_required(views.StaffSessionPaddles.as_view()), name='staff_session_paddles'),
+    path('staff-session-subject-earnings/<int:pk>/', login_required(views.StaffSessionSubjectEarnings.as_view()), name='staff_session_subject_earnings'),
 
     #txt
     path('robots.txt', views.RobotsTxt, name='robotsTxt'),

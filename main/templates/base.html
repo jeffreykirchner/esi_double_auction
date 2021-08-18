@@ -63,13 +63,20 @@
                 </button>
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav me-auto">
-                        <a class="navbar-item" href="{% url 'home' %}"  data-placement="bottom" title="Calendar">
-                            <i class="fas fa-flask"></i> Sessions
-                        </a>
-                        <li class="nav-item">
-                            
+                    <ul class="navbar-nav me-auto">                       
+                        
+                        <li class="nav-item px-2">
+                            <a href="{% url 'home' %}"  data-placement="bottom" title="Session list">
+                                <i class="fas fa-flask"></i> Sessions
+                            </a>
                         </li>
+
+                        <li class="nav-item px-2">
+                            <a href="{% url 'staff_demo' %}"  data-placement="bottom" title="Record sheet demo">
+                                <i class="fas fa-chalkboard-teacher"></i> Demo
+                            </a>
+                        </li>
+                        
                     
                     </ul>
                     <div class="d-flex dropdown">

@@ -37,5 +37,6 @@ class StaffSessionTradeSheetsView(SingleObjectMixin, View):
                                "id" : session.id,
                                "session" : session,
                                "buyer_list" : buyer_list,
-                               "seller_list" : seller_list})
+                               "seller_list" : seller_list,
+                               "editable":False})
     

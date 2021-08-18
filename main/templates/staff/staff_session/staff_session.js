@@ -225,6 +225,11 @@ var app = Vue.createApp({
             } 
         },
 
+        //do nothing on when enter pressed for post
+        onSubmit(){
+            //do nothing
+        },
+
         {%include "staff/staff_session/parameters_card.js"%}
         {%include "staff/staff_session/graph_card.js"%}
         {%include "staff/staff_session/control_card.js"%}

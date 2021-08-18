@@ -1,0 +1,68 @@
+{% load humanize %}
+
+{% for period in buyer.periods %}
+    <div class="row mt-4">
+        <div class = "col h6 mb-0">
+            Period {{period.id_number}}
+        </div>
+    </div>
+
+    <div class="row mt-0">
+        <div class="col">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col" class="text-center">Unit</th>
+                    <th scope="col" class="text-center">Value</th>
+                    <th scope="col" class="text-center">-</th>
+                    <th scope="col" class="text-center">Price Paid</th>
+                    <th scope="col" class="text-center">=</th>
+                    <th scope="col" class="text-center">Profit From Trade</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {% for value in period.value_list %}
+                        {%if value.enabled%}
+                            <tr>
+                                <td class="text-center">
+                                    {{forloop.counter | ordinal}}
+                                </td>
+                                <td class="text-center"> 
+                                    {{value.value_cost}}                                                                                              
+                                </td>
+                                <td class="text-center">
+                                    -
+                                </td>
+                                <td>
+                                    {%if editable%}
+                                        <input type="number"
+                                               class="form-control text-center"
+                                               step="0.25"
+                                               v-on:change="update_buyer({{forloop.counter}})"
+                                               v-model="values_prices[{{forloop.counter}}]">
+                                    {%endif%}
+                                </td>
+                                <td class="text-center">
+                                    =
+                                </td>
+                                <td class="text-center">
+                                    {%if editable%}
+                                        <span v-html="values_profits[{{forloop.counter}}]"></span>                                             
+                                    {%endif%}
+                                </td>
+                            </tr>
+                        {%endif%}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="row">
+            <div class="col-10 text-end h6">
+                Total profit for period {{period.id_number}}:
+            </div>
+            <div class="col-2">
+
+            </div>
+        </div>
+    </div> 
+{% endfor %}

@@ -10,4 +10,5 @@ from .staff_session import *
 from .staff_session_trade_sheets import *
 from .staff_session_paddles import * 
 from .staff_session_subject_earnings import *
+from .staff_demo import *
 
