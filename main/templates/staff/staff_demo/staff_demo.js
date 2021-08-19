@@ -10,10 +10,12 @@ var app = Vue.createApp({
                     values_prices:[],
                     values_profits:[],
                     buyer:{{buyer_json|safe}},
+                    buyer_profit:"0.00",
                     costs:[],
                     costs_prices:[],
                     costs_profits:[],
                     seller:{{seller_json|safe}},
+                    seller_profit:"0.00",
                 }},
     methods: {
         //update buyer profit when price changes
