@@ -30,6 +30,16 @@ var app = Vue.createApp({
                 app.$data.values_profits[index] = app.$data.values_profits[index].toFixed(2);
                 app.$data.values_prices[index] = parseFloat(app.$data.values_prices[index]).toFixed(2);
             }
+
+            total=0;
+            for(i=0;i<app.$data.values_profits.length;i++)
+            {
+                value = parseFloat(app.$data.values_profits[i]);
+                
+                if(value) total += value;
+            }
+
+            app.$data.buyer_profit=total.toFixed(2);
             
         },  
         
@@ -45,6 +55,16 @@ var app = Vue.createApp({
                 app.$data.costs_profits[index] = app.$data.costs_profits[index].toFixed(2);
                 app.$data.costs_prices[index] = parseFloat(app.$data.costs_prices[index]).toFixed(2);
             }
+
+            total=0;
+            for(i=0;i<app.$data.costs_profits.length;i++)
+            {
+                value = parseFloat(app.$data.costs_profits[i]);
+                
+                if(value) total += value;
+            }
+
+            app.$data.seller_profit=total.toFixed(2);
             
         }, 
     },
