@@ -148,6 +148,7 @@ var app = Vue.createApp({
                 app.$data.show_supply_demand_graph = false;
                 app.$data.show_equilibrium_price_graph = false;
                 app.$data.show_trade_line_graph = false;
+                app.$data.show_gains_from_trade_graph = false;
 
                 if(app.$data.session.finished)
                 {
@@ -167,6 +168,7 @@ var app = Vue.createApp({
                 app.$data.show_supply_demand_graph = true;
                 app.$data.show_equilibrium_price_graph = true;
                 app.$data.show_trade_line_graph = false;
+                app.$data.show_gains_from_trade_graph = false;
             }
 
             app.updateMoveOnButtonText();
