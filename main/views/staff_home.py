@@ -2,6 +2,7 @@
 staff view
 '''
 import logging
+import uuid
 
 import channels.layers
 from asgiref.sync import async_to_sync
@@ -27,6 +28,6 @@ class StaffHomeView(View):
 
         parameters = Parameters.objects.first()
 
-        return render(request, self.template_name, {"parameters" : parameters,
-                                                    "page_key" : self.websocket_path,
+        return render(request, self.template_name, {"channel_key" : uuid.uuid4(),
+                                                    "page_key" : "staff-home",
                                                     "websocket_path" : self.websocket_path})

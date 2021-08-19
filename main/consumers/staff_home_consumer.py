@@ -3,16 +3,17 @@ websocket session list
 '''
 from asgiref.sync import sync_to_async
 from datetime import datetime
+from asgiref.sync import sync_to_async
 
 import json
 import logging
 import pytz
 
 from django.core.serializers.json import DjangoJSONEncoder
+from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
 
 from main.consumers import SocketConsumerMixin
-from main.consumers import get_session_list_json
-from main.consumers import delete_session
 
 from main.models import Session
 from main.globals import create_new_session_parameterset
@@ -21,13 +22,16 @@ class StaffHomeConsumer(SocketConsumerMixin):
     '''
     websocket session list
     '''    
-
+    
     async def delete_session(self, event):
         '''
         delete specified session
         '''
         logger = logging.getLogger(__name__) 
         logger.info(f"Delete Session {event}")
+
+        self.user = self.scope["user"]
+        logger.info(f"User {self.user}")
 
         message_text = event["message_text"]
 
@@ -37,7 +41,7 @@ class StaffHomeConsumer(SocketConsumerMixin):
 
         #build response
         message_data = {}
-        message_data["sessions"] = await get_session_list_json()
+        message_data["sessions"] = await sync_to_async(get_session_list_json)(self.user)
 
         message = {}
         message["messageType"] = "get_sessions"
@@ -53,11 +57,14 @@ class StaffHomeConsumer(SocketConsumerMixin):
         logger = logging.getLogger(__name__) 
         logger.info(f"Create Session {event}")
 
-        await sync_to_async(create_new_session)(self.scope["user"])
+        self.user = self.scope["user"]
+        logger.info(f"User {self.user}")
+
+        await sync_to_async(create_new_session)(self.user)
         
         #build response
         message_data = {}
-        message_data["sessions"] = await get_session_list_json()
+        message_data["sessions"] = await sync_to_async(get_session_list_json)(self.user)
 
         message = {}
         message["messageType"] = event["type"]
@@ -71,11 +78,14 @@ class StaffHomeConsumer(SocketConsumerMixin):
         return a list of sessions
         '''
         logger = logging.getLogger(__name__) 
-        logger.info(f"Get Sessions {event}")
+        logger.info(f"Get Sessions {event}")   
+
+        self.user = self.scope["user"]
+        logger.info(f"User {self.user}")     
 
         #build response
         message_data = {}
-        message_data["sessions"] = await get_session_list_json()
+        message_data["sessions"] = await sync_to_async(get_session_list_json)(self.user)
 
         message = {}
         message["messageType"] = event["type"]
@@ -102,3 +112,50 @@ def create_new_session(auth_user):
     logger.info(f"Create New Session {session}")
 
     return session
+
+
+def get_session_list_json(usr):
+    '''
+    get list of sessions
+    '''
+    return [i.json() for i in Session.objects.filter(soft_delete=False, creator=usr)]
+
+@sync_to_async
+def delete_session(id_):
+    '''
+    delete specified session
+    param: id_ {int} session id
+    '''
+
+    logger = logging.getLogger(__name__)   
+
+    try:
+        session = Session.objects.get(id=id_)
+
+        if settings.DEBUG:
+            session.delete()
+        else:
+            session.soft_delete=True
+            session.save()
+
+        logger.info(f"Delete Session {id_}")
+        return True
+    except ObjectDoesNotExist:
+        logger.warning(f"Delete Session, not found: {id}")
+        return False
+
+@sync_to_async
+def get_session(id_):
+    '''
+    return session with specified id
+    param: id_ {int} session id
+    '''
+    session = None
+    logger = logging.getLogger(__name__)
+
+    try:        
+        session = Session.objects.get(id=id_)
+    except ObjectDoesNotExist:
+        logger.warning(f"get_session session, not found: {id_}")
+    
+    return session.json()

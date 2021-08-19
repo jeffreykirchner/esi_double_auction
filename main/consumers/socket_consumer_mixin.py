@@ -2,6 +2,8 @@
 core socket communication mixin
 '''
 import json
+import logging
+
 from channels.generic.websocket import AsyncWebsocketConsumer
 
 class SocketConsumerMixin(AsyncWebsocketConsumer):
@@ -28,6 +30,9 @@ class SocketConsumerMixin(AsyncWebsocketConsumer):
             self.room_group_name,
             self.channel_name
         )
+
+        logger = logging.getLogger(__name__) 
+        logger.info(f"SocketConsumerMixin Connect {self.channel_name}")
 
         await self.accept()
 
