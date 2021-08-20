@@ -32,8 +32,8 @@ class StaffSessionView(SingleObjectMixin, View):
     websocket_path = "staff-session"
     model = Session
     
-    @method_decorator(login_required)
     @method_decorator(user_is_owner)
+    @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
         '''
         handle get requests

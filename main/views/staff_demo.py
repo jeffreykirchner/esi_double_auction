@@ -6,6 +6,8 @@ import json
 from django.views.generic import View
 from django.shortcuts import render
 from django.core.serializers.json import DjangoJSONEncoder
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 
 from main.models import Parameters
 
@@ -16,6 +18,7 @@ class StaffDemo(View):
     template_name = "staff/staff_demo.html"
     websocket_path = "staff-demo"
     
+    @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
         '''
         handle get requests

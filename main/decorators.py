@@ -17,3 +17,13 @@ def user_is_owner(function):
             raise PermissionDenied
 
     return wrap
+
+def user_is_super(function):
+    def wrap(request, *args, **kwargs):      
+        
+        if request.user.is_superuser:
+            return function(request, *args, **kwargs)
+        else:
+            raise PermissionDenied
+
+    return wrap

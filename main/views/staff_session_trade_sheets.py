@@ -11,6 +11,8 @@ from django.utils.decorators import method_decorator
 from main.models import Parameters
 from main.models import Session
 
+from main.decorators import user_is_owner
+
 class StaffSessionTradeSheetsView(SingleObjectMixin, View):
     '''
     class based staff session payout view
@@ -20,6 +22,7 @@ class StaffSessionTradeSheetsView(SingleObjectMixin, View):
     model = Session
     
     @method_decorator(login_required)
+    @method_decorator(user_is_owner)
     def get(self, request, *args, **kwargs):
         '''
         handle get requests
