@@ -9,6 +9,8 @@ var app = Vue.createApp({
     data() {return {chatSocket : "",
                     reconnecting : true,
                     working : false,
+                    parameter_upload_status : "",
+                    datafile_upload_status : "",
                 }},
     methods: {
         handleSocketConnected(){
@@ -47,7 +49,8 @@ var app = Vue.createApp({
         },
 
         sendUploadParameters(){
-            
+            app.$data.parameter_upload_status="";
+            app.$data.working=true;
             
         },
 
