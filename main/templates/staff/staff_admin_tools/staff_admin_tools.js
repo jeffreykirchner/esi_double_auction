@@ -51,6 +51,8 @@ var app = Vue.createApp({
         sendUploadParameters(){
             app.$data.parameter_upload_status="";
             app.$data.working=true;
+
+            app.sendMessage("create_session",{});
             
         },
 
