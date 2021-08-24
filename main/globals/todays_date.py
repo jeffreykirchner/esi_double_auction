@@ -14,7 +14,7 @@ def todays_date():
     #logger = logging.getLogger(__name__)
 
     prm = Parameters.objects.first()
-    tmz = pytz.timezone(prm.experimentTimeZone)
+    tmz = pytz.timezone(prm.experiment_time_zone)
 
     d_today = datetime.now(tmz)
     d_today = d_today.replace(hour=0,minute=0, second=0,microsecond=0)       

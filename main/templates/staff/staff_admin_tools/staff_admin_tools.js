@@ -11,6 +11,8 @@ var app = Vue.createApp({
                     working : false,
                     parameter_upload_status : "",
                     datafile_upload_status : "",
+                    parameters_text : "",
+                    datafile_text : "",
                 }},
     methods: {
         handleSocketConnected(){
@@ -50,9 +52,9 @@ var app = Vue.createApp({
 
         sendUploadParameters(){
             app.$data.parameter_upload_status="";
-            app.$data.working=true;
+            //app.$data.working=true;
 
-            app.sendMessage("create_session",{});
+            app.sendMessage("upload_parameters",{ini_text : app.$data.parameters_text});
             
         },
 

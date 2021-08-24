@@ -76,6 +76,14 @@
                                 <i class="fas fa-chalkboard-teacher"></i> Demo
                             </a>
                         </li>
+
+                        {%if user.is_superuser%}
+                            <li class="nav-item px-2">
+                                <a href="{% url 'staff_admin_tools' %}"  data-placement="bottom" title="Admin Tools">
+                                    <i class="fas fa-tools"></i> Tools
+                                </a>
+                            </li>
+                        {%endif%}
                         
                     
                     </ul>
@@ -84,9 +92,11 @@
                             Menu
                         </a>
                         <ul class="dropdown-menu dropdown-menu-lg-end" aria-labelledby="navbarDropdown">
-                            <li>
-                                <a class="dropdown-item" href="{% url 'admin:index' %}"  data-placement="bottom" title="Admin Panel"><i class="fas fa-cogs fa-fw"></i> Admin</a>
-                            </li>
+                            {%if user.is_superuser%}
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'admin:index' %}"  data-placement="bottom" title="Admin Panel"><i class="fas fa-cogs fa-fw"></i> Admin</a>
+                                </li>
+                            {%endif%}
                             <li>
                                 <a class="dropdown-item" href="{% url 'logout'%}"><i class="fas fa-sign-out-alt fa-fw"></i> Log Out</a>
                             </li>                        
