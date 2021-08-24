@@ -10,7 +10,28 @@
                                                         
     </div>
     <div class="card-body">                      
-                    
-                    
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label for="datafile_textarea">Input INI datafile below</label>
+                    <textarea class="form-control"
+                              id="datafile_textarea"
+                              v-model = "datafile_text"
+                              rows="10"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col text-end">
+                <span v-html="datafile_upload_status"></span>
+            </div>
+            <div class="col text-end">
+                <button type="submit"
+                        class="btn btn-outline-primary"
+                        v-bind:disabled="working"
+                        v-on:click="sendUploadDatafile()">Submit</button>
+            </div>
+        </div>                    
+               
     </div>                    
 </div>

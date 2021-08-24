@@ -241,7 +241,7 @@ class StaffSessionConsumer(SocketConsumerMixin):
         '''
         #update subject count
         message_data = {}
-        message_data["data"] = await take_next_period(event["message_text"])
+        message_data["data"] = await sync_to_async(take_next_period)(event["message_text"])
 
         message = {}
         message["messageType"] = event["type"]
@@ -582,7 +582,6 @@ def take_reset_experiment(data):
     
     return {"status" : status}
 
-@sync_to_async
 def take_next_period(data):
     '''
     advance to next period in the experiment
@@ -610,6 +609,11 @@ def take_next_period(data):
 def take_submit_bid_offer(data):
     '''
     take bid or offer
+    data :{
+        sessionID : int session pk,
+        bid_offer_id : string example b1 or s2,
+        bid_offer_amount : decimal 0.01 to 99.99
+        }
     '''   
 
     logger = logging.getLogger(__name__) 

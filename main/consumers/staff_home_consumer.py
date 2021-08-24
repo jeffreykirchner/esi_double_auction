@@ -155,7 +155,8 @@ def get_session(id_):
 
     try:        
         session = Session.objects.get(id=id_)
+        return session.json()
     except ObjectDoesNotExist:
         logger.warning(f"get_session session, not found: {id_}")
+        return {}
     
-    return session.json()

@@ -1,13 +1,6 @@
 <div class="card">                  
     <div class="card-header">
-        Upload legacy INI parameter files
-
-        <span class="float-end">
-            <span v-show="reconnecting">
-                Connecting <i class="fas fa-cog fa-spin fa-1x"></i>
-            </span>
-        </span>
-                                                        
+        Upload legacy INI parameter files                                                        
     </div>
     <div class="card-body">  
         <div class="row">
@@ -23,7 +16,7 @@
         </div>
         <div class="row mt-2">
             <div class="col text-end">
-                [[parameter_upload_status]]
+                <span v-html="parameter_upload_status"></span>
             </div>
             <div class="col text-end">
                 <button type="submit"

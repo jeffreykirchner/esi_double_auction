@@ -32,8 +32,8 @@ var app = Vue.createApp({
                 case "upload_parameters":
                     app.takeUploadParameters(messageData);
                     break;
-                case "":
-                    
+                case "upload_datafile":
+                    app.takeUploadDatafile(messageData);
                     break;
     
             }
@@ -50,20 +50,59 @@ var app = Vue.createApp({
                 }));
         },
 
+        /**upload legacy parameter file
+        */
         sendUploadParameters(){
             app.$data.parameter_upload_status="";
-            //app.$data.working=true;
+            app.$data.working=true;
 
             app.sendMessage("upload_parameters",{ini_text : app.$data.parameters_text});
             
         },
 
+        /**take result of parameter file upload
+        */
         takeUploadParameters(messageData){
-   
+
+            result = messageData.result;
+            
+            if(result.status == "success")
+            {
+                app.$data.parameter_upload_status="Parameters have been uploaded: <a href='/staff-session/" + result.message.session + "/'>View Session</a>";
+                app.$data.parameters_text = "";
+            }
+            else
+            {
+                app.$data.parameter_upload_status="Invalid parameter file"
+            }            
+        }, 
+
+        /**upload legacy parameter file
+        */
+        sendUploadDatafile(){
+            app.$data.datafile_upload_status="";
+            app.$data.working=true;
+
+            app.sendMessage("upload_datafile", {ini_text : app.$data.datafile_text});
+            
         },
 
-       
-        
+        /**take result of parameter file upload
+        */
+        takeUploadDatafile(messageData){
+
+            result = messageData.result;
+            
+            if(result.status == "success")
+            {
+                app.$data.datafile_upload_status="Datafile has been uploaded: <a href='/staff-session/" + result.message.session + "/'>View Session</a>";
+                app.$data.datafile_text = "";
+            }
+            else
+            {
+                app.$data.datafile_upload_status="Invalid data file"
+            }            
+        },
     },
 
     mounted(){
