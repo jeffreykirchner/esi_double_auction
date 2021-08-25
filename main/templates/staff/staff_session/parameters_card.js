@@ -223,6 +223,7 @@ uploadParameterset:function(){
                 app.$data.uploadParametersetMessaage = response.data.message.message;
                 app.$data.session = response.data.session;
                 app.$data.uploadParametersetButtonText= 'Upload <i class="fas fa-upload"></i>';
+                Vue.nextTick(app.update_sdgraph_canvas());
 
             })
             .catch(function (error) {
