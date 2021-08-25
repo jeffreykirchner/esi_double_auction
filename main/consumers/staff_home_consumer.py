@@ -118,7 +118,10 @@ def get_session_list_json(usr):
     '''
     get list of sessions
     '''
-    return [i.json() for i in Session.objects.filter(soft_delete=False, creator=usr)]
+    return [{"title" : i.title,
+             "start_date":i.get_start_date_string(),
+            }
+            for i in Session.objects.filter(soft_delete=False, creator=usr)]
 
 @sync_to_async
 def delete_session(id_):
