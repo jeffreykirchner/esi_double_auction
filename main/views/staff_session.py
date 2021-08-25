@@ -59,7 +59,7 @@ class StaffSessionView(SingleObjectMixin, View):
                                "valuecost_form_ids" : valuecost_form_ids,
                                "period_form" : PeriodForm(),
                                "period_form_ids" : period_form_ids,
-                               "import_parameters_form" : ImportParametersForm(),                               
+                               "import_parameters_form" : ImportParametersForm(user=request.user),                               
                                "websocket_path" : self.websocket_path,
                                "page_key" : f'{self.websocket_path}-{session.id}',
                                "session" : session})

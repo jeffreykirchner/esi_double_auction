@@ -6,8 +6,13 @@
             <button class="btn btn-outline-primary" type="button" v-on:click = "showEditSession()">
                 Edit <i class="far fa-edit"></i>
             </button>
-
         </span>
+
+        {%if user.is_superuser%}
+        <span class="float-end pe-2 ps-2"> 
+            <a href='/admin/main/session/{{session.id}}/change/' class='link-primary'>Lock/Share</a>
+        </span>
+        {%endif%}
     </div>
     <div class="card-body">    
         <div class="row">

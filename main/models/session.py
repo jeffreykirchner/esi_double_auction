@@ -41,6 +41,9 @@ class Session(models.Model):
     current_period = models.IntegerField(default=0)                              #current period of the session
     finished = models.BooleanField(default=False)                                #true after all session periods are complete
 
+    shared = models.BooleanField(default=False)                                  #shared models can be imported by other users
+    locked = models.BooleanField(default=False)                                  #locked models cannot be deleted
+
     soft_delete =  models.BooleanField(default=False)                            #hide session if true
 
     timestamp = models.DateTimeField(auto_now_add=True)
@@ -48,6 +51,10 @@ class Session(models.Model):
 
     def __str__(self):
         return self.title
+
+    def creator_string(self):
+        return self.creator.email
+    creator_string.short_description = 'Creator'
 
     class Meta:
         verbose_name = 'Experiment Session'

@@ -120,6 +120,7 @@ def get_session_list_json(usr):
     '''
     return [{"title" : i.title,
              "id":i.id,
+             "locked":i.locked,
              "start_date":i.get_start_date_string(),
             }
             for i in Session.objects.filter(soft_delete=False, creator=usr)]

@@ -43,14 +43,19 @@
                         <span v-html="s.start_date"></span>                                 
                     </td>
                     <td class="text-center">
-                        <button v-bind:id="'deleteSession' + s.id"
-                                type="button"
-                                class="btn btn-outline-danger btn-sm"
-                                v-on:click = "sendDeleteSession(s.id)"
-                                title = "Delete session and its data."
-                                v-bind:disabled = "reconnecting || working">
-                            Delete <i class="fas fa-user-minus fa-xs"></i>  
-                        </button>
+                        <div v-if="s.locked">
+                            Locked
+                        </div>
+                        <div v-else>
+                            <button v-bind:id="'deleteSession' + s.id"
+                                    type="button"
+                                    class="btn btn-outline-danger btn-sm"
+                                    v-on:click = "sendDeleteSession(s.id)"
+                                    title = "Delete session and its data."
+                                    v-bind:disabled = "reconnecting || working">
+                                Delete <i class="fas fa-user-minus fa-xs"></i>  
+                            </button>
+                        </div>                        
                     </td>
                 </tr>                                                    
             </tbody>
