@@ -119,6 +119,7 @@ def get_session_list_json(usr):
     get list of sessions
     '''
     return [{"title" : i.title,
+             "id":i.id,
              "start_date":i.get_start_date_string(),
             }
             for i in Session.objects.filter(soft_delete=False, creator=usr)]
