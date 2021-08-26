@@ -28,6 +28,12 @@ update_sdgraph_canvas:function(){
         app.draw_gain_from_trade_fill("sd_graph", marginY, marginX, marginTopAndRight, 0, y_max, 0, x_max, period, period_result.realized_gains_from_trade);
     }
 
+    //playback gains fill
+    if (app.$data.playback_enabled)
+    {
+        app.draw_playback("sd_graph", marginY, marginX, marginTopAndRight, 0, y_max, 0, x_max, 3);
+    }
+
     //axis
     app.draw_axis("sd_graph", marginY, marginX, marginTopAndRight, 0, y_max, y_max, 0, x_max, x_max, "Price ($)", "Units Traded");
 
@@ -200,6 +206,87 @@ draw_axis: function (chartID, marginY, marginX, marginTopAndRight, yMin, yMax, y
     ctx.restore();                       
 },
 
+/** fill in gains from currently displayed trade during playback
+ * @param chartID {string} dom ID name of canvas
+ * @param marginY {int} margin between Y axis and vertial edge of graph
+ * @param marginX {int} margin between X axis and horizontal edge of graph
+ * @param marginTopAndRight {int} margin between top and rights side of canvas and grap
+ * @param yMin {int} starting value on Y axis
+ * @param yMax {int} ending value on Y axis
+ * @param xMin {int} starting value on X axis
+ * @param xMax {int} ending value on X axis
+ * @param lineWidth {int} width of the line
+*/
+draw_playback: function(chartID, marginY, marginX, marginTopAndRight, yMin, yMax, xMin, xMax){
+    var canvas = document.getElementById(chartID),
+    ctx = canvas.getContext('2d');
+
+    var w = ctx.canvas.width;
+    var h = ctx.canvas.height;
+
+    ctx.save();
+
+    ctx.fillStyle = "lightgreen";
+    ctx.strokeStyle = "black";
+
+    ctx.translate(marginY, h-marginX);
+
+    current_visible_period=app.$data.current_visible_period-1;
+    session_period = app.$data.session.session_periods[current_visible_period];
+    playback_trade = app.$data.playback_trade;
+
+    if(playback_trade == session_period.trade_list.length)
+    {
+        ctx.restore();
+        return;
+    }     
+
+    trade_price = parseFloat(session_period.trade_list[playback_trade].trade_price);
+   
+
+    //demand
+    demand = app.get_demand_index(session_period.trade_list[playback_trade].buyer_value__id, false);
+    value = parseFloat(demand.value);
+
+    xStart = app.convertToX(demand.index, xMax, xMin, w-marginY-marginTopAndRight, 0);
+    xEnd = app.convertToX(demand.index+1, xMax, xMin, w-marginY-marginTopAndRight, 0);
+
+    yStart = app.convertToY(value, yMax, yMin, h-marginX-marginTopAndRight, 0);
+    yEnd = app.convertToY(trade_price, yMax, yMin, h-marginX-marginTopAndRight, 0);
+
+    if(trade_price>value)
+        ctx.fillStyle = "lightpink";
+    else
+        ctx.fillStyle = "lightgreen";
+
+    ctx.beginPath();
+    ctx.rect(xStart, yStart, xEnd-xStart, yEnd-yStart);
+    ctx.fill();
+    ctx.stroke();
+
+    //supply    
+    supply = app.get_supply_index(session_period.trade_list[playback_trade].seller_cost__id, false);
+    cost = parseFloat(supply.cost);
+
+    xStart = app.convertToX(supply.index, xMax, xMin, w-marginY-marginTopAndRight, 0);
+    xEnd = app.convertToX(supply.index+1, xMax, xMin, w-marginY-marginTopAndRight, 0);
+
+    yStart = app.convertToY(cost, yMax, yMin, h-marginX-marginTopAndRight, 0);
+    yEnd = app.convertToY(trade_price, yMax, yMin, h-marginX-marginTopAndRight, 0);
+
+    if(cost>trade_price)
+        ctx.fillStyle = "lightpink";
+    else
+        ctx.fillStyle = "lightgreen";
+
+    ctx.beginPath();
+    ctx.rect(xStart, yStart, xEnd-xStart, yEnd-yStart);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.restore();
+},
+
 /** draw either the supply or demand line
  * @param chartID {string} dom ID name of canvas
  * @param marginY {int} margin between Y axis and vertial edge of graph
@@ -231,34 +318,37 @@ draw_sd_line: function(chartID, marginY, marginX, marginTopAndRight, yMin, yMax,
 
     ctx.translate(marginY, h-marginX);
 
-    counter = 0;
+    //remove non visible elements
+    valueListStart = valueList;
+    valueList=[];
+    for(i=0; i<valueListStart.length; i++)
+    {
+        if(valueListStart[i].visible)
+            valueList.push(valueListStart[i]);
+    }
+    
     for(i=0; i<valueList.length; i++)
     {
-        if(valueList[i].visible)
+        xStart = app.convertToX(i, xMax, xMin, w-marginY-marginTopAndRight, lineWidth);
+        xEnd = app.convertToX(i+1, xMax, xMin, w-marginY-marginTopAndRight, lineWidth);
+        y1 = app.convertToY(parseFloat(valueList[i].value_cost), yMax, yMin, h-marginX-marginTopAndRight, lineWidth);
+
+        //horizontal line
+        ctx.beginPath();
+        ctx.moveTo(xStart, y1);
+        ctx.lineTo(xEnd, y1);        
+
+        //vertical line
+        if(i<valueList.length-1)
         {
-            xStart = app.convertToX(counter, xMax, xMin, w-marginY-marginTopAndRight, lineWidth);
-            xEnd = app.convertToX(counter+1, xMax, xMin, w-marginY-marginTopAndRight, lineWidth);
-            y1 = app.convertToY(parseFloat(valueList[i].value_cost), yMax, yMin, h-marginX-marginTopAndRight, lineWidth);
-
-            //horizontal line
-            ctx.beginPath();
-            ctx.moveTo(xStart, y1);
-            ctx.lineTo(xEnd, y1);        
-
-            //vertical line
-            if(i<valueList.length-1)
-            {
-                y2 = app.convertToY(parseFloat(valueList[i+1].value_cost), yMax, yMin, h-marginX-marginTopAndRight, lineWidth);
-                ctx.lineTo(xEnd, y2);
-            }
-
-            ctx.stroke();
-
-            //label
-            ctx.fillText(valueList[i].label,(xEnd-xStart)/2 + xStart, y1-3); 
-
-            counter += 1;
+            y2 = app.convertToY(parseFloat(valueList[i+1].value_cost), yMax, yMin, h-marginX-marginTopAndRight, lineWidth);
+            ctx.lineTo(xEnd, y2);
         }
+
+        ctx.stroke();
+
+        //label
+        ctx.fillText(valueList[i].label,(xEnd-xStart)/2 + xStart, y1-3);    
     }
 
     ctx.restore(); 
@@ -583,7 +673,7 @@ draw_gain_from_trade_fill(chartID, marginY, marginX, marginTopAndRight, yMin, yM
     var canvas = document.getElementById(chartID),
         ctx = canvas.getContext('2d');
 
-    var w =  ctx.canvas.width;
+    var w = ctx.canvas.width;
     var h = ctx.canvas.height;
     
     ctx.save();

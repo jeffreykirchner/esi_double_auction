@@ -16,7 +16,7 @@
                     <div class="input-group w-50">
                         <button class="btn btn-outline-secondary" 
                                 type="button" 
-                                v-bind:disabled="session.finished==false || reconnecting || current_visible_period <= 1"
+                                v-bind:disabled="session.finished==false || reconnecting || current_visible_period <= 1 || playback_enabled"
                                 v-on:click="updateCurrentPeriodReplay(-1)"><i class="fas fa-angle-double-left"></i></button>
                         <input type="number"
                                id="period_visible"
@@ -25,7 +25,7 @@
                                style="background-color: white;"
                                v-model="current_visible_period">                   
                         <button class="btn btn-outline-secondary"
-                                v-bind:disabled="session.finished==false || reconnecting || current_visible_period == session.parameter_set.number_of_periods"
+                                v-bind:disabled="session.finished==false || reconnecting || current_visible_period == session.parameter_set.number_of_periods || playback_enabled"
                                 v-on:click="updateCurrentPeriodReplay(1)"
                                 type="button"><i class="fas fa-angle-double-right"></i></button>
                     </div>
@@ -57,7 +57,7 @@
                         <i class="fas fa-angle-double-left"></i>
                     </button>
                     <button type="button"
-                            v-bind:disabled="playback_enabled==false || playback_trade==session.session_periods[current_visible_period-1].trade_list.length-1"
+                            v-bind:disabled="playback_enabled==false || playback_trade==session.session_periods[current_visible_period-1].trade_list.length"
                             v-on:click="playback_advance(1)"
                             class="btn btn-outline-primary"
                             title="Previous Trade">
