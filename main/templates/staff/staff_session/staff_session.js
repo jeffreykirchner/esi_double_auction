@@ -14,6 +14,7 @@ var app = Vue.createApp({
                     session : {
                         current_period : 1,
                         started : false,
+                        locked : true,
                         session_periods : [{trade_list : []},
                                           ],
                         parameter_set : {
@@ -60,6 +61,8 @@ var app = Vue.createApp({
                     add_to_value_amount : 0,
                     add_to_cost_amount : 0,
                     import_parameters_message : "",
+                    playback_enabled : false,
+                    playback_trade : 0,
                 }},
     methods: {
 

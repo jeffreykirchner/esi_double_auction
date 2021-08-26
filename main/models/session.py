@@ -144,6 +144,7 @@ class Session(models.Model):
         return{
             "id":self.id,
             "title":self.title,
+            "locked":self.locked,
             "start_date":self.get_start_date_string(),
             "started":self.started,
             "current_period":self.current_period,

@@ -231,29 +231,34 @@ draw_sd_line: function(chartID, marginY, marginX, marginTopAndRight, yMin, yMax,
 
     ctx.translate(marginY, h-marginX);
 
+    counter = 0;
     for(i=0; i<valueList.length; i++)
     {
-        xStart = app.convertToX(i, xMax, xMin, w-marginY-marginTopAndRight, lineWidth);
-        xEnd = app.convertToX(i+1, xMax, xMin, w-marginY-marginTopAndRight, lineWidth);
-        y1 = app.convertToY(parseFloat(valueList[i].value_cost), yMax, yMin, h-marginX-marginTopAndRight, lineWidth);
-
-        //horizontal line
-        ctx.beginPath();
-        ctx.moveTo(xStart, y1);
-        ctx.lineTo(xEnd, y1);        
-
-        //vertical line
-        if(i<valueList.length-1)
+        if(valueList[i].visible)
         {
-            y2 = app.convertToY(parseFloat(valueList[i+1].value_cost), yMax, yMin, h-marginX-marginTopAndRight, lineWidth);
-            ctx.lineTo(xEnd, y2);
+            xStart = app.convertToX(counter, xMax, xMin, w-marginY-marginTopAndRight, lineWidth);
+            xEnd = app.convertToX(counter+1, xMax, xMin, w-marginY-marginTopAndRight, lineWidth);
+            y1 = app.convertToY(parseFloat(valueList[i].value_cost), yMax, yMin, h-marginX-marginTopAndRight, lineWidth);
+
+            //horizontal line
+            ctx.beginPath();
+            ctx.moveTo(xStart, y1);
+            ctx.lineTo(xEnd, y1);        
+
+            //vertical line
+            if(i<valueList.length-1)
+            {
+                y2 = app.convertToY(parseFloat(valueList[i+1].value_cost), yMax, yMin, h-marginX-marginTopAndRight, lineWidth);
+                ctx.lineTo(xEnd, y2);
+            }
+
+            ctx.stroke();
+
+            //label
+            ctx.fillText(valueList[i].label,(xEnd-xStart)/2 + xStart, y1-3); 
+
+            counter += 1;
         }
-
-        ctx.stroke();
-
-        //label
-        ctx.fillText(valueList[i].label,(xEnd-xStart)/2 + xStart, y1-3);
-
     }
 
     ctx.restore(); 

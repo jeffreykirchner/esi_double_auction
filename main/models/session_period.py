@@ -72,7 +72,12 @@ class SessionPeriod(models.Model):
         return a list if completed trades
         '''
         return list(self.session_period_trades_a.filter(trade_complete=True)
-                                                .values('id', 'trade_price', 'buyer__session_subject__id_number', 'seller__session_subject__id_number')
+                                                .values('id',
+                                                        'trade_price',
+                                                        'buyer__session_subject__id_number',
+                                                        'seller__session_subject__id_number',
+                                                        'buyer_value__id',
+                                                        'seller_cost__id')
                                                 .order_by('trade_number'))
 
     def get_price_cap(self):
@@ -97,7 +102,6 @@ class SessionPeriod(models.Model):
             realized_gains_from_trade += session_period_trade.get_total_gains_from_trade()
 
         return realized_gains_from_trade
-
 
     def get_period_efficiency(self):
         '''

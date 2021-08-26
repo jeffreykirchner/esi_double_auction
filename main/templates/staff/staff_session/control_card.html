@@ -28,7 +28,7 @@
                         class="btn btn-outline-danger"
                         v-on:click = "reset_experiment()"
                         title="Reset experiment"
-                        v-bind:disabled="reconnecting || working || session.started===false">
+                        v-bind:disabled="reconnecting || working || session.started===false || session.locked">
                     Reset experiment <i class="far fa-trash-alt"></i>
                 </button>
             </div>

@@ -42,9 +42,9 @@ class ParameterSetPeriodSubjectValuecost(models.Model):
         return json object of model
         '''
         return{
-
             "id" : self.id,
             "value_cost" : str(self.value_cost),
             "enabled" : "True" if self.enabled else "False",
+            "visible" : True,                                       #draw on graph if true
             "label" : self.parameter_set_period_subject.get_label(),
         }
