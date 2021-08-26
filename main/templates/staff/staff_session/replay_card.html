@@ -43,6 +43,7 @@
             <div class="col-md text-center">                
                 <div class="btn-group" role="group" aria-label="trade playback control" id="trade_playback">
                     <button type="button"
+                            tabindex="1"
                             v-bind:disabled="playback_enabled==true"
                             v-on:click="playback_start()"
                             class="btn btn-outline-primary"
@@ -50,6 +51,7 @@
                         <i class="fas fa-play"></i>
                     </button>
                     <button type="button"
+                            tabindex="2"
                             v-bind:disabled="playback_enabled==false || playback_trade==0"
                             v-on:click="playback_advance(-1)"
                             class="btn btn-outline-primary"
@@ -57,6 +59,7 @@
                         <i class="fas fa-angle-double-left"></i>
                     </button>
                     <button type="button"
+                            tabindex="3"
                             v-bind:disabled="playback_enabled==false || playback_trade==session.session_periods[current_visible_period-1].trade_list.length"
                             v-on:click="playback_advance(1)"
                             class="btn btn-outline-primary"
@@ -64,6 +67,7 @@
                         <i class="fas fa-angle-double-right"></i>
                     </button>
                     <button type="button"
+                            tabindex="4"
                             v-bind:disabled="playback_enabled==false"
                             v-on:click="playback_stop()"
                             class="btn btn-outline-primary"
@@ -79,6 +83,7 @@
             <div class="col-md text-center">
                 <a href="/staff-session-subject-earnings/{{session.id}}/"
                    class="link-primary"
+                   tabindex="-1"
                    title="Printout of total earnings.">
                     Earnings Printout
                 </a>
