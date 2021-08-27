@@ -6,9 +6,11 @@ from django.shortcuts import render
 from django.views.generic.detail import SingleObjectMixin
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
+from django.db.models import CharField,F, Value
 
 from main.models import Parameters
 from main.models import Session
+from main.models import HelpDocs
 
 class StaffSessionPaddles(SingleObjectMixin, View):
     '''
@@ -47,6 +49,12 @@ class StaffSessionPaddles(SingleObjectMixin, View):
             if i % 2 == 1 or i == buyer_or_seller_count-1:
                 rows.append(col)
                 col = []
+        
+        try:
+            help_text = HelpDocs.objects.annotate(rp=Value(request.path,output_field=CharField()))\
+                                       .filter(rp__icontains=F('path')).first().text
+        except Exception  as e:   
+            help_text = "No help doc was found."
 
         return render(request=request,
                       template_name=self.template_name,
@@ -55,5 +63,6 @@ class StaffSessionPaddles(SingleObjectMixin, View):
                                "buyer_or_seller" : buyer_or_seller,
                                "buyer_or_seller_count" : buyer_or_seller_count,
                                "rows" : rows,
+                               "help_text":help_text,
                                "session" : session})
     

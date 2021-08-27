@@ -43,6 +43,22 @@
             }
         </style>
 
+        <script type="text/javascript">
+            $(document).ready(function(){
+
+            function showHelp(){                        
+                $('#helpModal').modal('show');
+            }
+
+            var btn = document.getElementById("helpButton");
+
+            if(btn)
+            {
+                btn.addEventListener("click", showHelp);
+            }
+            });
+        </script>
+
 
         {%block head%}
         {%endblock head%}        
@@ -66,7 +82,7 @@
                     <ul class="navbar-nav me-auto">                       
                         
                         <li class="nav-item px-2">
-                            <a href="{% url 'home' %}"  data-placement="bottom" title="Session list">
+                            <a href="{% url 'staff-home' %}"  data-placement="bottom" title="Session list">
                                 <i class="fas fa-flask"></i> Sessions
                             </a>
                         </li>
@@ -116,6 +132,8 @@
         <div class="container-fluid mt-4 mb-4" id="app">                    
             {%block content%}
             {%endblock content%}
+
+            {%include "helpModal.html"%}
         </div>  
    
     </body>

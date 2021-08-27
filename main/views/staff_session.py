@@ -7,22 +7,23 @@ import uuid
 
 from django.views import View
 from django.shortcuts import render
-from django.http import HttpResponse
-from django.core.exceptions import ObjectDoesNotExist
 from django.views.generic.detail import SingleObjectMixin
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.http import JsonResponse
+from django.db.models import CharField,F, Value
 
 from main.decorators import user_is_owner
 
 from main.models import Parameters
 from main.models import Session
+from main.models import HelpDocs
 
 from main.forms import SessionForm
 from main.forms import ValuecostForm
 from main.forms import PeriodForm
 from main.forms import ImportParametersForm
+
 
 class StaffSessionView(SingleObjectMixin, View):
     '''
@@ -50,6 +51,12 @@ class StaffSessionView(SingleObjectMixin, View):
         for i in PeriodForm():
             period_form_ids.append(i.html_name)
 
+        try:
+            help_text = HelpDocs.objects.annotate(rp=Value(request.path,output_field=CharField()))\
+                                       .filter(rp__icontains=F('path')).first().text
+        except Exception  as e:   
+             help_text = "No help doc was found."
+
         return render(request=request,
                       template_name=self.template_name,
                       context={"channel_key" : uuid.uuid4(),
@@ -61,6 +68,7 @@ class StaffSessionView(SingleObjectMixin, View):
                                "period_form_ids" : period_form_ids,
                                "import_parameters_form" : ImportParametersForm(user=request.user),                               
                                "websocket_path" : self.websocket_path,
+                               "help_text":help_text,
                                "page_key" : f'{self.websocket_path}-{session.id}',
                                "session" : session})
     

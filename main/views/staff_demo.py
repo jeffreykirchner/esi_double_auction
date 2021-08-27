@@ -8,8 +8,10 @@ from django.shortcuts import render
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
+from django.db.models import CharField,F, Value
 
 from main.models import Parameters
+from main.models import HelpDocs
 
 class StaffDemo(View):
     '''
@@ -43,9 +45,16 @@ class StaffDemo(View):
                                              {"value_cost" : "11.00", "enabled" : True}]
                             }]
                  }
+        
+        try:
+            help_text = HelpDocs.objects.annotate(rp=Value(request.path,output_field=CharField()))\
+                                       .filter(rp__icontains=F('path')).first().text
+        except Exception  as e:   
+             help_text = "No help doc was found."
 
         return render(request, self.template_name, {"buyer" : buyer,
                                                     "buyer_json" : json.dumps(buyer, cls=DjangoJSONEncoder),
                                                     "seller" : seller,
+                                                    "help_text":help_text,
                                                     "seller_json" : json.dumps(seller, cls=DjangoJSONEncoder),
                                                     "editable" : True})

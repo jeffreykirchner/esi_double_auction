@@ -5,9 +5,11 @@ admin screen models
 from django.contrib import admin
 
 from main.forms import ParametersForm
+from main.forms import HelpDocForm
 
 from main.models import Parameters
 from main.models import Session
+from main.models import HelpDocs
 
 from django.db.models.functions import Lower
 
@@ -41,3 +43,14 @@ class SessionAdmin(admin.ModelAdmin):
     readonly_fields = ('parameter_set','start_date')
 
 admin.site.register(Session, SessionAdmin)
+
+class HelpDocAdmin(admin.ModelAdmin):
+            
+      form = HelpDocForm
+
+      ordering = [Lower('title')]
+
+      actions = []
+      list_display = ['title','path']
+
+admin.site.register(HelpDocs, HelpDocAdmin)

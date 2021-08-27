@@ -6,8 +6,6 @@ import logging
 from django.db import models
 from django.db.utils import IntegrityError
 
-from main.models import ConsentForms
-
 import main
 
 #experiment session parameters

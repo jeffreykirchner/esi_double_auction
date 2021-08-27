@@ -2,7 +2,7 @@
 build main.models
 '''
 from .parameters import *
-from .consent_forms import *
+from .help_docs import *
 
 from .parameter_set import *
 from .parameter_set_period import * 

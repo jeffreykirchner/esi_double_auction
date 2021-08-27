@@ -7,9 +7,11 @@ from django.shortcuts import render
 from django.views.generic.detail import SingleObjectMixin
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
+from django.db.models import CharField,F, Value
 
 from main.models import Parameters
 from main.models import Session
+from main.models import HelpDocs
 
 from main.decorators import user_is_owner
 
@@ -34,6 +36,12 @@ class StaffSessionTradeSheetsView(SingleObjectMixin, View):
         buyer_list = session.parameter_set.get_buyer_list_json()
         seller_list = session.parameter_set.get_seller_list_json()
 
+        try:
+            help_text = HelpDocs.objects.annotate(rp=Value(request.path,output_field=CharField()))\
+                                       .filter(rp__icontains=F('path')).first().text
+        except Exception  as e:   
+             help_text = "No help doc was found."
+
         return render(request=request,
                       template_name=self.template_name,
                       context={"parameters" : parameters,
@@ -41,5 +49,6 @@ class StaffSessionTradeSheetsView(SingleObjectMixin, View):
                                "session" : session,
                                "buyer_list" : buyer_list,
                                "seller_list" : seller_list,
+                               "help_text":help_text,
                                "editable":False})
     

@@ -18,8 +18,8 @@ urlpatterns = [
     path('accounts/logout/', views.logout_view, name='logout'),
 
     #main
-    path('', views.StaffHomeView.as_view(), name='home'),
     path('subject', views.SubjectView.as_view(), name='subject'),
+    path('staff-home/', views.StaffHomeView.as_view(), name='staff-home'),
     path('staff-admin-tools/', views.StaffAdminTools.as_view(), name='staff_admin_tools'),
     path('staff-demo/', views.StaffDemo.as_view(), name='staff_demo'),
     path('staff-session/<int:pk>/', views.StaffSessionView.as_view(), name='staff_session'),
@@ -27,7 +27,6 @@ urlpatterns = [
     path('staff-session-paddles/<int:pk>/<str:buyer_or_seller>/', views.StaffSessionPaddles.as_view(), name='staff_session_paddles'),
     path('staff-session-subject-earnings/<int:pk>/', views.StaffSessionSubjectEarnings.as_view(), name='staff_session_subject_earnings'),
     
-
     #txt
     path('robots.txt', views.RobotsTxt, name='robotsTxt'),
     path('ads.txt', views.AdsTxt, name='adsTxt'),
