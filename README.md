@@ -11,5 +11,6 @@ https://channels.readthedocs.io/en/stable/
 
 Load site parameters:
 python manage.py loaddata Parameters.json
+python manage.py loaddata help_docs.json
 
 make new directory /logs in project directory
