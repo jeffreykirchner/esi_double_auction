@@ -500,7 +500,7 @@ draw_bid_carrot:function(ctx, x, y, width){
     ctx.stroke();
 },
 
-/**draw a offer carrot at the specified location
+/**draw a offer caret at the specified location
     @param ctx {canvas} canvas to draw on
     @param x {double} x location of offer
     @param y {double} y location of offer
