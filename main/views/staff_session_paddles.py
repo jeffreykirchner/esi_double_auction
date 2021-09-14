@@ -51,7 +51,7 @@ class StaffSessionPaddles(SingleObjectMixin, View):
                 col = []
         
         try:
-            help_text = HelpDocs.objects.annotate(rp=Value(request.path,output_field=CharField()))\
+            help_text = HelpDocs.objects.annotate(rp=Value(request.path, output_field=CharField()))\
                                        .filter(rp__icontains=F('path')).first().text
         except Exception  as e:   
             help_text = "No help doc was found."

@@ -13,9 +13,9 @@ urlpatterns = [
 
     #auth
     re_path(r'^admin/login/$', views.LoginView.as_view()),
-    re_path(r'^admin/logout/', views.logout_view),
+    re_path(r'^admin/logout/', views.LogoutView.as_view()),
     path('accounts/login/', views.LoginView.as_view(), name='login'),
-    path('accounts/logout/', views.logout_view, name='logout'),
+    path('accounts/logout/', views.LogoutView.as_view(), name='logout'),
 
     #main
     path('subject', views.SubjectView.as_view(), name='subject'),
