@@ -84,3 +84,8 @@ LOGGING = {
         },
     },
 }
+
+ESI_AUTH_URL = os.environ['ESI_AUTH_URL']
+ESI_AUTH_USERNAME = os.environ['ESI_AUTH_USERNAME']
+ESI_AUTH_PASS = os.environ['ESI_AUTH_PASS']
+ESI_AUTH_APP = 'Double Auction'

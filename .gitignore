@@ -3,3 +3,4 @@ ESIDoubleAuctionEnv/*
 .vscode/*
 *.pyc
 setup.sh
+local_settings.py
