@@ -68,6 +68,8 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'ESIDoubleAuction.context_processors.get_debug',
+                'ESIDoubleAuction.context_processors.get_auth_account_url',
+                'ESIDoubleAuction.context_processors.get_auth_password_reset_url',
             ],
         },
     },
