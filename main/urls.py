@@ -20,7 +20,7 @@ urlpatterns = [
     #main
     path('subject', views.SubjectView.as_view(), name='subject'),
     path('staff-home/', views.StaffHomeView.as_view(), name='staff-home'),
-    path('', views.StaffHomeView.as_view(), name='staff-home'),
+    path('', views.StaffHomeView.as_view(), name='staff-home-base'),
     path('staff-admin-tools/', views.StaffAdminTools.as_view(), name='staff_admin_tools'),
     path('staff-demo/', views.StaffDemo.as_view(), name='staff_demo'),
     path('staff-session/<int:pk>/', views.StaffSessionView.as_view(), name='staff_session'),

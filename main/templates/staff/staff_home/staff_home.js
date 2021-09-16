@@ -75,6 +75,10 @@ var app = Vue.createApp({
         },
 
         sendDeleteSession(id){
+            if (!confirm('Delete session? This is not reversible.')) {
+                return;
+            }
+
             //delete specified session
             app.working = true;
             app.sendMessage("delete_session",{"id" : id});
