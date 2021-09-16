@@ -60,6 +60,7 @@ jobs:
         ESI_AUTH_USERNAME : double_auction_local
         ESI_AUTH_PASS : asdfasdf12341234
         ESI_AUTH_APP : Double Auction Local
+        REDIS : localhost
         SECRET_KEY: super_duper_secret_key
       run: python manage.py test
 
