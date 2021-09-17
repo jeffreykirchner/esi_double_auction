@@ -81,36 +81,34 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto">                       
                         
-                        <li class="nav-item px-2">
-                            <a href="{% url 'staff-home' %}"  data-placement="bottom" title="Session list">
-                                <i class="fas fa-flask"></i> Sessions
+                        <li class="nav-item">
+                            <a class="nav-link active" href="{% url 'staff-home' %}"  data-placement="bottom" title="Session list">
+                                Sessions <i class="fas fa-flask"></i>
                             </a>
                         </li>
 
-                        <li class="nav-item px-2">
-                            <a href="{% url 'staff_demo' %}"  data-placement="bottom" title="Record sheet demo">
-                                <i class="fas fa-chalkboard-teacher"></i> Demo
+                        <li class="nav-item">
+                            <a class="nav-link active" href="{% url 'staff_demo' %}"  data-placement="bottom" title="Record sheet demo">
+                                Demo <i class="fas fa-chalkboard-teacher"></i>
                             </a>
-                        </li>
-
-                        {%if user.is_superuser%}
-                            <li class="nav-item px-2">
-                                <a href="{% url 'staff_admin_tools' %}"  data-placement="bottom" title="Admin Tools">
-                                    <i class="fas fa-tools"></i> Tools
-                                </a>
-                            </li>
-                        {%endif%}
-                        
+                        </li>                       
                     
                     </ul>
                     <div class="d-flex dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Menu
+                            {{request.user.last_name}}, {{request.user.first_name}}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-lg-end" aria-labelledby="navbarDropdown">
                             {%if user.is_superuser%}
                                 <li>
-                                    <a class="dropdown-item" href="{% url 'admin:index' %}"  data-placement="bottom" title="Admin Panel"><i class="fas fa-cogs fa-fw"></i> Admin</a>
+                                    <a class="dropdown-item" href="{% url 'admin:index' %}"  data-placement="bottom" title="Admin Panel">
+                                        <i class="fas fa-cogs fa-fw"></i> Admin
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'staff_admin_tools' %}"  data-placement="bottom" title="Admin Tools">
+                                        <i class="fas fa-tools"></i> Tools 
+                                    </a>
                                 </li>
                             {%endif%}
                             <li>
@@ -118,7 +116,7 @@
                             </li>
                             <li><hr class="dropdown-divider"></li>    
                             <li>
-                                <a class="dropdown-item" href="{{ESI_AUTH_ACCOUNT_URL}}"><i class="far fa-user"></i> {{request.user.last_name}}, {{request.user.first_name}}</a>
+                                <a class="dropdown-item" href="{{ESI_AUTH_ACCOUNT_URL}}"><i class="far fa-user"></i> Profile</a>
                             </li>                   
                         </ul>
                     </div>
