@@ -9,10 +9,17 @@ import main
 
 class SubjectType(models.TextChoices):
     '''
-    treatment types for session
+    subject types for parameter sets
     '''
     BUYER = 'Buyer', _('Buyer')
     SELLER = 'Seller', _('Seller')
+
+class PriceCapType(models.TextChoices):
+    '''
+    Price cap types for parameter sets
+    '''
+    FLOOR = 'Floor', _('Floor')
+    CEILING = 'Ceiling', _('Ceiling')
 
 def create_new_session_parameterset():
     '''

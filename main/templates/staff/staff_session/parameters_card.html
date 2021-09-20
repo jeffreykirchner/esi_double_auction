@@ -96,7 +96,7 @@
                         class="btn btn-light"
                         v-on:click = "showEditPeriod()"
                         v-bind:disabled="session.started || reconnecting || working" >
-                    Price Cap 
+                    Price Cap [[session.parameter_set.periods[current_visible_period-1].price_cap_type]] 
                         (<span v-if="session.parameter_set.periods[current_visible_period-1].price_cap_enabled == 'True'">ON</span>
                         <span v-else>OFF</span>): 
                     [[session.parameter_set.periods[current_visible_period-1].price_cap]]

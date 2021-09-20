@@ -821,7 +821,18 @@ draw_price_cap:function(chartID, marginY, marginX, marginTopAndRight, yMin, yMax
 
     ctx.stroke();
 
-    ctx.fillText("Max Bid/Offer: " + period.price_cap, x2, y1-7);
+    var label = "";
+
+    if(period.price_cap_type == "Ceiling")
+    {
+        label = "Max Bid/Offer: ";
+    }
+    else
+    {
+        label = "Min Bid/Offer: ";
+    }
+
+    ctx.fillText(label + period.price_cap, x2, y1-7);
 
     ctx.restore();
 },

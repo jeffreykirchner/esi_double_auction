@@ -26,6 +26,7 @@ var app = Vue.createApp({
                                 price_cap : "0.00",
                                 y_scale_max: "",
                                 x_scale_max: "",
+                                price_cap_type: "ceiling",
                                 price_cap_enabled : "False",
                                 sellers : [],
                                 buyers : [],
