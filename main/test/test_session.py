@@ -135,12 +135,12 @@ class TestSession(TestCase):
         self.assertEqual(session_period.get_period_efficiency(),  '0.60')
 
         self.assertEqual(len(session_period.get_trade_list_json()), 2)
-        self.assertEqual(session_period.get_trade_list_json()[0]['trade_price'], Decimal('4.10'))
-        self.assertEqual(session_period.get_trade_list_json()[0]['buyer__session_subject__id_number'], 1)
-        self.assertEqual(session_period.get_trade_list_json()[0]['seller__session_subject__id_number'], 1)
-        self.assertEqual(session_period.get_trade_list_json()[1]['trade_price'], Decimal('5.00'))
-        self.assertEqual(session_period.get_trade_list_json()[1]['buyer__session_subject__id_number'], 2)
-        self.assertEqual(session_period.get_trade_list_json()[1]['seller__session_subject__id_number'], 3)
+        self.assertEqual(session_period.get_trade_list_json()[1]['trade_price'], Decimal('4.10'))
+        self.assertEqual(session_period.get_trade_list_json()[1]['buyer__session_subject__id_number'], 1)
+        self.assertEqual(session_period.get_trade_list_json()[1]['seller__session_subject__id_number'], 1)
+        self.assertEqual(session_period.get_trade_list_json()[0]['trade_price'], Decimal('5.00'))
+        self.assertEqual(session_period.get_trade_list_json()[0]['buyer__session_subject__id_number'], 2)
+        self.assertEqual(session_period.get_trade_list_json()[0]['seller__session_subject__id_number'], 3)
 
         #check player profit
         b1 = session.session_subjects.get(subject_type=main.globals.SubjectType.BUYER , id_number=1)

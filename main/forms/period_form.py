@@ -5,6 +5,7 @@ value cost edit form
 from django import forms
 
 from main.models import ParameterSetPeriod
+from main.globals import PriceCapType
 
 class PeriodForm(forms.ModelForm):
     '''
@@ -15,6 +16,11 @@ class PeriodForm(forms.ModelForm):
                                     widget=forms.NumberInput(attrs={"v-model":"session.parameter_set.periods[current_visible_period-1].price_cap",
                                                                     "v-on:keyup.enter":"sendUpdatePeriod()",
                                                                     "step":"0.25"}))
+    
+    price_cap_type = forms.ChoiceField(label='Price Cap Type',
+                                          choices=PriceCapType.choices,
+                                          widget=forms.Select(attrs={"v-model":"session.parameter_set.periods[current_visible_period-1].price_cap_type",
+                                                                     "v-on:keyup.enter":"sendUpdatePeriod()",}))
     
     price_cap_enabled = forms.ChoiceField(label='Enabled',
                                           choices=((True, 'Yes'), (False,'No' )),
@@ -35,4 +41,4 @@ class PeriodForm(forms.ModelForm):
 
     class Meta:
         model=ParameterSetPeriod
-        fields =['price_cap', 'price_cap_enabled', 'y_scale_max', 'x_scale_max']
+        fields =['price_cap', 'price_cap_type', 'price_cap_enabled', 'y_scale_max', 'x_scale_max']

@@ -74,11 +74,12 @@ class SessionPeriod(models.Model):
         return list(self.session_period_trades_a.filter(trade_complete=True)
                                                 .values('id',
                                                         'trade_price',
+                                                        'trade_number',
                                                         'buyer__session_subject__id_number',
                                                         'seller__session_subject__id_number',
                                                         'buyer_value__id',
                                                         'seller_cost__id')
-                                                .order_by('trade_number'))
+                                                .order_by('-trade_number'))
 
     def get_price_cap(self):
         '''
@@ -91,6 +92,12 @@ class SessionPeriod(models.Model):
         return true if price cap is enabled for this period
         '''
         return self.session.parameter_set.parameter_set_periods.get(period_number=self.period_number).price_cap_enabled
+
+    def get_price_cap_type(self):
+        '''
+        return either ceiling or floor
+        '''
+        return self.session.parameter_set.parameter_set_periods.get(period_number=self.period_number).price_cap_type
 
     def get_total_gains_from_trade(self):
         '''

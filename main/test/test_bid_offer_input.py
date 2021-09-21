@@ -2,6 +2,7 @@
 unit tests for bid and offer input
 '''
 import logging
+from main.globals.parameter_sets import PriceCapType
 
 from unittest import main
 from django.test import TestCase
@@ -157,12 +158,25 @@ class TestBidOfferInput(TestCase):
 
         result = take_submit_bid_offer({"sessionID":1, "bid_offer_id":"b2", "bid_offer_amount":"7"})
         self.assertEqual("fail", result["status"])
-        self.assertEqual("Error: Amount exceeds price cap.", result["message"])
+        self.assertEqual("Error: Amount exceeds price ceiling.", result["message"])
 
         result = take_submit_bid_offer({"sessionID":1, "bid_offer_id":"s1", "bid_offer_amount":"9"})
         self.assertEqual("fail", result["status"])
-        self.assertEqual("Error: Amount exceeds price cap.", result["message"])
+        self.assertEqual("Error: Amount exceeds price ceiling.", result["message"])
     
+        parameter_set_period.price_cap = 6
+        parameter_set_period.price_cap_enabled = True
+        parameter_set_period.price_cap_type = PriceCapType.FLOOR
+        parameter_set_period.save()
+
+        result = take_submit_bid_offer({"sessionID":1, "bid_offer_id":"b2", "bid_offer_amount":"5"})
+        self.assertEqual("fail", result["status"])
+        self.assertEqual("Error: Amount below price floor.", result["message"])
+
+        result = take_submit_bid_offer({"sessionID":1, "bid_offer_id":"s1", "bid_offer_amount":"4"})
+        self.assertEqual("fail", result["status"])
+        self.assertEqual("Error: Amount below price floor.", result["message"])
+
     def test_trade(self):
         '''
         test that trade happens at correct price

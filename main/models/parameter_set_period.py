@@ -8,6 +8,8 @@ from django.db.utils import IntegrityError
 
 from main.models import ParameterSet
 
+from main.globals import PriceCapType
+
 import main
 
 #experiment session parameters
@@ -21,6 +23,7 @@ class ParameterSetPeriod(models.Model):
     period_number = models.IntegerField(verbose_name='Period number')                                       #period from 1 - N in parameter set
     price_cap = models.DecimalField(decimal_places=2, default=0, max_digits=5, verbose_name = 'Price Cap')  #max bid or offer allowed in this period 
     price_cap_enabled = models.BooleanField(default=False, verbose_name = 'Price Cap Enabled')              #if true, enforce price cap
+    price_cap_type = models.CharField(max_length=100, choices=PriceCapType.choices, default=PriceCapType.CEILING)         #price cap type, floor or ceiling
 
     y_scale_max = models.IntegerField(verbose_name='Y Scale Max', default=10)                               #max Y scale of period 
     x_scale_max = models.IntegerField(verbose_name='X Scale Max', default=10)                               #max X scale of period 
@@ -272,7 +275,6 @@ class ParameterSetPeriod(models.Model):
 
         return total        
         
-
     def json(self):
         '''
         return json object of model
@@ -305,6 +307,7 @@ class ParameterSetPeriod(models.Model):
             "y_scale_max" : self.y_scale_max,
             "x_scale_max" : self.x_scale_max,
             "price_cap" : str(self.price_cap),
+            "price_cap_type" : self.price_cap_type,
             "price_cap_enabled" : "True" if self.price_cap_enabled else "False",
             "buyers" : [b.json() for b in self.get_buyer_list()],
             "sellers" : [s.json() for s in self.get_seller_list()],
