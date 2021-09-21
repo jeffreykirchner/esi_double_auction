@@ -341,6 +341,7 @@ class TestParameterSet(TestCase):
                                                     'periodID': parameter_set_period.id,
                                                     'formData': [{'name': 'price_cap', 'value': '0.00'},
                                                                  {'name': 'price_cap_enabled', 'value': 'False'},
+                                                                 {'name': 'price_cap_type', 'value' : 'Ceiling'},
                                                                  {'name': 'y_scale_max', 'value': '1'},
                                                                  {'name': 'x_scale_max', 'value': '11'}]})
         
@@ -351,6 +352,7 @@ class TestParameterSet(TestCase):
                                                     'periodID': parameter_set_period.id,
                                                     'formData': [{'name': 'price_cap', 'value': '-1'},
                                                                  {'name': 'price_cap_enabled', 'value': 'False'},
+                                                                 {'name': 'price_cap_type', 'value' : 'Ceiling'},
                                                                  {'name': 'y_scale_max', 'value': '1'},
                                                                  {'name': 'x_scale_max', 'value': '11'}]})
         
@@ -361,6 +363,18 @@ class TestParameterSet(TestCase):
                                                     'periodID': parameter_set_period.id,
                                                     'formData': [{'name': 'price_cap', 'value': '0.00'},
                                                                  {'name': 'price_cap_enabled', 'value': 'a'},
+                                                                 {'name': 'price_cap_type', 'value' : 'Ceiling'},
+                                                                 {'name': 'y_scale_max', 'value': '1'},
+                                                                 {'name': 'x_scale_max', 'value': '11'}]})
+        
+        self.assertEqual("fail", result["value"])
+
+        #invalid price cap
+        result = main.consumers.take_update_period({'sessionID': session.id,
+                                                    'periodID': parameter_set_period.id,
+                                                    'formData': [{'name': 'price_cap', 'value': '0.00'},
+                                                                 {'name': 'price_cap_enabled', 'value': 'False'},
+                                                                 {'name': 'price_cap_type', 'value' : 'asdf'},
                                                                  {'name': 'y_scale_max', 'value': '1'},
                                                                  {'name': 'x_scale_max', 'value': '11'}]})
         
@@ -371,6 +385,7 @@ class TestParameterSet(TestCase):
                                                     'periodID': parameter_set_period.id,
                                                     'formData': [{'name': 'price_cap', 'value': '0.00'},
                                                                  {'name': 'price_cap_enabled', 'value': 'False'},
+                                                                 {'name': 'price_cap_type', 'value' : 'Ceiling'},
                                                                  {'name': 'y_scale_max', 'value': '0'},
                                                                  {'name': 'x_scale_max', 'value': '11'}]})
         
@@ -381,6 +396,7 @@ class TestParameterSet(TestCase):
                                                     'periodID': parameter_set_period.id,
                                                     'formData': [{'name': 'price_cap', 'value': '0.00'},
                                                                  {'name': 'price_cap_enabled', 'value': 'False'},
+                                                                 {'name': 'price_cap_type', 'value' : 'Ceiling'},
                                                                  {'name': 'y_scale_max', 'value': '1'},
                                                                  {'name': 'x_scale_max', 'value': '0'}]})
         
