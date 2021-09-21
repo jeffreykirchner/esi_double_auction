@@ -92,6 +92,12 @@ class SessionPeriod(models.Model):
         '''
         return self.session.parameter_set.parameter_set_periods.get(period_number=self.period_number).price_cap_enabled
 
+    def get_price_cap_type(self):
+        '''
+        return either ceiling or floor
+        '''
+        return self.session.parameter_set.parameter_set_periods.get(period_number=self.period_number).price_cap_type
+
     def get_total_gains_from_trade(self):
         '''
         return the total gains from trade for this period

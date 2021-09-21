@@ -29,6 +29,7 @@ from main.forms import PeriodForm
 from main.forms import ValuecostForm
 
 from main.globals import SubjectType
+from main.globals import PriceCapType
 
 class StaffSessionConsumer(SocketConsumerMixin):
     '''
@@ -645,6 +646,7 @@ def take_submit_bid_offer(data):
 
     logger.info(f'take_submit_bid_offer: buyer_seller_id_1 {buyer_seller_id_1}')
 
+    #check for s or b
     if status == "success": 
         if buyer_seller_id_1 != "s" and buyer_seller_id_1 != "S" and \
            buyer_seller_id_1 != "b" and buyer_seller_id_1 != "B":
@@ -652,6 +654,7 @@ def take_submit_bid_offer(data):
             status = "fail"       
             message = "Error: Invalid ID, missing s or b."
     
+    #check for id number
     if status == "success": 
         try:
             buyer_seller_id_2 = bid_offer_id[1:]
@@ -659,6 +662,7 @@ def take_submit_bid_offer(data):
             status = "fail"       
             message = f"Error: Invalid ID, incorrect number."
     
+    #check that id number is a number
     if status == "success": 
         try:
             buyer_seller_id_2 = int(buyer_seller_id_2)
@@ -688,14 +692,21 @@ def take_submit_bid_offer(data):
     #check bid / offer is under price cap, if applicable
     if status == "success":
         if session_period.get_price_cap_enabled():
-            if bid_offer_amount > session_period.get_price_cap():
-                status = "fail"       
-                message = f"Error: Amount exceeds price cap."
-                logger.warning(f'take_submit_bid_offer: {message}')
+            if session_period.get_price_cap_type() == PriceCapType.CEILING:
+                if bid_offer_amount > session_period.get_price_cap():
+                    status = "fail"       
+                    message = f"Error: Amount exceeds price ceiling."
+                    logger.warning(f'take_submit_bid_offer: {message}')
+            else:
+                if bid_offer_amount < session_period.get_price_cap():
+                    status = "fail"       
+                    message = f"Error: Amount below price floor."
+                    logger.warning(f'take_submit_bid_offer: {message}')
 
     best_bid = session_period_trade.get_best_bid()
     best_offer = session_period_trade.get_best_offer()
 
+    #check that type is a letter
     if status == "success":
         try:
             buyer_seller_id_1 = buyer_seller_id_1.lower()
