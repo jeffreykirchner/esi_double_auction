@@ -34,8 +34,8 @@ class StaffHomeView(View):
         parameters = Parameters.objects.first()
 
         try:
-            help_text = HelpDocs.objects.annotate(rp=Value(request.path,output_field=CharField()))\
-                                       .filter(rp__icontains=F('path')).first().text
+            help_text = HelpDocs.objects.annotate(rp=Value('/staff-home/',output_field=CharField()))\
+                                        .filter(rp__icontains=F('path')).first().text
         except Exception  as e:   
              help_text = "No help doc was found."
 
