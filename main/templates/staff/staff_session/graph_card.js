@@ -752,27 +752,24 @@ draw_trade_line:function(chartID, marginY, marginX, marginTopAndRight, yMin, yMa
 
     ctx.translate(marginY, h-marginX);
 
-    counter = 1;
-
-    for(i=period.trade_list.length-1; i>=1 ; i--)
+    for(i=1; i< period.trade_list.length; i++)
     {
-        trade1 = period.trade_list[i];
-        trade2 = period.trade_list[i-1];
+        trade1 = period.trade_list[i-1];
+        trade2 = period.trade_list[i];
 
-        x1 = app.convertToX(counter-1, xMax, xMin, w-marginY-marginTopAndRight, lineWidth);
+        x1 = app.convertToX(i-1, xMax, xMin, w-marginY-marginTopAndRight, lineWidth);
         y1 = app.convertToY(parseFloat(trade1.trade_price), yMax, yMin, h-marginX-marginTopAndRight, lineWidth);
 
-        x2 = app.convertToX(counter, xMax, xMin, w-marginY-marginTopAndRight, lineWidth);
+        x2 = app.convertToX(i, xMax, xMin, w-marginY-marginTopAndRight, lineWidth);
         y2 = app.convertToY(parseFloat(trade2.trade_price), yMax, yMin, h-marginX-marginTopAndRight, lineWidth);
 
-        x3 = app.convertToX(counter+1, xMax, xMin, w-marginY-marginTopAndRight, lineWidth);
+        x3 = app.convertToX(i+1, xMax, xMin, w-marginY-marginTopAndRight, lineWidth);
 
         ctx.beginPath();
         ctx.moveTo((x1+x2)/2, y1);
         ctx.lineTo((x2+x3)/2, y2);
 
         ctx.stroke();
-        counter++;
     }
 
     ctx.restore();

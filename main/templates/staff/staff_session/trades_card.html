@@ -25,9 +25,11 @@
             </thead>
 
             <tbody id="trade_list" style="font-size: large;">                                                  
-                <tr v-for="(t, index) in session.session_periods[session.current_period - 1].trade_list" 
+                <tr v-for="(t, index) in session.session_periods[session.current_period - 1].trade_list.slice().reverse()" 
                        v-bind:key="t.id" 
-                       v-bind:style="playback_enabled && playback_trade==index && {'background-color':'lightyellow'}">                                                                          
+                       v-bind:style="playback_enabled &&
+                                     session.session_periods[session.current_period - 1].trade_list.length-playback_trade-1==index &&
+                                     {'background-color':'lightyellow'}">                                                                          
                     <td class="pt-1 pb-1"> 
                         [[t.trade_number]]                                        
                     </td>

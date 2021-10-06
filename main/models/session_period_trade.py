@@ -38,7 +38,7 @@ class SessionPeriodTrade(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['session_period', 'trade_number'], name='unique_SD_trade')
         ]
-        ordering = ['-trade_number']
+        ordering = ['trade_number']
         verbose_name = 'Session Period Trade'
         verbose_name_plural = 'Session Period Trades'
     
