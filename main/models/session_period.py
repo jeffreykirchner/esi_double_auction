@@ -79,7 +79,7 @@ class SessionPeriod(models.Model):
                                                         'seller__session_subject__id_number',
                                                         'buyer_value__id',
                                                         'seller_cost__id')
-                                                .order_by('-trade_number'))
+                                                .order_by('trade_number'))
 
     def get_price_cap(self):
         '''
