@@ -93,6 +93,27 @@ class StaffHomeConsumer(SocketConsumerMixin):
 
         # Send message to WebSocket
         await self.send(text_data=json.dumps({'message': message,}, cls=DjangoJSONEncoder))
+    
+    async def get_sessions_admin(self, event):
+        '''
+        return a list of all sessions
+        '''
+        logger = logging.getLogger(__name__) 
+        logger.info(f"Get Sessions Admin {event}")   
+
+        self.user = self.scope["user"]
+        logger.info(f"User {self.user}")     
+
+        #build response
+        message_data = {}
+        message_data["sessions_admin"] = await sync_to_async(get_session_list_admin_json)(self.user)
+
+        message = {}
+        message["messageType"] = event["type"]
+        message["messageData"] = message_data
+
+        # Send message to WebSocket
+        await self.send(text_data=json.dumps({'message': message,}, cls=DjangoJSONEncoder))
 
 
 def create_new_session(auth_user):
@@ -116,14 +137,23 @@ def create_new_session(auth_user):
 
 def get_session_list_json(usr):
     '''
-    get list of sessions
+    get list of sessions created by usr
+    usr: auth user
     '''
-    return [{"title" : i.title,
-             "id":i.id,
-             "locked":i.locked,
-             "start_date":i.get_start_date_string(),
-            }
-            for i in Session.objects.filter(soft_delete=False, creator=usr)]
+
+    return list(Session.objects.filter(soft_delete=False, creator=usr)
+                               .values('title', 'id', 'locked', 'start_date'))
+
+def get_session_list_admin_json(usr):
+    '''
+    get list of all sessions if admin
+    '''
+    if usr.is_superuser:
+        return list(Session.objects.filter(soft_delete=False) \
+                              .order_by('creator', 'title') \
+                              .values('title', 'id', 'locked', 'creator__last_name', 'creator__first_name', 'start_date'))
+    else:
+        return []
 
 @sync_to_async
 def delete_session(id_):
