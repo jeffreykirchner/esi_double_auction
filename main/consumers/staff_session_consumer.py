@@ -3,13 +3,12 @@ websocket session list
 '''
 from decimal import Decimal, DecimalException
 
-from django.core.serializers.json import DjangoJSONEncoder
-from main.models.session_period_trade_offer import SessionPeriodTradeOffer
-from asgiref.sync import sync_to_async
-
 import json
 import logging
 
+from asgiref.sync import sync_to_async
+
+from django.core.serializers.json import DjangoJSONEncoder
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.decorators import method_decorator
 
@@ -19,6 +18,7 @@ from main.models import ParameterSetPeriod
 from main.models import SessionPeriodTradeBid
 from main.models import SessionPeriodTradeOffer
 from main.models import SessionPeriodTrade
+from main.models.session_period_trade_offer import SessionPeriodTradeOffer
 
 from main.consumers import SocketConsumerMixin
 from main.consumers import get_session
@@ -32,12 +32,10 @@ from main.forms import ValuecostForm
 from main.globals import SubjectType
 from main.globals import PriceCapType
 
-from main.decorators import user_is_owner
-
 class StaffSessionConsumer(SocketConsumerMixin):
     '''
     websocket session list
-    '''    
+    '''            
     async def get_session(self, event):
         '''
         return a list of sessions
@@ -276,7 +274,8 @@ class StaffSessionConsumer(SocketConsumerMixin):
         '''
         undo last bid or offer
         '''
-                #update subject count
+
+        #update subject count
         message_data = {}
         message_data["result"] = await take_undo_bid_offer(event["message_text"])
         
@@ -291,7 +290,8 @@ class StaffSessionConsumer(SocketConsumerMixin):
         '''
         add to all values or costs by a specified amount
         '''
-                #update subject count
+        
+        #update subject count
         message_data = {}
         message_data["status"] = await sync_to_async(take_add_to_all_values_or_costs)(event["message_text"])
 
@@ -313,15 +313,15 @@ def check_valid_user(user, session_id):
         logger.warning("check_valid_user: no auth user")
         return False
     
-    if user.is_superuser:
-        return True
-    
     try:        
         session = Session.objects.get(id=session_id)
     except ObjectDoesNotExist:
         logger.warning("check_valid_user: session does not exist")
         return False
     
+    if user.is_superuser:
+        return True
+
     if session.creator != user:
         logger.warning("check_valid_user: user is not creator of session")
         return False

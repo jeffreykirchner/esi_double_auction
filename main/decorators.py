@@ -1,12 +1,17 @@
 import logging
 
+from asgiref.sync import sync_to_async
+
 from django.core.exceptions import PermissionDenied
-from main.models import Session
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404
 
+from channels.db import database_sync_to_async
+
+from main.models import Session, session
 
 def user_is_owner(function):
+
     def wrap(request, *args, **kwargs):      
         logger = logging.getLogger(__name__) 
         logger.info(f"user_is_owner {args} {kwargs}")
@@ -17,7 +22,6 @@ def user_is_owner(function):
             logger.warn(f"user_is_owner: Session not found")
             raise Http404('Session Not Found')
         
-
         if request.user == session.creator or request.user.is_superuser:
             return function(request, *args, **kwargs)
         else:
