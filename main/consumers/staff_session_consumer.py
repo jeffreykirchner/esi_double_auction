@@ -11,6 +11,7 @@ import json
 import logging
 
 from django.core.exceptions import ObjectDoesNotExist
+from django.utils.decorators import method_decorator
 
 from main.models import ParameterSetPeriodSubjectValuecost
 from main.models import ParameterSetPeriod
@@ -31,11 +32,12 @@ from main.forms import ValuecostForm
 from main.globals import SubjectType
 from main.globals import PriceCapType
 
+from main.decorators import user_is_owner
+
 class StaffSessionConsumer(SocketConsumerMixin):
     '''
     websocket session list
     '''    
-
     async def get_session(self, event):
         '''
         return a list of sessions
@@ -56,7 +58,7 @@ class StaffSessionConsumer(SocketConsumerMixin):
     
     async def update_session(self, event):
         '''
-        return a list of sessions
+        update session parameters
         '''
         logger = logging.getLogger(__name__) 
         logger.info(f"Update Session: {event}")
@@ -255,6 +257,10 @@ class StaffSessionConsumer(SocketConsumerMixin):
         '''
         take bid or offer
         '''
+
+        if not await sync_to_async(check_valid_user)(self.scope["user"], event["message_text"]["sessionID"]):
+            return
+
         #update subject count
         message_data = {}
         message_data["result"] = await sync_to_async(take_submit_bid_offer)(event["message_text"])
@@ -297,6 +303,31 @@ class StaffSessionConsumer(SocketConsumerMixin):
 
         # Send message to WebSocket
         await self.send(text_data=json.dumps({'message': message}, cls=DjangoJSONEncoder))
+
+def check_valid_user(user, session_id):
+    '''
+    check that user has access this session
+    '''
+    logger = logging.getLogger(__name__)
+    if not user:
+        logger.warning("check_valid_user: no auth user")
+        return False
+    
+    if user.is_superuser:
+        return True
+    
+    try:        
+        session = Session.objects.get(id=session_id)
+    except ObjectDoesNotExist:
+        logger.warning("check_valid_user: session does not exist")
+        return False
+    
+    if session.creator != user:
+        logger.warning("check_valid_user: user is not creator of session")
+        return False
+    
+    return True
+
 #local sync_to_asyncs
 @sync_to_async
 def take_update_session_form(data):
