@@ -37,10 +37,10 @@ class SessionAdmin(admin.ModelAdmin):
         return False
 
     actions = []
-    list_display = ['title', 'creator_string']
-    ordering = [Lower('creator__email'), Lower('title')]
+    list_display = ['title', 'creator_string', 'start_date']
+    ordering = ['-start_date']
 
-    readonly_fields = ('parameter_set','start_date')
+    readonly_fields = ('parameter_set', 'start_date')
 
 admin.site.register(Session, SessionAdmin)
 
