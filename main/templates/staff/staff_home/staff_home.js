@@ -10,9 +10,8 @@ var app = Vue.createApp({
                     reconnecting : true,
                     working : false,
                     sessions : [],
-                    createSessionButtonText : 'Create Session <i class="fas fa-plus"></i>',
-                    dateSortButtonText: 'Date <i class="fas fa-sort"></i>',
-                    titleSortButtonText: 'Title <i class="fas fa-sort"></i>',
+                    sessions_full_admin : [],
+                    sessions_full_admin_visible : false,
                 }},
     methods: {
         handleSocketConnected(){
@@ -35,6 +34,9 @@ var app = Vue.createApp({
                 case "get_sessions":
                     app.takeGetSessions(messageData);
                     break;
+                case "get_sessions_admin":
+                    app.takeGetSessionsAdmin(messageData);
+                    break;
     
             }
 
@@ -50,28 +52,19 @@ var app = Vue.createApp({
                 }));
         },
 
-        sendCreateSession(){
-            //send create new session
-            app.$data.createSessionButtonText ='<i class="fas fa-spinner fa-spin"></i>';
-            app.sendMessage("create_session",{});
-        },
-
-        takeCreateSession(messageData){
-            //take create new session
-            app.$data.createSessionButtonText ='Create Session <i class="fas fa-plus"></i>';
-            app.takeGetSessions(messageData);
-        },
-
         sendGetSessions(){
             //get list of sessions
             app.sendMessage("get_sessions",{});
         },
 
         takeGetSessions(messageData){
-            //process list of sessions
+            //process list of sessions created by user
+            app.sessions = messageData.sessions;           
 
-            app.sessions = messageData.sessions;
-            
+            if(app.$data.sessions_full_admin_visible)
+            {
+                app.sendGetSessionsAdmin()
+            }
         },
 
         sendDeleteSession(id){
@@ -83,6 +76,19 @@ var app = Vue.createApp({
             app.working = true;
             app.sendMessage("delete_session",{"id" : id});
         },
+
+        formatDate: function(value){
+            if (value) {        
+                //console.log(value);                    
+                return moment(String(value)).local().format('MM/DD/YYYY');
+            }
+            else{
+                return "date format error";
+            }
+        },
+
+        {%include "staff/staff_home/sessions_card_full_admin.js"%}
+        {%include "staff/staff_home/sessions_card.js"%}
         
     },
 
