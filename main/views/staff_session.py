@@ -78,6 +78,7 @@ class StaffSessionView(SingleObjectMixin, View):
                                "page_key" : f'{self.websocket_path}-{session.id}',
                                "session" : session})
     
+    @method_decorator(user_is_owner)
     @method_decorator(login_required)
     def post(self, request, *args, **kwargs):
         '''

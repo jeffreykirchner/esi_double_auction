@@ -314,6 +314,6 @@ class ParameterSetPeriod(models.Model):
             "demand" : demand,
             "supply" : supply,
             "eq_price" : eq_price,
-            "eq_quantity" : eq_quantity,
+            "eq_quantity" : eq_quantity if eq_quantity else "null",
             "possible_gains_from_trade" : self.get_possible_gains_from_trade(),
         }
