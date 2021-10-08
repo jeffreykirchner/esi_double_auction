@@ -32,6 +32,9 @@ from main.forms import ValuecostForm
 from main.globals import SubjectType
 from main.globals import PriceCapType
 
+from main.decorators import check_sesison_exists_ws
+from main.decorators import check_user_is_owner_ws
+
 class StaffSessionConsumer(SocketConsumerMixin):
     '''
     websocket session list
@@ -251,13 +254,14 @@ class StaffSessionConsumer(SocketConsumerMixin):
         # Send message to WebSocket
         await self.send(text_data=json.dumps({'message': message}, cls=DjangoJSONEncoder))
     
+    @check_user_is_owner_ws
     async def submit_bid_offer(self, event):
         '''
         take bid or offer
         '''
 
-        if not await sync_to_async(check_valid_user)(self.scope["user"], event["message_text"]["sessionID"]):
-            return
+        # if not await sync_to_async(check_valid_user)(self.scope["user"], event["message_text"]["sessionID"]):
+        #     return
 
         #update subject count
         message_data = {}
