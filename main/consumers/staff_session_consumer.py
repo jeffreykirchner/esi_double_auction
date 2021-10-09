@@ -3,14 +3,14 @@ websocket session list
 '''
 from decimal import Decimal, DecimalException
 
-from django.core.serializers.json import DjangoJSONEncoder
-from main.models.session_period_trade_offer import SessionPeriodTradeOffer
-from asgiref.sync import sync_to_async
-
 import json
 import logging
 
+from asgiref.sync import sync_to_async
+
+from django.core.serializers.json import DjangoJSONEncoder
 from django.core.exceptions import ObjectDoesNotExist
+from django.utils.decorators import method_decorator
 
 from main.models import ParameterSetPeriodSubjectValuecost
 from main.models import ParameterSetPeriod
@@ -18,6 +18,7 @@ from main.models import ParameterSetPeriod
 from main.models import SessionPeriodTradeBid
 from main.models import SessionPeriodTradeOffer
 from main.models import SessionPeriodTrade
+from main.models.session_period_trade_offer import SessionPeriodTradeOffer
 
 from main.consumers import SocketConsumerMixin
 from main.consumers import get_session
@@ -31,11 +32,14 @@ from main.forms import ValuecostForm
 from main.globals import SubjectType
 from main.globals import PriceCapType
 
+from main.decorators import check_sesison_exists_ws
+from main.decorators import check_user_is_owner_ws
+
 class StaffSessionConsumer(SocketConsumerMixin):
     '''
     websocket session list
-    '''    
-
+    '''     
+    @check_user_is_owner_ws       
     async def get_session(self, event):
         '''
         return a list of sessions
@@ -54,9 +58,10 @@ class StaffSessionConsumer(SocketConsumerMixin):
         # Send message to WebSocket
         await self.send(text_data=json.dumps({'message': message,}, cls=DjangoJSONEncoder))
     
+    @check_user_is_owner_ws
     async def update_session(self, event):
         '''
-        return a list of sessions
+        update session parameters
         '''
         logger = logging.getLogger(__name__) 
         logger.info(f"Update Session: {event}")
@@ -72,6 +77,7 @@ class StaffSessionConsumer(SocketConsumerMixin):
         # Send message to WebSocket
         await self.send(text_data=json.dumps({'message': message}, cls=DjangoJSONEncoder))
     
+    @check_user_is_owner_ws
     async def update_subject_count(self, event):
         '''
         add or remove a buyer or seller
@@ -88,6 +94,7 @@ class StaffSessionConsumer(SocketConsumerMixin):
         # Send message to WebSocket
         await self.send(text_data=json.dumps({'message': message}, cls=DjangoJSONEncoder))
     
+    @check_user_is_owner_ws
     async def update_period_count(self, event):
         '''
         change the number of periods in a session
@@ -105,6 +112,7 @@ class StaffSessionConsumer(SocketConsumerMixin):
         # Send message to WebSocket
         await self.send(text_data=json.dumps({'message': message}, cls=DjangoJSONEncoder))
     
+    @check_user_is_owner_ws
     async def update_valuecost(self, event):
         '''
         update a value or cost
@@ -122,6 +130,7 @@ class StaffSessionConsumer(SocketConsumerMixin):
         # Send message to WebSocket
         await self.send(text_data=json.dumps({'message': message}, cls=DjangoJSONEncoder))
     
+    @check_user_is_owner_ws
     async def shift_value_or_cost(self, event):
         '''
         shift values or costs for current period up down between subjects
@@ -140,6 +149,7 @@ class StaffSessionConsumer(SocketConsumerMixin):
         # Send message to WebSocket
         await self.send(text_data=json.dumps({'message': message}, cls=DjangoJSONEncoder))
     
+    @check_user_is_owner_ws
     async def copy_value_or_cost(self, event):
         '''
         copy values or costs form previous period
@@ -158,6 +168,7 @@ class StaffSessionConsumer(SocketConsumerMixin):
         # Send message to WebSocket
         await self.send(text_data=json.dumps({'message': message}, cls=DjangoJSONEncoder))
 
+    @check_user_is_owner_ws
     async def update_period(self, event):
         '''
         update a period parameters
@@ -175,6 +186,7 @@ class StaffSessionConsumer(SocketConsumerMixin):
         # Send message to WebSocket
         await self.send(text_data=json.dumps({'message': message}, cls=DjangoJSONEncoder))
     
+    @check_user_is_owner_ws
     async def import_parameters(self, event):
         '''
         import parameters from another session
@@ -192,6 +204,7 @@ class StaffSessionConsumer(SocketConsumerMixin):
         # Send message to WebSocket
         await self.send(text_data=json.dumps({'message': message}, cls=DjangoJSONEncoder))
     
+    @check_user_is_owner_ws
     async def download_parameters(self, event):
         '''
         download parameters to a file
@@ -204,6 +217,7 @@ class StaffSessionConsumer(SocketConsumerMixin):
         # Send message to WebSocket
         await self.send(text_data=json.dumps({'message': message}, cls=DjangoJSONEncoder))
 
+    @check_user_is_owner_ws
     async def start_experiment(self, event):
         '''
         start experiment
@@ -220,6 +234,7 @@ class StaffSessionConsumer(SocketConsumerMixin):
         # Send message to WebSocket
         await self.send(text_data=json.dumps({'message': message}, cls=DjangoJSONEncoder))
     
+    @check_user_is_owner_ws
     async def reset_experiment(self, event):
         '''
         reset experiment, removes all trades, bids and asks
@@ -235,7 +250,8 @@ class StaffSessionConsumer(SocketConsumerMixin):
 
         # Send message to WebSocket
         await self.send(text_data=json.dumps({'message': message}, cls=DjangoJSONEncoder))
-    
+
+    @check_user_is_owner_ws
     async def next_period(self, event):
         '''
         advance to next period in experiment
@@ -251,10 +267,15 @@ class StaffSessionConsumer(SocketConsumerMixin):
         # Send message to WebSocket
         await self.send(text_data=json.dumps({'message': message}, cls=DjangoJSONEncoder))
     
+    @check_user_is_owner_ws
     async def submit_bid_offer(self, event):
         '''
         take bid or offer
         '''
+
+        # if not await sync_to_async(check_valid_user)(self.scope["user"], event["message_text"]["sessionID"]):
+        #     return
+
         #update subject count
         message_data = {}
         message_data["result"] = await sync_to_async(take_submit_bid_offer)(event["message_text"])
@@ -266,11 +287,13 @@ class StaffSessionConsumer(SocketConsumerMixin):
         # Send message to WebSocket
         await self.send(text_data=json.dumps({'message': message}, cls=DjangoJSONEncoder))
 
+    @check_user_is_owner_ws
     async def undo_bid_offer(self, event):
         '''
         undo last bid or offer
         '''
-                #update subject count
+
+        #update subject count
         message_data = {}
         message_data["result"] = await take_undo_bid_offer(event["message_text"])
         
@@ -281,11 +304,13 @@ class StaffSessionConsumer(SocketConsumerMixin):
         # Send message to WebSocket
         await self.send(text_data=json.dumps({'message': message}, cls=DjangoJSONEncoder))
 
+    @check_user_is_owner_ws
     async def add_to_all_values_or_costs(self, event):
         '''
         add to all values or costs by a specified amount
         '''
-                #update subject count
+        
+        #update subject count
         message_data = {}
         message_data["status"] = await sync_to_async(take_add_to_all_values_or_costs)(event["message_text"])
 
@@ -297,6 +322,31 @@ class StaffSessionConsumer(SocketConsumerMixin):
 
         # Send message to WebSocket
         await self.send(text_data=json.dumps({'message': message}, cls=DjangoJSONEncoder))
+
+# def check_valid_user(user, session_id):
+#     '''
+#     check that user has access this session
+#     '''
+#     logger = logging.getLogger(__name__)
+#     if not user:
+#         logger.warning("check_valid_user: no auth user")
+#         return False
+    
+#     try:        
+#         session = Session.objects.get(id=session_id)
+#     except ObjectDoesNotExist:
+#         logger.warning("check_valid_user: session does not exist")
+#         return False
+    
+#     if user.is_superuser:
+#         return True
+
+#     if session.creator != user:
+#         logger.warning("check_valid_user: user is not creator of session")
+#         return False
+    
+#     return True
+
 #local sync_to_asyncs
 @sync_to_async
 def take_update_session_form(data):
