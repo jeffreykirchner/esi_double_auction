@@ -35,7 +35,7 @@ class StaffHomeConsumer(SocketConsumerMixin):
 
         message_text = event["message_text"]
 
-        status = await delete_session(message_text["id"])
+        status = await delete_session(message_text["id"], self.user)
 
         logger.info(f"Delete Session success: {status}")
 
@@ -134,7 +134,6 @@ def create_new_session(auth_user):
 
     return session
 
-
 def get_session_list_json(usr):
     '''
     get list of sessions created by usr
@@ -156,7 +155,7 @@ def get_session_list_admin_json(usr):
         return []
 
 @sync_to_async
-def delete_session(id_):
+def delete_session(id_, user):
     '''
     delete specified session
     param: id_ {int} session id
@@ -166,6 +165,11 @@ def delete_session(id_):
 
     try:
         session = Session.objects.get(id=id_)
+
+        #check ownership
+        if session.creator != user and not user.is_superuser:
+            logger.warning("delete_session: invalid user")
+            return
 
         if settings.DEBUG:
             session.delete()
