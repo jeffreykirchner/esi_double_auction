@@ -22,7 +22,7 @@ var app = Vue.createApp({
         takeMessage(data) {
            //process socket message from server
 
-           console.log(data);
+           //console.log(data);
 
            messageType = data.message.messageType;
            messageData = data.message.messageData;
