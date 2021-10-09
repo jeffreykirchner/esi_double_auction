@@ -79,7 +79,7 @@ var app = Vue.createApp({
         takeMessage(data) {
             app.first_load_done = true;
 
-            console.log(data);
+            //console.log(data);
 
             messageType = data.message.messageType;
             messageData = data.message.messageData;
