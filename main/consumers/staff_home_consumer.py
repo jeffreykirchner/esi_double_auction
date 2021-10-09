@@ -150,7 +150,7 @@ def get_session_list_admin_json(usr):
     '''
     if usr.is_superuser:
         return list(Session.objects.filter(soft_delete=False) \
-                              .order_by('creator', 'title') \
+                              .order_by('-start_date') \
                               .values('title', 'id', 'locked', 'creator__last_name', 'creator__first_name', 'start_date'))
     else:
         return []

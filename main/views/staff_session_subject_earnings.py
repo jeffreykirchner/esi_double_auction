@@ -12,6 +12,8 @@ from main.models import Parameters
 from main.models import Session
 from main.models import HelpDocs
 
+from main.decorators import user_is_owner
+
 class StaffSessionSubjectEarnings(SingleObjectMixin, View):
     '''
     class based staff session subject earnings view
@@ -20,6 +22,7 @@ class StaffSessionSubjectEarnings(SingleObjectMixin, View):
     websocket_path = "staff-session-subject-earnings"
     model = Session
     
+    @method_decorator(user_is_owner)
     @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
         '''

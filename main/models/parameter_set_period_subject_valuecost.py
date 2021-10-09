@@ -45,6 +45,6 @@ class ParameterSetPeriodSubjectValuecost(models.Model):
             "id" : self.id,
             "value_cost" : str(self.value_cost),
             "enabled" : "True" if self.enabled else "False",
-            "visible" : True,                                       #draw on graph if true
+            "visible" : "True" if self.enabled else "False",                                       #draw on graph if true
             "label" : self.parameter_set_period_subject.get_label(),
         }

@@ -12,6 +12,8 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.http import JsonResponse
 from django.db.models import CharField,F, Value
+from django.core.exceptions import ObjectDoesNotExist
+from django.http import Http404
 
 from main.decorators import user_is_owner
 
@@ -41,7 +43,11 @@ class StaffSessionView(SingleObjectMixin, View):
         '''
 
         parameters = Parameters.objects.first()
-        session = self.get_object()
+
+        try:
+            session = self.get_object()    
+        except ObjectDoesNotExist :
+            raise Http404('Session Not Found')
 
         valuecost_form_ids=[]
         for i in ValuecostForm():
@@ -72,6 +78,7 @@ class StaffSessionView(SingleObjectMixin, View):
                                "page_key" : f'{self.websocket_path}-{session.id}',
                                "session" : session})
     
+    @method_decorator(user_is_owner)
     @method_decorator(login_required)
     def post(self, request, *args, **kwargs):
         '''
