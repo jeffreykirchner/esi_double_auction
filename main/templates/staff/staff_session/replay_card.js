@@ -169,6 +169,9 @@ get_supply_index(id){
     app.$data.show_supply_demand_graph = false;
     app.$data.show_bids_offers_graph = true;
 
+    var session = app.$data.session;
+    var parameter_set = session.parameter_set;
+
     //reset visibility
     for(i=0; i<parameter_set.periods.length;i++)
     {
