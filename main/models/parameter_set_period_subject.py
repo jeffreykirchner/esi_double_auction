@@ -105,7 +105,6 @@ class ParameterSetPeriodSubject(models.Model):
         else:
             return f'S{self.id_number}'
 
-
     def json(self):
         '''
         return json object of model
