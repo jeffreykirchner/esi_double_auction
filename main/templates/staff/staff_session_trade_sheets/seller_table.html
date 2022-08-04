@@ -66,5 +66,13 @@
                 {%endif%}
             </div>
         </div>
-    </div>        
+    </div>
+    
+    {%if forloop.counter|divisibleby:"3" %}
+    <div class="row" style="page-break-after: always;">
+        <div class = "col">
+            
+        </div>
+    </div>
+    {%endif%}
 {% endfor %}
