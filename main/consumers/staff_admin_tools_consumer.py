@@ -126,7 +126,7 @@ def take_upload_parameters(ini_text, auth_user):
                 value_qs = list(value_qs)
 
                 for j in range(4):
-                    if value_list[j] == "none":
+                    if value_list[j] == "none" or value_list[j] == "":
                         value_qs[j].enabled = False
                     else:
                         value_qs[j].value_cost = Decimal(value_list[j])
@@ -145,7 +145,7 @@ def take_upload_parameters(ini_text, auth_user):
                 cost_qs = list(cost_qs)
 
                 for j in range(4):
-                    if cost_list[j] == "none":
+                    if cost_list[j] == "none" or cost_list[j] =="":
                         cost_qs[j].enabled = False
                     else:
                         cost_qs[j].value_cost = Decimal(cost_list[j])
