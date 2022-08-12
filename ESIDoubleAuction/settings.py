@@ -111,5 +111,6 @@ DATE_FORMAT = '%d/%m/%Y'
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = 'static_files/'
 AUTH_USER_MODEL = 'auth.user'
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'

@@ -6,6 +6,7 @@ from django.contrib import admin
 
 from main.forms import ParametersForm
 from main.forms import HelpDocForm
+from main.forms import SessionFormAdmin
 
 from main.models import Parameters
 from main.models import Session
@@ -35,12 +36,12 @@ class SessionAdmin(admin.ModelAdmin):
     '''
     def has_add_permission(self, request, obj=None):
         return False
+    
+    form = SessionFormAdmin
 
     actions = []
     list_display = ['title', 'creator_string', 'start_date']
     ordering = ['-start_date']
-
-    readonly_fields = ('parameter_set', 'start_date')
 
 admin.site.register(Session, SessionAdmin)
 
