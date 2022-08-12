@@ -59,7 +59,7 @@ class SessionSubject(models.Model):
                 earnings -= trade.seller_cost.value_cost
                 earnings += trade.trade_price
 
-        return f'{earnings:.2f}'
+        return f'${earnings:.2f}'.replace('$-','-$')
     
     def get_my_trades(self):
         '''

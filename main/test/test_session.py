@@ -149,8 +149,8 @@ class TestSession(TestCase):
         s3 = session.session_subjects.get(subject_type=main.globals.SubjectType.SELLER , id_number=3)
 
         
-        self.assertEqual(b1.get_total_profit(),  '5.90')
-        self.assertEqual(b2.get_total_profit(),  '4.00')
-        self.assertEqual(s1.get_total_profit(),  '3.10')
-        self.assertEqual(s3.get_total_profit(),  '2.00')
+        self.assertEqual(b1.get_total_profit(),  '$5.90')
+        self.assertEqual(b2.get_total_profit(),  '$4.00')
+        self.assertEqual(s1.get_total_profit(),  '$3.10')
+        self.assertEqual(s3.get_total_profit(),  '$2.00')
 
