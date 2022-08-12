@@ -12,6 +12,7 @@ var app = Vue.createApp({
                     sessions : [],
                     sessions_full_admin : [],
                     sessions_full_admin_visible : false,
+                    user_id : {{request.user.id}},
                 }},
     methods: {
         handleSocketConnected(){

@@ -8,7 +8,7 @@
             </button>
         </span>
 
-        {%if user.is_superuser%}
+        {%if user.is_staff%}
         <span class="float-end pe-2 ps-2"> 
             <a href='/admin/main/session/{{session.id}}/change/' class='link-primary'>Lock/Share</a>
         </span>

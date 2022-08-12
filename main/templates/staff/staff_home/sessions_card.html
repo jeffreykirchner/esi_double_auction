@@ -54,6 +54,9 @@
                         <div v-if="s.locked">
                             Locked
                         </div>
+                        <div v-else-if="s.creator__id != user_id">
+                            Shared by [[s.creator__first_name]] [[s.creator__last_name]]
+                        </div>
                         <div v-else>
                             <button v-bind:id="'deleteSession' + s.id"
                                     type="button"

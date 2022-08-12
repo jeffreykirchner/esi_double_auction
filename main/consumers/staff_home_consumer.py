@@ -12,6 +12,7 @@ import pytz
 from django.core.serializers.json import DjangoJSONEncoder
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Q
 
 from main.consumers import SocketConsumerMixin
 
@@ -140,14 +141,19 @@ def get_session_list_json(usr):
     usr: auth user
     '''
 
-    return list(Session.objects.filter(soft_delete=False, creator=usr)
-                               .values('title', 'id', 'locked', 'start_date'))
+    #list of created and collaborated sessions
+    session_list_1 = usr.sessions.all()
+    session_list_2 = usr.sessions_b.all()
+
+    return list(Session.objects.filter(soft_delete=False)
+                               .filter(Q(id__in=session_list_1) | Q(id__in=session_list_2)) \
+                               .values('title', 'id', 'locked', 'start_date', 'creator__id', 'creator__first_name', 'creator__last_name'))
 
 def get_session_list_admin_json(usr):
     '''
     get list of all sessions if admin
     '''
-    if usr.is_superuser:
+    if usr.is_staff:
         return list(Session.objects.filter(soft_delete=False) \
                               .order_by('-start_date') \
                               .values('title', 'id', 'locked', 'creator__last_name', 'creator__first_name', 'start_date'))
@@ -167,7 +173,7 @@ def delete_session(id_, user):
         session = Session.objects.get(id=id_)
 
         #check ownership
-        if session.creator != user and not user.is_superuser:
+        if session.creator != user and not user.is_staff:
             logger.warning("delete_session: invalid user")
             return
 

@@ -25,7 +25,10 @@ def user_is_owner(function):
             logger.warn(f"user_is_owner: Session not found")
             raise Http404('Session Not Found')
         
-        if request.user == session.creator or request.user.is_superuser:
+        if request.user == session.creator or \
+           request.user.is_staff or \
+           request.user in session.collaborators.all() :
+           
             return function(request, *args, **kwargs)
         else:
             logger.warn(f"user_is_owner: Permisson denied")
@@ -40,6 +43,19 @@ def user_is_super(function):
     def wrap(request, *args, **kwargs):      
         
         if request.user.is_superuser:
+            return function(request, *args, **kwargs)
+        else:
+            raise PermissionDenied
+
+    return wrap
+
+def user_is_staff(function):
+    '''
+    check if user is a super user
+    '''
+    def wrap(request, *args, **kwargs):      
+        
+        if request.user.is_staff:
             return function(request, *args, **kwargs)
         else:
             raise PermissionDenied
@@ -92,7 +108,9 @@ def check_user_is_owner_ws(function):
             logger.warn(f"check_user_is_owner_ws: Session not found")
             return False
         
-        if user == session.creator or user.is_superuser:
+        if user == session.creator or \
+           user.is_staff or \
+           user in session.collaborators.all() :
             return True
         else:
             return False
