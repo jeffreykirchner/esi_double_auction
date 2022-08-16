@@ -17,6 +17,12 @@ updateCurrentPeriodReplay(adjustment){
         }
     }
 
+    app.$data.show_bids_offers_graph = true;
+    app.$data.show_supply_demand_graph = false;
+    app.$data.show_equilibrium_price_graph = false;
+    app.$data.show_trade_line_graph = false;
+    app.$data.show_gains_from_trade_graph = false;
+
     app.$data.session.current_period =  app.$data.current_visible_period;
 
     Vue.nextTick(app.update_sdgraph_canvas());
