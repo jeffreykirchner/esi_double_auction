@@ -82,7 +82,7 @@ class StaffSessionConsumer(SocketConsumerMixin):
         '''
         add or remove a buyer or seller
         '''                
-        #update subject count
+  
         message_data = {}
         message_data["status"] = await sync_to_async(take_update_subject_count)(event["message_text"])
         message_data["session"] = await get_session(event["message_text"]["sessionID"])
@@ -99,7 +99,7 @@ class StaffSessionConsumer(SocketConsumerMixin):
         '''
         change the number of periods in a session
         '''
-        #update subject count
+   
         message_data = {}
         message_data["status"] = await sync_to_async(take_update_period_count)(event["message_text"])
 
@@ -117,7 +117,7 @@ class StaffSessionConsumer(SocketConsumerMixin):
         '''
         update a value or cost
         '''
-        #update subject count
+       
         message_data = {}
         message_data["status"] = await sync_to_async(take_update_valuecost)(event["message_text"])
 
@@ -135,7 +135,6 @@ class StaffSessionConsumer(SocketConsumerMixin):
         '''
         shift values or costs for current period up down between subjects
         '''
-        #update subject count
 
         message_data = {}
         message_data["status"] = await sync_to_async(take_shift_value_or_cost)(event["message_text"])
@@ -154,7 +153,6 @@ class StaffSessionConsumer(SocketConsumerMixin):
         '''
         copy values or costs form previous period
         '''
-        #update subject count
 
         message_data = {}
         message_data["status"] = await sync_to_async(take_copy_value_or_cost)(event["message_text"])
@@ -173,7 +171,7 @@ class StaffSessionConsumer(SocketConsumerMixin):
         '''
         update a period parameters
         '''
-        #update subject count
+
         message_data = {}
         message_data["status"] = await sync_to_async(take_update_period)(event["message_text"])
 
@@ -191,7 +189,7 @@ class StaffSessionConsumer(SocketConsumerMixin):
         '''
         import parameters from another session
         '''
-        #update subject count
+
         message_data = {}
         message_data["status"] = await sync_to_async(take_import_parameters)(event["message_text"])
 
@@ -209,10 +207,22 @@ class StaffSessionConsumer(SocketConsumerMixin):
         '''
         download parameters to a file
         '''
-        #download parameters to a file
+
         message = {}
         message["messageType"] = "download_parameters"
         message["messageData"] = await take_download_parameters(event["message_text"])
+
+        # Send message to WebSocket
+        await self.send(text_data=json.dumps({'message': message}, cls=DjangoJSONEncoder))
+    
+    @check_user_is_owner_ws
+    async def download_dataset(self, event):
+        '''
+        download dataset to a file
+        '''
+        message = {}
+        message["messageType"] = "download_dataset"
+        message["messageData"] = await take_download_dataset(event["message_text"])
 
         # Send message to WebSocket
         await self.send(text_data=json.dumps({'message': message}, cls=DjangoJSONEncoder))
@@ -222,7 +232,7 @@ class StaffSessionConsumer(SocketConsumerMixin):
         '''
         start experiment
         '''
-        #update subject count
+
         message_data = {}
         message_data["status"] = await take_start_experiment(event["message_text"])
         message_data["session"] = await get_session(event["message_text"]["sessionID"])
@@ -239,7 +249,7 @@ class StaffSessionConsumer(SocketConsumerMixin):
         '''
         reset experiment, removes all trades, bids and asks
         '''
-        #update subject count
+
         message_data = {}
         message_data["status"] = await take_reset_experiment(event["message_text"])
         message_data["session"] = await get_session(event["message_text"]["sessionID"])
@@ -256,7 +266,7 @@ class StaffSessionConsumer(SocketConsumerMixin):
         '''
         advance to next period in experiment
         '''
-        #update subject count
+
         message_data = {}
         message_data["data"] = await sync_to_async(take_next_period)(event["message_text"])
 
@@ -276,7 +286,6 @@ class StaffSessionConsumer(SocketConsumerMixin):
         # if not await sync_to_async(check_valid_user)(self.scope["user"], event["message_text"]["sessionID"]):
         #     return
 
-        #update subject count
         message_data = {}
         message_data["result"] = await sync_to_async(take_submit_bid_offer)(event["message_text"])
         
@@ -293,7 +302,6 @@ class StaffSessionConsumer(SocketConsumerMixin):
         undo last bid or offer
         '''
 
-        #update subject count
         message_data = {}
         message_data["result"] = await take_undo_bid_offer(event["message_text"])
         
@@ -310,7 +318,6 @@ class StaffSessionConsumer(SocketConsumerMixin):
         add to all values or costs by a specified amount
         '''
         
-        #update subject count
         message_data = {}
         message_data["status"] = await sync_to_async(take_add_to_all_values_or_costs)(event["message_text"])
 
@@ -322,30 +329,6 @@ class StaffSessionConsumer(SocketConsumerMixin):
 
         # Send message to WebSocket
         await self.send(text_data=json.dumps({'message': message}, cls=DjangoJSONEncoder))
-
-# def check_valid_user(user, session_id):
-#     '''
-#     check that user has access this session
-#     '''
-#     logger = logging.getLogger(__name__)
-#     if not user:
-#         logger.warning("check_valid_user: no auth user")
-#         return False
-    
-#     try:        
-#         session = Session.objects.get(id=session_id)
-#     except ObjectDoesNotExist:
-#         logger.warning("check_valid_user: session does not exist")
-#         return False
-    
-#     if user.is_superuser:
-#         return True
-
-#     if session.creator != user:
-#         logger.warning("check_valid_user: user is not creator of session")
-#         return False
-    
-#     return True
 
 #local sync_to_asyncs
 @sync_to_async
@@ -587,7 +570,21 @@ def take_download_parameters(data):
 
     session = Session.objects.get(id=session_id)
    
-    return {"status" : "success", "parameter_set":session.parameter_set.json()}                      
+    return {"status" : "success", "parameter_set":session.parameter_set.json()}    
+
+@sync_to_async
+def take_download_dataset(data):
+    '''
+    download dataset to a file
+    '''   
+    logger = logging.getLogger(__name__) 
+    logger.info(f"Download dataset: {data}")
+
+    session_id = data["sessionID"]
+
+    session = Session.objects.get(id=session_id)
+   
+    return {"status" : "success", "dataset":session.get_data_set()}                  
                                 
 @sync_to_async
 def take_start_experiment(data):

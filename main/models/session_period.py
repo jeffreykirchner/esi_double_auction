@@ -130,8 +130,18 @@ class SessionPeriod(models.Model):
         '''
 
         return self.session.parameter_set.parameter_set_periods.get(period_number=self.period_number)
+    
+    def get_data_set(self):
+        '''
+        return the dataset for this session period
+        '''
 
-    #return json object of class
+        data_set = {'id':self.id,
+                    'period_number':self.period_number,
+                    'units':[i.get_data_set() for i in self.session_period_trades_a.all()]}
+
+        return data_set
+
     def json(self):
         '''
         json object of model

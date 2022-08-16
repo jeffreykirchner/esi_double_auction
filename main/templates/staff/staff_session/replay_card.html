@@ -3,7 +3,13 @@
         <span class="align-middle">Results</span>       
             
         <span class="float-end">
-             
+            <button class="btn btn-outline-primary me-1"
+                    type="button"
+                    v-bind:disabled="reconnecting || working" 
+                    v-on:click="sendDownloadDataset()" 
+                    title="Download dataset to a file.">
+                <span v-html = "downloadDatasetButtonText"></span>
+            </button> 
         </span>
         
     </div>

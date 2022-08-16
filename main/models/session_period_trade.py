@@ -66,6 +66,26 @@ class SessionPeriodTrade(models.Model):
         total_gains += self.trade_price - self.seller_cost.value_cost
 
         return total_gains
+    
+    def get_data_set(self):
+        '''
+        return the dataset for this session period trade
+        '''
+
+        data_set = {'id':self.id,
+                    'unit_number':self.trade_number,
+                    'trade_complete':self.trade_complete,
+                    'bids':[i.get_data_set() for i in self.session_period_trade_bids.all()],
+                    'offers':[i.get_data_set() for i in self.session_period_trade_offers.all()]}
+        
+        if self.trade_complete:
+            data_set['trade'] = {'buyer':self.buyer.session_subject.id_number,
+                                 'value':self.buyer_value.value_cost,          
+                                 'seller':self.seller.session_subject.id_number,
+                                 'cost':self.seller_cost.value_cost,
+                                 'price':self.trade_price, }
+
+        return data_set
 
 
     #return json object of class
