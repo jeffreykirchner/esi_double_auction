@@ -37,6 +37,7 @@ var app = Vue.createApp({
                      },
                     current_visible_period : 1,                //period visible on screen
                     downloadParametersetButtonText:'Download <i class="fas fa-download"></i>',
+                    downloadDatasetButtonText:'Download <i class="fas fa-download"></i>',
                     valuecost_modal_label:'Edit Value or Cost',
                     current_valuecost:{                       //json attached to value/cost edit modal
                         id:0,
@@ -117,6 +118,9 @@ var app = Vue.createApp({
                     break;       
                 case "undo_bid_offer":
                     app.take_undo_bid_offer(messageData);
+                    break;
+                case "download_dataset":
+                    app.takeDownloadDataset(messageData);
                     break;
             }
 

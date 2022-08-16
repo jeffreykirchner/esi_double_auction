@@ -35,6 +35,20 @@ class SessionPeriodTradeOffer(models.Model):
         return display string for bid-offer spread string
         '''
         return f'S{self.session_subject_period.session_subject.id_number} ${self.amount:0.2f}'
+    
+    def get_data_set(self):
+        '''
+        return the dataset for this session period trade
+        '''
+
+        data_set = {'id':self.id,
+                    'seller':self.session_subject_period.session_subject.id_number,
+                    'amount':self.amount,
+                    'cost':self.cost.value_cost,
+                    'timestamp':self.timestamp,
+                    }
+
+        return data_set
 
     #return json object of class
     def json(self):

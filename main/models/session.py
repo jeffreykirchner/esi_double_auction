@@ -138,6 +138,20 @@ class Session(models.Model):
             t.trade_number = 1
             t.save()
 
+    def get_data_set(self):
+        '''
+        return the dataset for this session
+        '''
+
+        data_set = {'id':self.id,
+                    'title':self.title,
+                    'creator':f'{self.creator.first_name} {self.creator.last_name}',
+                    'periods':[i.get_data_set() for i in self.session_periods.all()],
+                    'parameters':self.parameter_set.json(),
+                     }
+
+        return data_set
+
     def json(self):
         '''
         return json object of model

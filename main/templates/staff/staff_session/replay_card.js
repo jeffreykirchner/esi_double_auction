@@ -17,6 +17,12 @@ updateCurrentPeriodReplay(adjustment){
         }
     }
 
+    app.$data.show_bids_offers_graph = true;
+    app.$data.show_supply_demand_graph = false;
+    app.$data.show_equilibrium_price_graph = false;
+    app.$data.show_trade_line_graph = false;
+    app.$data.show_gains_from_trade_graph = false;
+
     app.$data.session.current_period =  app.$data.current_visible_period;
 
     Vue.nextTick(app.update_sdgraph_canvas());
@@ -193,4 +199,38 @@ get_supply_index(id){
 
     Vue.nextTick(app.update_sdgraph_canvas());
 },
+
+/** send request to download parameters to a file 
+*/
+sendDownloadDataset(){
+    
+    app.$data.working = true;
+    app.sendMessage("download_dataset", {"sessionID" : app.$data.sessionID,});
+},
+
+/** download parameter set into a file 
+ @param messageData {json} result of file request, either sucess or fail with errors
+*/
+takeDownloadDataset(messageData){
+    
+
+    if(messageData.status == "success")
+    {                  
+        console.log(messageData.parameter_set);
+
+        var downloadLink = document.createElement("a");
+        var jsonse = JSON.stringify(messageData.dataset);
+        var blob = new Blob([jsonse], {type: "application/json"})
+        var url = URL.createObjectURL(blob);
+        downloadLink.href = url;
+        downloadLink.download = "Double_Auction_Session_" + app.$data.session.id + "_Dataset.json";
+
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);                     
+    } 
+
+    app.$data.working = false;
+},
+
 
