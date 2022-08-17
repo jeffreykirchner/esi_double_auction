@@ -6,6 +6,14 @@
             <span v-show="reconnecting" class="me-1">
                 Connecting <i class="fas fa-cog fa-spin fa-1x"></i>
             </span>
+
+            <button type="button" 
+                class="btn btn-link ms-1" 
+                title="Show Help Doc" 
+                v-on:click="sendLoadHelpDoc('Staff Session Graph')">
+                <i class="far fa-question-circle"></i> 
+            </button>
+           
         </span>
         
     </div>

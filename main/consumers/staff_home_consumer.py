@@ -15,11 +15,12 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 
 from main.consumers import SocketConsumerMixin
+from main.consumers import StaffSubjectMixin
 
 from main.models import Session
 from main.globals import create_new_session_parameterset
 
-class StaffHomeConsumer(SocketConsumerMixin):
+class StaffHomeConsumer(SocketConsumerMixin, StaffSubjectMixin):
     '''
     websocket session list
     '''    

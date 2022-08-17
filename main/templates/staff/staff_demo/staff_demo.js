@@ -7,6 +7,7 @@ var app = Vue.createApp({
     delimiters: ["[[", "]]"],
 
     data() {return {values:[],
+                    helpText : "Loading ...",
                     values_prices:[],
                     values_profits:[],
                     buyer:{{buyer_json|safe}},
@@ -67,6 +68,8 @@ var app = Vue.createApp({
             app.$data.seller_profit=total.toFixed(2);
             
         }, 
+
+        {%include "js/help_doc.js"%}
     },
 
     mounted(){
