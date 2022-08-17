@@ -10,6 +10,12 @@
                     title="Download dataset to a file.">
                 <span v-html = "downloadDatasetButtonText"></span>
             </button> 
+            <button type="button" 
+                class="btn btn-link ms-1" 
+                title="Show Help Doc" 
+                v-on:click="sendLoadHelpDoc('Staff Session Replay')">
+            <i class="far fa-question-circle"></i> 
+            </button>
         </span>
         
     </div>

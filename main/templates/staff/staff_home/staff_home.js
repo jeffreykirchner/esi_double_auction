@@ -7,6 +7,7 @@ var app = Vue.createApp({
     delimiters: ["[[", "]]"],
 
     data() {return {chatSocket : "",
+                    helpText : "Loading ...",
                     reconnecting : true,
                     working : false,
                     sessions : [],
@@ -29,6 +30,9 @@ var app = Vue.createApp({
            messageData = data.message.messageData;
 
             switch(messageType) {
+                case "help_doc":
+                    app.takeLoadHelpDoc(messageData);
+                    break;
                 case "create_session":
                     app.takeCreateSession(messageData);
                     break;
@@ -90,6 +94,7 @@ var app = Vue.createApp({
 
         {%include "staff/staff_home/sessions_card_full_admin.js"%}
         {%include "staff/staff_home/sessions_card.js"%}
+        {%include "js/help_doc.js"%}
         
     },
 

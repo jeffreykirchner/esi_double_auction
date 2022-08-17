@@ -21,6 +21,7 @@ from main.models import SessionPeriodTrade
 from main.models.session_period_trade_offer import SessionPeriodTradeOffer
 
 from main.consumers import SocketConsumerMixin
+from main.consumers import StaffSubjectMixin
 from main.consumers import get_session
 
 from main.views import Session
@@ -35,7 +36,7 @@ from main.globals import PriceCapType
 from main.decorators import check_sesison_exists_ws
 from main.decorators import check_user_is_owner_ws
 
-class StaffSessionConsumer(SocketConsumerMixin):
+class StaffSessionConsumer(SocketConsumerMixin, StaffSubjectMixin):
     '''
     websocket session list
     '''     

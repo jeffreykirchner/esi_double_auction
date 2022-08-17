@@ -14,6 +14,7 @@ from main.models import HelpDocs
 
 from django.db.models.functions import Lower
 
+@admin.register(Parameters)
 class ParametersAdmin(admin.ModelAdmin):
     '''
     parameters model admin
@@ -28,8 +29,7 @@ class ParametersAdmin(admin.ModelAdmin):
 
     actions = []
 
-admin.site.register(Parameters, ParametersAdmin)
-
+@admin.register(Session)
 class SessionAdmin(admin.ModelAdmin):
     '''
     Session model admin
@@ -43,8 +43,7 @@ class SessionAdmin(admin.ModelAdmin):
     list_display = ['title', 'creator_string', 'start_date']
     ordering = ['-start_date']
 
-admin.site.register(Session, SessionAdmin)
-
+@admin.register(HelpDocs)
 class HelpDocAdmin(admin.ModelAdmin):
             
       form = HelpDocForm
@@ -52,6 +51,4 @@ class HelpDocAdmin(admin.ModelAdmin):
       ordering = [Lower('title')]
 
       actions = []
-      list_display = ['title','path']
-
-admin.site.register(HelpDocs, HelpDocAdmin)
+      list_display = ['title']

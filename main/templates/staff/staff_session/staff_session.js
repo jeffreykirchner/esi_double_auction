@@ -7,6 +7,7 @@ var app = Vue.createApp({
     delimiters: ["[[", "]]"],
 
     data() {return {chatSocket : "",
+                    helpText : "Loading ...",
                     reconnecting : true,
                     working : false,
                     first_load_done : false,          //true after software is loaded for the first time
@@ -85,7 +86,10 @@ var app = Vue.createApp({
             messageType = data.message.messageType;
             messageData = data.message.messageData;
 
-            switch(messageType) {                
+            switch(messageType) {         
+                case "help_doc":
+                    app.takeLoadHelpDoc(messageData);
+                    break;       
                 case "get_session":
                     app.takeGetSession(messageData);
                     break;
@@ -245,6 +249,7 @@ var app = Vue.createApp({
         {%include "staff/staff_session/control_card.js"%}
         {%include "staff/staff_session/input_card.js"%}
         {%include "staff/staff_session/replay_card.js"%}
+        {%include "js/help_doc.js"%}
         
         /** clear form error messages
         */
@@ -292,6 +297,8 @@ var app = Vue.createApp({
 
             }
         }, 
+
+
 
     },
 
