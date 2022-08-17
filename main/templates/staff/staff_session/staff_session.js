@@ -66,6 +66,13 @@ var app = Vue.createApp({
                     import_parameters_message : "",
                     playback_enabled : false,
                     playback_trade : 0,
+
+                    // modals
+                    editSessionModal : null,
+                    valuecostModal : null,           
+                    editPeriodModal : null,
+                    importParametersModal : null,
+                    parameterSetModal : null,
                 }},
     methods: {
 
@@ -79,8 +86,7 @@ var app = Vue.createApp({
         *    @param data {json} incoming data from server, contains message and message type
         */
         takeMessage(data) {
-            app.first_load_done = true;
-
+            
             //console.log(data);
 
             messageType = data.message.messageType;
@@ -128,7 +134,8 @@ var app = Vue.createApp({
                     break;
             }
 
-            app.working = false;
+            this.working = false;
+            this.first_load_done = true;
             Vue.nextTick(app.update_sdgraph_canvas());
         },
 
@@ -136,14 +143,38 @@ var app = Vue.createApp({
         *    @param messageType {string} type of message sent to server
         *    @param messageText {json} body of message being sent to server
         */
-        sendMessage(messageType, messageText) {
-            
+        sendMessage(messageType, messageText) {            
 
             app.$data.chatSocket.send(JSON.stringify({
                     'messageType': messageType,
                     'messageText': messageText,
                 }));
         },
+
+        /**
+         * do after session has loaded
+         */
+         doFirstLoad()
+         {
+
+            // $('#editSessionModal').on("hidden.bs.modal", this.hideEditSession); 
+            // $('#valuecostModal').on("hidden.bs.modal", this.hideEditValuecost); 
+            // $('#editPeriodModal').on("hidden.bs.modal", this.hideEditPeriod); 
+            // $('#importParametersModal').on("hidden.bs.modal", this.hideImportParameters); 
+            // $('#parameterSetModal').on("hidden.bs.modal", this.hideUploadParameters);
+            
+            app.editSessionModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('editSessionModal'), {keyboard: false});
+            app.valuecostModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('valuecostModal'), {keyboard: false});            
+            app.editPeriodModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('editPeriodModal'), {keyboard: false});            
+            app.importParametersModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('importParametersModal'), {keyboard: false});
+            app.parameterSetModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('parameterSetModal'), {keyboard: false}); 
+
+            document.getElementById('editSessionModal').addEventListener('hidden.bs.modal', app.hideEditSession);
+            document.getElementById('valuecostModal').addEventListener('hidden.bs.modal', app.hideEditValuecost);
+            document.getElementById('editPeriodModal').addEventListener('hidden.bs.modal', app.hideEditPeriod);
+            document.getElementById('importParametersModal').addEventListener('hidden.bs.modal', app.hideImportParameters);
+            document.getElementById('parameterSetModal').addEventListener('hidden.bs.modal', app.hideUploadParameters);
+         }, 
 
         /** take create new session
         *    @param messageData {json} session day in json format
@@ -184,6 +215,11 @@ var app = Vue.createApp({
             }
 
             app.updateMoveOnButtonText();
+
+            if(!app.first_load_done)
+            {
+                setTimeout(app.doFirstLoad, 500);
+            }
         },
 
         /**update text of move on button based on current state
@@ -230,7 +266,7 @@ var app = Vue.createApp({
             if(messageData.status == "success")
             {
                 app.takeGetSession(messageData);       
-                $('#editSessionModal').modal('hide');    
+                app.editSessionModal.hide(); 
             } 
             else
             {
@@ -303,11 +339,7 @@ var app = Vue.createApp({
     },
 
     mounted(){
-        $('#editSessionModal').on("hidden.bs.modal", this.hideEditSession); 
-        $('#valuecostModal').on("hidden.bs.modal", this.hideEditValuecost); 
-        $('#editPeriodModal').on("hidden.bs.modal", this.hideEditPeriod); 
-        $('#importParametersModal').on("hidden.bs.modal", this.hideImportParameters); 
-        $('#parameterSetModal').on("hidden.bs.modal", this.hideUploadParameters);
+
     },
 
 }).mount('#app');

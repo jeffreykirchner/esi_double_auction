@@ -41,7 +41,7 @@ takeUpdateValuecost(messageData){
     if(messageData.status.value == "success")
     {
         app.takeGetSession(messageData);       
-        $('#valuecostModal').modal('hide');    
+        app.valuecostModal.hide();    
     } 
     else
     {
@@ -135,7 +135,7 @@ takeUpdatePeriod(messageData){
     if(messageData.status.value == "success")
     {
         app.takeGetSession(messageData);       
-        $('#editPeriodModal').modal('hide');    
+        app.editPeriodModal.hide();    
     } 
     else
     {
@@ -262,11 +262,7 @@ showUploadParameters:function(upload_mode){
     app.$data.upload_mode = upload_mode;
     app.$data.uploadParametersetMessaage = "";
 
-    var myModal = new bootstrap.Modal(document.getElementById('parameterSetModal'), {
-        keyboard: false
-        })
-
-    myModal.toggle();
+    app.parameterSetModal.toggle();
 },
 
 /**hide upload parameters modal
@@ -292,12 +288,7 @@ showEditValuecost:function(value_cost, type){
         app.$data.valuecost_modal_label = "Edit cost";
     }
 
-
-    var myModal = new bootstrap.Modal(document.getElementById('valuecostModal'), {
-        keyboard: false
-        })
-
-    myModal.toggle();
+    app.valuecostModal.toggle();
 },
 
 /** hide edit valuecost modal
@@ -316,13 +307,8 @@ showEditSession:function(){
     app.clearMainFormErrors();
     app.$data.cancelModal=true;
     app.$data.sessionBeforeEdit = Object.assign({}, app.$data.session);
-
     
-    var myModal = new bootstrap.Modal(document.getElementById('editSessionModal'), {
-        keyboard: false
-        })
-
-    myModal.toggle();
+    app.editSessionModal.toggle();
 },
 
 /** hide edit session modal
@@ -342,11 +328,7 @@ showEditPeriod:function(){
     app.$data.cancelModal=true;
     app.$data.periodBeforeEdit = Object.assign({}, app.$data.session.parameter_set.periods[app.$data.current_visible_period-1]);
 
-    var myModal = new bootstrap.Modal(document.getElementById('editPeriodModal'), {
-        keyboard: false
-        })
-
-    myModal.toggle();
+    app.editPeriodModal.toggle();
 },
 
 /** hide edit session modal
@@ -362,12 +344,8 @@ hideEditPeriod:function(){
 /** show edit session modal
 */
 showImportParameters:function(){
-    
-    var myModal = new bootstrap.Modal(document.getElementById('importParametersModal'), {
-        keyboard: false
-        })
 
-    myModal.toggle();
+    app.importParametersModal.toggle();
 },
 
 /** hide edit session modal
