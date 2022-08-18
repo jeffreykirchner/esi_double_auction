@@ -62,10 +62,10 @@ def login_function(request,data):
     #logger.info(data)
 
     #convert form into dictionary
-    form_data_dict = {}
+    form_data_dict = data["formData"]
 
-    for field in data["formData"]:
-        form_data_dict[field["name"]] = field["value"]
+    # for field in data["formData"]:
+    #     form_data_dict[field["name"]] = field["value"]
 
     form = LoginForm(form_data_dict)
 
@@ -74,11 +74,11 @@ def login_function(request,data):
         username = form.cleaned_data['username']
         password = form.cleaned_data['password']
 
-        #logger.info(f"Login user {username}")
-
+        #check for user on auth server
         user = login_function_esi_auth(username=username.lower(), password=password)
 
         if not user:
+            #check for local user
             user = authenticate(request, username=username.lower(), password=password)
 
         if user is not None:
@@ -127,7 +127,7 @@ def login_function_esi_auth(username, password):
         request_result_json = request_result.json()
 
         if request_result_json['status'] == 'fail':        
-            logger.warning(f'ESI auth error: {request_result}')
+            logger.warning(f'ESI auth error: {request_result_json}')
             return None
 
         logger.info(f"ESI auth response: {request_result_json}")

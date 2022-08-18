@@ -11,6 +11,8 @@
               loginButtonText : 'Submit <i class="fas fa-sign-in-alt"></i>',
               loginErrorText : "",
               form_ids : {{form_ids|safe}},
+              username:null,
+              password:null,
               }                          
           },
 
@@ -23,7 +25,7 @@
 
                   axios.post('/accounts/login/', {
                           action :"login",
-                          formData : $("#login_form").serializeArray(), 
+                          formData : {username:app.username, password:app.password}, 
                                                       
                       })
                       .then(function (response) {     
