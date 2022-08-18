@@ -3,10 +3,10 @@
  * @param adjustment : 1 or -1
 */
 sendUpdateSubjectCount(type, adjustment){
-    app.$data.cancelModal = false;
-    app.$data.working = true;
-    app.sendMessage("update_subject_count", {"sessionID" : app.$data.sessionID,
-                                                "current_visible_period" : app.$data.current_visible_period,
+    app.cancelModal = false;
+    app.working = true;
+    app.sendMessage("update_subject_count", {"sessionID" : app.sessionID,
+                                                "current_visible_period" : app.current_visible_period,
                                                 "type" : type,
                                                 "adjustment" : adjustment});
 },
@@ -15,9 +15,9 @@ sendUpdateSubjectCount(type, adjustment){
  * @param adjustment : 1 or -1
 */
 sendUpdatePeriodCount(adjustment){
-    app.$data.cancelModal = false;
-    app.$data.working = true;
-    app.sendMessage("update_period_count", {"sessionID" : app.$data.sessionID,
+    app.cancelModal = false;
+    app.working = true;
+    app.sendMessage("update_period_count", {"sessionID" : app.sessionID,
                                             "adjustment" : adjustment});
 },
 
@@ -35,7 +35,7 @@ sendUpdateValuecost(){
  * @param messageData {json} result of update, either sucess or fail with errors
 */
 takeUpdateValuecost(messageData){
-    app.$data.cancelModal=false;
+    app.cancelModal=false;
     app.clearMainFormErrors();
 
     if(messageData.status.value == "success")
@@ -45,7 +45,7 @@ takeUpdateValuecost(messageData){
     } 
     else
     {
-        app.$data.cancelModal=true;                           
+        app.cancelModal=true;                           
         app.displayErrors(messageData.status.errors);
     } 
 },
@@ -57,16 +57,16 @@ updateCurrentPeriod(adjustment){
     
     if(adjustment == 1)
     {
-        if(app.$data.current_visible_period < app.$data.session.parameter_set.number_of_periods)
+        if(app.current_visible_period < app.session.parameter_set.number_of_periods)
         {
-            app.$data.current_visible_period += 1;
+            app.current_visible_period += 1;
         }
     }
     else
     {
-        if(app.$data.current_visible_period > 1)
+        if(app.current_visible_period > 1)
         {
-            app.$data.current_visible_period -= 1;
+            app.current_visible_period -= 1;
         }
     }
 
@@ -79,9 +79,9 @@ updateCurrentPeriod(adjustment){
  * @param valueOrCost : 'up' or 'down'
 */
 shiftValueOrCost(valueOrCost, direction){
-    app.$data.working = true;
-    app.sendMessage("shift_value_or_cost", {"sessionID" : app.$data.sessionID,
-                                            "currentPeriod" : app.$data.current_visible_period,
+    app.working = true;
+    app.sendMessage("shift_value_or_cost", {"sessionID" : app.sessionID,
+                                            "currentPeriod" : app.current_visible_period,
                                             "valueOrCost" : valueOrCost,
                                             "direction" : direction,});
 },
@@ -91,15 +91,15 @@ shiftValueOrCost(valueOrCost, direction){
  * @param valueOrCost : 'up' or 'down'
 */
 addToValueOrCost(valueOrCost){
-    app.$data.working = true;
+    app.working = true;
     amount = 0;
     if (valueOrCost == 'value')
-        amount = app.$data.add_to_value_amount;
+        amount = app.add_to_value_amount;
     else
-        amount = app.$data.add_to_cost_amount;
+        amount = app.add_to_cost_amount;
 
-    app.sendMessage("add_to_all_values_or_costs", {"sessionID" : app.$data.sessionID,
-                                            "currentPeriod" : app.$data.current_visible_period,
+    app.sendMessage("add_to_all_values_or_costs", {"sessionID" : app.sessionID,
+                                            "currentPeriod" : app.current_visible_period,
                                             "valueOrCost" : valueOrCost,
                                             "amount" : amount,});
 },
@@ -109,9 +109,9 @@ addToValueOrCost(valueOrCost){
  * @param valueOrCost : 'up' or 'down'
 */
     copyValueOrCost(valueOrCost){
-    app.$data.working = true;
-    app.sendMessage("copy_value_or_cost", {"sessionID" : app.$data.sessionID,
-                                            "currentPeriod" : app.$data.current_visible_period,
+    app.working = true;
+    app.sendMessage("copy_value_or_cost", {"sessionID" : app.sessionID,
+                                            "currentPeriod" : app.current_visible_period,
                                             "valueOrCost" : valueOrCost});
 },
 
@@ -121,7 +121,7 @@ sendUpdatePeriod(){
     
     app.working = true;
     app.sendMessage("update_period", {"sessionID" : app.sessionID,
-                                      "periodID" : app.session.parameter_set.periods[app.$data.current_visible_period-1].id,
+                                      "periodID" : app.session.parameter_set.periods[app.current_visible_period-1].id,
                                       "formData" : app.session.parameter_set.periods[app.current_visible_period-1],});
 },
 
@@ -156,19 +156,18 @@ sendImportParameters(){
 /** show parameters copied from another period 
 */
 takeImportParameters(){
-    //app.$data.cancelModal=false;
+    //app.cancelModal=false;
     //app.clearMainFormErrors();
 
     if(messageData.status.status == "success")
     {
-        app.$data.current_visible_period = 1;
+        app.current_visible_period = 1;
         app.takeGetSession(messageData);       
-        app.$data.import_parameters_message = messageData.status.message;
-        //$('#importParametersModal').modal('hide');    
+        app.import_parameters_message = messageData.status.message;
     } 
     else
     {
-        app.$data.import_parameters_message = messageData.status.message;
+        app.import_parameters_message = messageData.status.message;
     } 
 },
 
@@ -176,8 +175,8 @@ takeImportParameters(){
 */
 sendDownloadParameters(){
     
-    app.$data.working = true;
-    app.sendMessage("download_parameters", {"sessionID" : app.$data.sessionID,});
+    app.working = true;
+    app.sendMessage("download_parameters", {"sessionID" : app.sessionID,});
 },
 
 /** download parameter set into a file 
@@ -194,14 +193,14 @@ takeDownloadParameters(messageData){
         var blob = new Blob([jsonse], {type: "application/json"});
         var url = URL.createObjectURL(blob);
         downloadLink.href = url;
-        downloadLink.download = "Double_Auction_Session_" + app.$data.session.id + "_Parameter_Set.json";
+        downloadLink.download = "Double_Auction_Session_" + app.session.id + "_Parameter_Set.json";
 
         document.body.appendChild(downloadLink);
         downloadLink.click();
         document.body.removeChild(downloadLink);                     
     } 
 
-    app.$data.working = false;
+    app.working = false;
 },
 
 /**upload a parameter set file
@@ -209,7 +208,7 @@ takeDownloadParameters(messageData){
 uploadParameterset:function(){  
 
     let formData = new FormData();
-    formData.append('file', app.$data.upload_file);
+    formData.append('file', app.upload_file);
 
     axios.post('/staff-session/{{id}}/', formData,
             {
@@ -220,27 +219,27 @@ uploadParameterset:function(){
             )
             .then(function (response) {     
 
-                app.$data.uploadParametersetMessaage = response.data.message.message;
-                app.$data.session = response.data.session;
-                app.$data.uploadParametersetButtonText= 'Upload <i class="fas fa-upload"></i>';
+                app.uploadParametersetMessaage = response.data.message.message;
+                app.session = response.data.session;
+                app.uploadParametersetButtonText= 'Upload <i class="fas fa-upload"></i>';
                 Vue.nextTick(app.update_sdgraph_canvas());
 
             })
             .catch(function (error) {
                 console.log(error);
-                app.$data.searching=false;
+                app.searching=false;
             });                        
 },
 
 //direct upload button click
 uploadAction:function(){
-    if(app.$data.upload_file == null)
+    if(app.upload_file == null)
         return;
 
-    app.$data.uploadParametersetMessaage = "";
-    app.$data.uploadParametersetButtonText = '<i class="fas fa-spinner fa-spin"></i>';
+    app.uploadParametersetMessaage = "";
+    app.uploadParametersetButtonText = '<i class="fas fa-spinner fa-spin"></i>';
 
-    if(app.$data.upload_mode == "parameters")
+    if(app.upload_mode == "parameters")
     {
         this.uploadParameterset();
     }
@@ -252,15 +251,15 @@ uploadAction:function(){
 },
 
 handleFileUpload:function(){
-    app.$data.upload_file = this.$refs.file.files[0];
-    app.$data.upload_file_name = app.$data.upload_file.name;
+    app.upload_file = this.$refs.file.files[0];
+    app.upload_file_name = app.upload_file.name;
 },
 
 /** show upload parameters modal
 */
 showUploadParameters:function(upload_mode){
-    app.$data.upload_mode = upload_mode;
-    app.$data.uploadParametersetMessaage = "";
+    app.upload_mode = upload_mode;
+    app.uploadParametersetMessaage = "";
 
     app.parameterSetModal.toggle();
 },
@@ -274,18 +273,18 @@ hideUploadParameters:function(){
 */
 showEditValuecost:function(value_cost, type){
     app.clearMainFormErrors();
-    app.$data.cancelModal=true;
-    app.$data.sessionBeforeEdit = Object.assign({}, app.$data.session);
+    app.cancelModal=true;
+    app.sessionBeforeEdit = Object.assign({}, app.session);
 
-    app.$data.current_valuecost = Object.assign({}, value_cost);
+    app.current_valuecost = Object.assign({}, value_cost);
 
     if(type == "value")
     {
-        app.$data.valuecost_modal_label = "Edit value";
+        app.valuecost_modal_label = "Edit value";
     }
     else
     {
-        app.$data.valuecost_modal_label = "Edit cost";
+        app.valuecost_modal_label = "Edit cost";
     }
 
     app.valuecostModal.toggle();
@@ -294,10 +293,10 @@ showEditValuecost:function(value_cost, type){
 /** hide edit valuecost modal
 */
 hideEditValuecost:function(){
-    if(app.$data.cancelModal)
+    if(app.cancelModal)
     {
-        Object.assign(app.$data.session, app.$data.sessionBeforeEdit);
-        app.$data.sessionBeforeEdit=null;
+        Object.assign(app.session, app.sessionBeforeEdit);
+        app.sessionBeforeEdit=null;
     }
 },
 
@@ -305,8 +304,8 @@ hideEditValuecost:function(){
 */
 showEditSession:function(){
     app.clearMainFormErrors();
-    app.$data.cancelModal=true;
-    app.$data.sessionBeforeEdit = Object.assign({}, app.$data.session);
+    app.cancelModal=true;
+    app.sessionBeforeEdit = Object.assign({}, app.session);
     
     app.editSessionModal.toggle();
 },
@@ -314,10 +313,10 @@ showEditSession:function(){
 /** hide edit session modal
 */
 hideEditSession:function(){
-    if(app.$data.cancelModal)
+    if(app.cancelModal)
     {
-        Object.assign(app.$data.session, app.$data.sessionBeforeEdit);
-        app.$data.sessionBeforeEdit=null;
+        Object.assign(app.session, app.sessionBeforeEdit);
+        app.sessionBeforeEdit=null;
     }
 },
 

@@ -146,7 +146,7 @@ var app = Vue.createApp({
         */
         sendMessage(messageType, messageText) {            
 
-            app.$data.chatSocket.send(JSON.stringify({
+            app.chatSocket.send(JSON.stringify({
                     'messageType': messageType,
                     'messageText': messageText,
                 }));
@@ -156,14 +156,7 @@ var app = Vue.createApp({
          * do after session has loaded
          */
          doFirstLoad()
-         {
-
-            // $('#editSessionModal').on("hidden.bs.modal", this.hideEditSession); 
-            // $('#valuecostModal').on("hidden.bs.modal", this.hideEditValuecost); 
-            // $('#editPeriodModal').on("hidden.bs.modal", this.hideEditPeriod); 
-            // $('#importParametersModal').on("hidden.bs.modal", this.hideImportParameters); 
-            // $('#parameterSetModal').on("hidden.bs.modal", this.hideUploadParameters);
-            
+         {            
             app.editSessionModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('editSessionModal'), {keyboard: false});
             app.valuecostModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('valuecostModal'), {keyboard: false});            
             app.editPeriodModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('editPeriodModal'), {keyboard: false});            
@@ -182,37 +175,37 @@ var app = Vue.createApp({
         */
         takeGetSession(messageData){
             
-            app.$data.session = messageData.session;
+            app.session = messageData.session;
 
-            if(app.$data.session.started)
+            if(app.session.started)
             {
-                app.$data.show_parameters = false;
+                app.show_parameters = false;
 
-                app.$data.show_bids_offers_graph = true;
-                app.$data.show_supply_demand_graph = false;
-                app.$data.show_equilibrium_price_graph = false;
-                app.$data.show_trade_line_graph = false;
-                app.$data.show_gains_from_trade_graph = false;
+                app.show_bids_offers_graph = true;
+                app.show_supply_demand_graph = false;
+                app.show_equilibrium_price_graph = false;
+                app.show_trade_line_graph = false;
+                app.show_gains_from_trade_graph = false;
 
-                if(app.$data.session.finished)
+                if(app.session.finished)
                 {
-                    app.$data.current_visible_period = 1;
-                    app.$data.session.current_period = 1;
+                    app.current_visible_period = 1;
+                    app.session.current_period = 1;
                 }
                 else
                 {
-                    app.$data.current_visible_period = app.$data.session.current_period;
+                    app.current_visible_period = app.session.current_period;
                 }
             }
             else
             {
-                app.$data.show_parameters = true;
+                app.show_parameters = true;
 
-                app.$data.show_bids_offers_graph = false;
-                app.$data.show_supply_demand_graph = true;
-                app.$data.show_equilibrium_price_graph = true;
-                app.$data.show_trade_line_graph = false;
-                app.$data.show_gains_from_trade_graph = false;
+                app.show_bids_offers_graph = false;
+                app.show_supply_demand_graph = true;
+                app.show_equilibrium_price_graph = true;
+                app.show_trade_line_graph = false;
+                app.show_gains_from_trade_graph = false;
             }
 
             app.updateMoveOnButtonText();
@@ -226,19 +219,19 @@ var app = Vue.createApp({
         /**update text of move on button based on current state
          */
         updateMoveOnButtonText(){
-            if(app.$data.session.finished)
+            if(app.session.finished)
             {
-                app.$data.move_to_next_period_text = '** Experiment complete **';
+                app.move_to_next_period_text = '** Experiment complete **';
             }
-            else if(app.$data.session.started)
+            else if(app.session.started)
             {
-                if(app.$data.session.current_period == app.$data.session.parameter_set.number_of_periods)
+                if(app.session.current_period == app.session.parameter_set.number_of_periods)
                 {
-                    app.$data.move_to_next_period_text = 'Complete experiment <i class="fas fa-flag-checkered"></i>';
+                    app.move_to_next_period_text = 'Complete experiment <i class="fas fa-flag-checkered"></i>';
                 }
                 else
                 {
-                    app.$data.move_to_next_period_text = 'Move to next period <i class="fas fa-fast-forward"></i>';
+                    app.move_to_next_period_text = 'Move to next period <i class="fas fa-fast-forward"></i>';
                 }
             }
         },
@@ -246,16 +239,16 @@ var app = Vue.createApp({
         /** send winsock request to get session info
         */
         sendGetSession(){
-            app.sendMessage("get_session",{"sessionID" : app.$data.sessionID});
+            app.sendMessage("get_session",{"sessionID" : app.sessionID});
         },
 
         /** send session update form   
         */
         sendUpdateSession(){
-            app.$data.cancelModal = false;
-            app.$data.working = true;
+            app.cancelModal = false;
+            app.working = true;
             app.sendMessage("update_session",{"formData" : {id:app.session.id, title:app.session.title},
-                                              "sessionID" : app.$data.sessionID});
+                                              "sessionID" : app.sessionID});
         },
 
         /** take update session reponse
@@ -271,7 +264,7 @@ var app = Vue.createApp({
             } 
             else
             {
-                app.$data.cancelModal=true;                           
+                app.cancelModal=true;                           
                 app.displayErrors(messageData.errors);
             } 
         },
@@ -292,48 +285,56 @@ var app = Vue.createApp({
         */
         clearMainFormErrors(){
             
-            for(var item in app.$data.session)
+            for(var item in app.session)
             {
-                $("#id_" + item).attr("class","form-control");
-                $("#id_errors_" + item).remove();
+                e = document.getElementById("id_errors_" + item);
+                if(e){
+                    document.getElementById("div_id_" + item).removeAttribute("class");
+                    e.remove();
+                }
             }
 
-            s = app.$data.valuecost_form_ids;
+            s = app.valuecost_form_ids;
             for(var i in s)
             {
-                $("#id_" + s[i]).attr("class","form-control");
-                $("#id_errors_" + s[i]).remove();
+                e = document.getElementById("id_errors_" + s[i]);
+                if(e){
+                    document.getElementById("div_id_" + s[i]).removeAttribute("class");
+                    e.remove();
+                }
             }
 
-            s = app.$data.period_form_ids;
+            s = app.period_form_ids;
             for(var i in s)
             {
-                $("#id_" + s[i]).attr("class","form-control");
-                $("#id_errors_" + s[i]).remove();
+                e = document.getElementById("id_errors_" + s[i]);
+                if(e){
+                    document.getElementById("div_id_" + s[i]).removeAttribute("class");
+                    e.remove();
+                }
             }
         },
 
-        /** display form error messages
-        */
         displayErrors(errors){
             for(var e in errors)
-            {
-                $("#id_" + e).attr("class","form-control is-invalid")
-                var str='<span id=id_errors_'+ e +' class="text-danger">';
-                
-                for(var i in errors[e])
                 {
-                    str +=errors[e][i] + '<br>';
+                    //e = document.getElementById("id_" + e).getAttribute("class", "form-control is-invalid")
+                    var str='<span id=id_errors_'+ e +' class="text-danger">';
+                    
+                    for(var i in errors[e])
+                    {
+                        str +=errors[e][i] + '<br>';
+                    }
+
+                    str+='</span>';
+
+                    document.getElementById("div_id_" + e).insertAdjacentHTML('beforeend', str);
+                    document.getElementById("div_id_" + e).setAttribute("class","form-control is-invalid");
+
+                    document.getElementById("div_id_" + e).scrollIntoView(); 
+                
                 }
-
-                str+='</span>';
-                $("#div_id_" + e).append(str); 
-
-                var elmnt = document.getElementById("div_id_" + e);
-                elmnt.scrollIntoView(); 
-
-            }
-        }, 
+        },
 
 
 

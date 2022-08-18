@@ -551,6 +551,9 @@ def take_import_parameters(data):
     # for field in form_data:            
     #     form_data_dict[field["name"]] = field["value"]
 
+    if not form_data_dict["session"]:
+        return {"status" : "fail", "message" :  "No session specified."}
+
     source_session = Session.objects.get(id=form_data_dict["session"])
     target_session = Session.objects.get(id=session_id)
 

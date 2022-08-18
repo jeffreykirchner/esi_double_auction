@@ -15,7 +15,7 @@ var app = Vue.createApp({
 
         sendMessage(messageType,messageText) {
 
-            app.$data.chatSocket.send(JSON.stringify({
+            app.chatSocket.send(JSON.stringify({
                     'messageType': messageType,
                     'messageText': messageText,
                 }));
@@ -32,25 +32,25 @@ var app = Vue.createApp({
 doWebSockets = function()
 {
         var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-        app.$data.chatSocket = new WebSocket(            
+        app.chatSocket = new WebSocket(            
                                ws_scheme + '://' + window.location.host +
                                '/ws/subject/1/');        
     
-        app.$data.chatSocket.onmessage = function(e) {
+        app.chatSocket.onmessage = function(e) {
             var data = JSON.parse(e.data);                       
             app.takeMessage(data);
         };
     
-        app.$data.chatSocket.onclose = function(e) {
+        app.chatSocket.onclose = function(e) {
             // console.error('Socket closed unexpectedly.');
-            // app.$data.reconnecting=true;
+            // app.reconnecting=true;
             // window.setTimeout(doWebSockets(), app.randomNumber(500,1500));            
         }; 
 
-        app.$data.chatSocket.onopen = function(e) {
+        app.chatSocket.onopen = function(e) {
             console.log('Socket connected.');     
-            // app.$data.reconnecting=false;   
-            // app.$data.sendingMessage=false;
+            // app.reconnecting=false;   
+            // app.sendingMessage=false;
             // app.sendMessage("",-1,"setup");                        
         };                
 };
