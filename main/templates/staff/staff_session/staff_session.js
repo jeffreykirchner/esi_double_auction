@@ -66,6 +66,7 @@ var app = Vue.createApp({
                     import_parameters_message : "",
                     playback_enabled : false,
                     playback_trade : 0,
+                    import_parameters_session : null,
 
                     // modals
                     editSessionModal : null,
@@ -253,7 +254,7 @@ var app = Vue.createApp({
         sendUpdateSession(){
             app.$data.cancelModal = false;
             app.$data.working = true;
-            app.sendMessage("update_session",{"formData" : $("#sessionForm").serializeArray(),
+            app.sendMessage("update_session",{"formData" : {id:app.session.id, title:app.session.title},
                                               "sessionID" : app.$data.sessionID});
         },
 

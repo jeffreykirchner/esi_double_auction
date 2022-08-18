@@ -25,10 +25,10 @@ sendUpdatePeriodCount(adjustment){
 */
 sendUpdateValuecost(){
     
-    app.$data.working = true;
-    app.sendMessage("update_valuecost", {"sessionID" : app.$data.sessionID,
-                                         "id" : app.$data.current_valuecost.id,
-                                         "formData" : $("#valuecostForm").serializeArray(),});
+    app.working = true;
+    app.sendMessage("update_valuecost", {"sessionID" : app.sessionID,
+                                         "id" : app.current_valuecost.id,
+                                         "formData" :app.current_valuecost ,});
 },
 
 /** take update valuecost
@@ -119,17 +119,17 @@ addToValueOrCost(valueOrCost){
 */
 sendUpdatePeriod(){
     
-    app.$data.working = true;
-    app.sendMessage("update_period", {"sessionID" : app.$data.sessionID,
-                                      "periodID" : app.$data.session.parameter_set.periods[app.$data.current_visible_period-1].id,
-                                      "formData" : $("#periodForm").serializeArray(),});
+    app.working = true;
+    app.sendMessage("update_period", {"sessionID" : app.sessionID,
+                                      "periodID" : app.session.parameter_set.periods[app.$data.current_visible_period-1].id,
+                                      "formData" : app.session.parameter_set.periods[app.current_visible_period-1],});
 },
 
 /** take update period
  * @param messageData {json} result of update, either sucess or fail with errors
 */
 takeUpdatePeriod(messageData){
-    app.$data.cancelModal=false;
+    app.cancelModal=false;
     app.clearMainFormErrors();
 
     if(messageData.status.value == "success")
@@ -139,7 +139,7 @@ takeUpdatePeriod(messageData){
     } 
     else
     {
-        app.$data.cancelModal=true;                           
+        app.cancelModal=true;                           
         app.displayErrors(messageData.status.errors);
     } 
 },
@@ -148,9 +148,9 @@ takeUpdatePeriod(messageData){
 */
 sendImportParameters(){
     
-    app.$data.working = true;
-    app.sendMessage("import_parameters", {"sessionID" : app.$data.sessionID,
-                                            "formData" : $("#importParametersForm").serializeArray(),});
+    app.working = true;
+    app.sendMessage("import_parameters", {"sessionID" : app.sessionID,
+                                          "formData" : {session:app.import_parameters_session},});
 },
 
 /** show parameters copied from another period 
@@ -325,8 +325,8 @@ hideEditSession:function(){
 */
 showEditPeriod:function(){
     app.clearMainFormErrors();
-    app.$data.cancelModal=true;
-    app.$data.periodBeforeEdit = Object.assign({}, app.$data.session.parameter_set.periods[app.$data.current_visible_period-1]);
+    app.cancelModal=true;
+    app.periodBeforeEdit = Object.assign({}, app.session.parameter_set.periods[app.current_visible_period-1]);
 
     app.editPeriodModal.toggle();
 },
@@ -334,10 +334,10 @@ showEditPeriod:function(){
 /** hide edit session modal
 */
 hideEditPeriod:function(){
-    if(app.$data.cancelModal)
+    if(app.cancelModal)
     {
-        Object.assign(app.$data.session.parameter_set.periods[app.$data.current_visible_period-1], app.$data.periodBeforeEdit);
-        app.$data.periodBeforeEdit=null;
+        Object.assign(app.session.parameter_set.periods[app.current_visible_period-1], app.periodBeforeEdit);
+        app.periodBeforeEdit=null;
     }
 },
 
