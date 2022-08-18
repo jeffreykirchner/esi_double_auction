@@ -4,26 +4,26 @@ updateCurrentPeriodReplay(adjustment){
     
     if(adjustment == 1)
     {
-        if(app.$data.current_visible_period < app.$data.session.parameter_set.number_of_periods)
+        if(app.current_visible_period < app.session.parameter_set.number_of_periods)
         {
-            app.$data.current_visible_period += 1;
+            app.current_visible_period += 1;
         }
     }
     else
     {
-        if(app.$data.current_visible_period > 1)
+        if(app.current_visible_period > 1)
         {
-            app.$data.current_visible_period -= 1;
+            app.current_visible_period -= 1;
         }
     }
 
-    app.$data.show_bids_offers_graph = true;
-    app.$data.show_supply_demand_graph = false;
-    app.$data.show_equilibrium_price_graph = false;
-    app.$data.show_trade_line_graph = false;
-    app.$data.show_gains_from_trade_graph = false;
+    app.show_bids_offers_graph = true;
+    app.show_supply_demand_graph = false;
+    app.show_equilibrium_price_graph = false;
+    app.show_trade_line_graph = false;
+    app.show_gains_from_trade_graph = false;
 
-    app.$data.session.current_period =  app.$data.current_visible_period;
+    app.session.current_period =  app.current_visible_period;
 
     Vue.nextTick(app.update_sdgraph_canvas());
 },
@@ -32,14 +32,14 @@ updateCurrentPeriodReplay(adjustment){
  **/
 playback_start(){
 
-    app.$data.playback_enabled=true;
-    app.$data.playback_trade=0;
+    app.playback_enabled=true;
+    app.playback_trade=0;
 
-    app.$data.show_bids_offers_graph = false;
-    app.$data.show_supply_demand_graph = true;
-    app.$data.show_equilibrium_price_graph = false;
-    app.$data.show_trade_line_graph = false;
-    app.$data.show_gains_from_trade_graph = false;
+    app.show_bids_offers_graph = false;
+    app.show_supply_demand_graph = true;
+    app.show_equilibrium_price_graph = false;
+    app.show_trade_line_graph = false;
+    app.show_gains_from_trade_graph = false;
 
     Vue.nextTick(app.update_sdgraph_canvas());
 },
@@ -47,29 +47,29 @@ playback_start(){
 /** advance playback period in direction specified
  **/
 playback_advance(direction){
-    current_visible_period=app.$data.current_visible_period-1;
-    session_period = app.$data.session.session_periods[current_visible_period];
-    parameter_set_period = app.$data.session.parameter_set.periods[current_visible_period]
+    current_visible_period=app.current_visible_period-1;
+    session_period = app.session.session_periods[current_visible_period];
+    parameter_set_period = app.session.parameter_set.periods[current_visible_period]
 
     if(direction == 1 && 
-       app.$data.playback_trade < session_period.trade_list.length)
+       app.playback_trade < session_period.trade_list.length)
     {
-        app.$data.playback_trade++;
+        app.playback_trade++;
     }
-    else if (direction == -1 && app.$data.playback_trade > 0)
+    else if (direction == -1 && app.playback_trade > 0)
     {
-        app.$data.playback_trade--;
+        app.playback_trade--;
     }
 
     // hide used bids and offers
-    for(let i=0;i<app.$data.playback_trade;i++)
+    for(let i=0;i<app.playback_trade;i++)
     {
         app.set_demand_visible(session_period.trade_list[i].buyer_value__id, false);
         app.set_supply_visible(session_period.trade_list[i].seller_cost__id, false);
     }
 
     //show remaining bids and offers
-    for(i = app.$data.playback_trade; i < session_period.trade_list.length; i++)
+    for(i = app.playback_trade; i < session_period.trade_list.length; i++)
     {
         app.set_demand_visible(session_period.trade_list[i].buyer_value__id, true);
         app.set_supply_visible(session_period.trade_list[i].seller_cost__id, true);
@@ -81,7 +81,7 @@ playback_advance(direction){
 /**set demand step visibility based on id number
  */
 set_demand_visible(id, value){
-    session = app.$data.session;
+    session = app.session;
     parameter_set = session.parameter_set;
 
     for(let i=0; i<parameter_set.periods.length;i++)
@@ -102,7 +102,7 @@ set_demand_visible(id, value){
 /**return index in demand array that value holds
  */
  get_demand_index(id){
-    var session = app.$data.session;
+    var session = app.session;
     var parameter_set = session.parameter_set;
 
     for(let i=0; i<parameter_set.periods.length;i++)
@@ -126,7 +126,7 @@ set_demand_visible(id, value){
 /**set cost step visibility based on id number
  */
  set_supply_visible(id, value){
-    var session = app.$data.session;
+    var session = app.session;
     var parameter_set = session.parameter_set;
 
     for(let i=0; i<parameter_set.periods.length;i++)
@@ -147,7 +147,7 @@ set_demand_visible(id, value){
 /**return index in supply array cost holds
  */
 get_supply_index(id){
-    var session = app.$data.session;
+    var session = app.session;
     var parameter_set = session.parameter_set;
 
     for(let i=0; i<parameter_set.periods.length;i++)
@@ -170,12 +170,12 @@ get_supply_index(id){
 /** start playback
  * */
  playback_stop(){
-    app.$data.playback_enabled=false;
+    app.playback_enabled=false;
 
-    app.$data.show_supply_demand_graph = false;
-    app.$data.show_bids_offers_graph = true;
+    app.show_supply_demand_graph = false;
+    app.show_bids_offers_graph = true;
 
-    var session = app.$data.session;
+    var session = app.session;
     var parameter_set = session.parameter_set;
 
     //reset visibility
@@ -204,8 +204,8 @@ get_supply_index(id){
 */
 sendDownloadDataset(){
     
-    app.$data.working = true;
-    app.sendMessage("download_dataset", {"sessionID" : app.$data.sessionID,});
+    app.working = true;
+    app.sendMessage("download_dataset", {"sessionID" : app.sessionID,});
 },
 
 /** download parameter set into a file 
@@ -223,14 +223,14 @@ takeDownloadDataset(messageData){
         var blob = new Blob([jsonse], {type: "application/json"})
         var url = URL.createObjectURL(blob);
         downloadLink.href = url;
-        downloadLink.download = "Double_Auction_Session_" + app.$data.session.id + "_Dataset.json";
+        downloadLink.download = "Double_Auction_Session_" + app.session.id + "_Dataset.json";
 
         document.body.appendChild(downloadLink);
         downloadLink.click();
         document.body.removeChild(downloadLink);                     
     } 
 
-    app.$data.working = false;
+    app.working = false;
 },
 
 

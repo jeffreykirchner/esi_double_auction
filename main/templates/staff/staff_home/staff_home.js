@@ -51,7 +51,7 @@ var app = Vue.createApp({
         sendMessage(messageType,messageText) {
             //send socket message to server
 
-            app.$data.chatSocket.send(JSON.stringify({
+            app.chatSocket.send(JSON.stringify({
                     'messageType': messageType,
                     'messageText': messageText,
                 }));
@@ -66,7 +66,7 @@ var app = Vue.createApp({
             //process list of sessions created by user
             app.sessions = messageData.sessions;           
 
-            if(app.$data.sessions_full_admin_visible)
+            if(app.sessions_full_admin_visible)
             {
                 app.sendGetSessionsAdmin()
             }

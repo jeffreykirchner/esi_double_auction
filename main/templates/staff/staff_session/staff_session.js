@@ -66,6 +66,14 @@ var app = Vue.createApp({
                     import_parameters_message : "",
                     playback_enabled : false,
                     playback_trade : 0,
+                    import_parameters_session : null,
+
+                    // modals
+                    editSessionModal : null,
+                    valuecostModal : null,           
+                    editPeriodModal : null,
+                    importParametersModal : null,
+                    parameterSetModal : null,
                 }},
     methods: {
 
@@ -79,8 +87,7 @@ var app = Vue.createApp({
         *    @param data {json} incoming data from server, contains message and message type
         */
         takeMessage(data) {
-            app.first_load_done = true;
-
+            
             //console.log(data);
 
             messageType = data.message.messageType;
@@ -128,7 +135,8 @@ var app = Vue.createApp({
                     break;
             }
 
-            app.working = false;
+            this.working = false;
+            this.first_load_done = true;
             Vue.nextTick(app.update_sdgraph_canvas());
         },
 
@@ -136,72 +144,94 @@ var app = Vue.createApp({
         *    @param messageType {string} type of message sent to server
         *    @param messageText {json} body of message being sent to server
         */
-        sendMessage(messageType, messageText) {
-            
+        sendMessage(messageType, messageText) {            
 
-            app.$data.chatSocket.send(JSON.stringify({
+            app.chatSocket.send(JSON.stringify({
                     'messageType': messageType,
                     'messageText': messageText,
                 }));
         },
+
+        /**
+         * do after session has loaded
+         */
+         doFirstLoad()
+         {            
+            app.editSessionModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('editSessionModal'), {keyboard: false});
+            app.valuecostModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('valuecostModal'), {keyboard: false});            
+            app.editPeriodModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('editPeriodModal'), {keyboard: false});            
+            app.importParametersModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('importParametersModal'), {keyboard: false});
+            app.parameterSetModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('parameterSetModal'), {keyboard: false}); 
+
+            document.getElementById('editSessionModal').addEventListener('hidden.bs.modal', app.hideEditSession);
+            document.getElementById('valuecostModal').addEventListener('hidden.bs.modal', app.hideEditValuecost);
+            document.getElementById('editPeriodModal').addEventListener('hidden.bs.modal', app.hideEditPeriod);
+            document.getElementById('importParametersModal').addEventListener('hidden.bs.modal', app.hideImportParameters);
+            document.getElementById('parameterSetModal').addEventListener('hidden.bs.modal', app.hideUploadParameters);
+         }, 
 
         /** take create new session
         *    @param messageData {json} session day in json format
         */
         takeGetSession(messageData){
             
-            app.$data.session = messageData.session;
+            app.session = messageData.session;
 
-            if(app.$data.session.started)
+            if(app.session.started)
             {
-                app.$data.show_parameters = false;
+                app.show_parameters = false;
 
-                app.$data.show_bids_offers_graph = true;
-                app.$data.show_supply_demand_graph = false;
-                app.$data.show_equilibrium_price_graph = false;
-                app.$data.show_trade_line_graph = false;
-                app.$data.show_gains_from_trade_graph = false;
+                app.show_bids_offers_graph = true;
+                app.show_supply_demand_graph = false;
+                app.show_equilibrium_price_graph = false;
+                app.show_trade_line_graph = false;
+                app.show_gains_from_trade_graph = false;
 
-                if(app.$data.session.finished)
+                if(app.session.finished)
                 {
-                    app.$data.current_visible_period = 1;
-                    app.$data.session.current_period = 1;
+                    app.current_visible_period = 1;
+                    app.session.current_period = 1;
                 }
                 else
                 {
-                    app.$data.current_visible_period = app.$data.session.current_period;
+                    app.current_visible_period = app.session.current_period;
                 }
             }
             else
             {
-                app.$data.show_parameters = true;
+                app.show_parameters = true;
 
-                app.$data.show_bids_offers_graph = false;
-                app.$data.show_supply_demand_graph = true;
-                app.$data.show_equilibrium_price_graph = true;
-                app.$data.show_trade_line_graph = false;
-                app.$data.show_gains_from_trade_graph = false;
+                app.show_bids_offers_graph = false;
+                app.show_supply_demand_graph = true;
+                app.show_equilibrium_price_graph = true;
+                app.show_trade_line_graph = false;
+                app.show_gains_from_trade_graph = false;
             }
 
             app.updateMoveOnButtonText();
+
+            if(!app.first_load_done)
+            {
+                setTimeout(app.doFirstLoad, 500);
+            }
         },
 
         /**update text of move on button based on current state
          */
         updateMoveOnButtonText(){
-            if(app.$data.session.finished)
+            if(app.session.finished)
             {
-                app.$data.move_to_next_period_text = '** Experiment complete **';
+                app.move_to_next_period_text = '** Experiment complete **';
             }
-            else if(app.$data.session.started)
+            else if(app.session.started)
             {
-                if(app.$data.session.current_period == app.$data.session.parameter_set.number_of_periods)
+                if(app.session.current_period == app.session.parameter_set.number_of_periods)
                 {
-                    app.$data.move_to_next_period_text = 'Complete experiment <i class="fas fa-flag-checkered"></i>';
+                    app.move_to_next_period_text = 'Complete experiment <i class="fas fa-flag-checkered"></i>';
                 }
                 else
                 {
-                    app.$data.move_to_next_period_text = 'Move to next period <i class="fas fa-fast-forward"></i>';
+                    app.move_to_next_period_text = 'Move to next period <i class="fas fa-fast-forward"></i>';
                 }
             }
         },
@@ -209,16 +239,16 @@ var app = Vue.createApp({
         /** send winsock request to get session info
         */
         sendGetSession(){
-            app.sendMessage("get_session",{"sessionID" : app.$data.sessionID});
+            app.sendMessage("get_session",{"sessionID" : app.sessionID});
         },
 
         /** send session update form   
         */
         sendUpdateSession(){
-            app.$data.cancelModal = false;
-            app.$data.working = true;
-            app.sendMessage("update_session",{"formData" : $("#sessionForm").serializeArray(),
-                                              "sessionID" : app.$data.sessionID});
+            app.cancelModal = false;
+            app.working = true;
+            app.sendMessage("update_session",{"formData" : {id:app.session.id, title:app.session.title},
+                                              "sessionID" : app.sessionID});
         },
 
         /** take update session reponse
@@ -230,11 +260,11 @@ var app = Vue.createApp({
             if(messageData.status == "success")
             {
                 app.takeGetSession(messageData);       
-                $('#editSessionModal').modal('hide');    
+                app.editSessionModal.hide(); 
             } 
             else
             {
-                app.$data.cancelModal=true;                           
+                app.cancelModal=true;                           
                 app.displayErrors(messageData.errors);
             } 
         },
@@ -255,59 +285,63 @@ var app = Vue.createApp({
         */
         clearMainFormErrors(){
             
-            for(var item in app.$data.session)
+            for(var item in app.session)
             {
-                $("#id_" + item).attr("class","form-control");
-                $("#id_errors_" + item).remove();
+                e = document.getElementById("id_errors_" + item);
+                if(e){
+                    document.getElementById("div_id_" + item).removeAttribute("class");
+                    e.remove();
+                }
             }
 
-            s = app.$data.valuecost_form_ids;
+            s = app.valuecost_form_ids;
             for(var i in s)
             {
-                $("#id_" + s[i]).attr("class","form-control");
-                $("#id_errors_" + s[i]).remove();
+                e = document.getElementById("id_errors_" + s[i]);
+                if(e){
+                    document.getElementById("div_id_" + s[i]).removeAttribute("class");
+                    e.remove();
+                }
             }
 
-            s = app.$data.period_form_ids;
+            s = app.period_form_ids;
             for(var i in s)
             {
-                $("#id_" + s[i]).attr("class","form-control");
-                $("#id_errors_" + s[i]).remove();
+                e = document.getElementById("id_errors_" + s[i]);
+                if(e){
+                    document.getElementById("div_id_" + s[i]).removeAttribute("class");
+                    e.remove();
+                }
             }
         },
 
-        /** display form error messages
-        */
         displayErrors(errors){
             for(var e in errors)
-            {
-                $("#id_" + e).attr("class","form-control is-invalid")
-                var str='<span id=id_errors_'+ e +' class="text-danger">';
-                
-                for(var i in errors[e])
                 {
-                    str +=errors[e][i] + '<br>';
+                    //e = document.getElementById("id_" + e).getAttribute("class", "form-control is-invalid")
+                    var str='<span id=id_errors_'+ e +' class="text-danger">';
+                    
+                    for(var i in errors[e])
+                    {
+                        str +=errors[e][i] + '<br>';
+                    }
+
+                    str+='</span>';
+
+                    document.getElementById("div_id_" + e).insertAdjacentHTML('beforeend', str);
+                    document.getElementById("div_id_" + e).setAttribute("class","form-control is-invalid");
+
+                    document.getElementById("div_id_" + e).scrollIntoView(); 
+                
                 }
-
-                str+='</span>';
-                $("#div_id_" + e).append(str); 
-
-                var elmnt = document.getElementById("div_id_" + e);
-                elmnt.scrollIntoView(); 
-
-            }
-        }, 
+        },
 
 
 
     },
 
     mounted(){
-        $('#editSessionModal').on("hidden.bs.modal", this.hideEditSession); 
-        $('#valuecostModal').on("hidden.bs.modal", this.hideEditValuecost); 
-        $('#editPeriodModal').on("hidden.bs.modal", this.hideEditPeriod); 
-        $('#importParametersModal').on("hidden.bs.modal", this.hideImportParameters); 
-        $('#parameterSetModal').on("hidden.bs.modal", this.hideUploadParameters);
+
     },
 
 }).mount('#app');

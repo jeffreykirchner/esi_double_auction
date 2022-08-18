@@ -11,6 +11,8 @@
               loginButtonText : 'Submit <i class="fas fa-sign-in-alt"></i>',
               loginErrorText : "",
               form_ids : {{form_ids|safe}},
+              username:null,
+              password:null,
               }                          
           },
 
@@ -18,12 +20,12 @@
               //get current, last or next month
 
               login:function(){
-                  app.$data.loginButtonText = '<i class="fas fa-spinner fa-spin"></i>';
-                  app.$data.loginErrorText = "";
+                  app.loginButtonText = '<i class="fas fa-spinner fa-spin"></i>';
+                  app.loginErrorText = "";
 
                   axios.post('/accounts/login/', {
                           action :"login",
-                          formData : $("#login_form").serializeArray(), 
+                          formData : {username:app.username, password:app.password}, 
                                                       
                       })
                       .then(function (response) {     
@@ -39,14 +41,14 @@
                         }
                         else if(status == "error")
                         {
-                          app.$data.loginErrorText = "Username or Password is incorrect."
+                          app.loginErrorText = "Username or Password is incorrect."
                         }
                         else
                         {
                           window.location = response.data.redirect_path;
                         }
 
-                        app.$data.loginButtonText = 'Submit <i class="fas fa-sign-in-alt"></i>';
+                        app.loginButtonText = 'Submit <i class="fas fa-sign-in-alt"></i>';
 
                       })
                       .catch(function (error) {
@@ -54,34 +56,45 @@
                       });                        
                   },
 
-                  clearMainFormErrors:function(){
+                clearMainFormErrors(){
 
-                        s = app.$data.form_ids;                    
+                    s = app.form_ids;                    
+                    for(var i in s)
+                    {
+                        s = app.form_ids;
                         for(var i in s)
                         {
-                            $("#id_" + s[i]).attr("class","form-control");
-                            $("#id_errors_" + s[i]).remove();
+                            e = document.getElementById("id_errors_" + s[i]);
+                            if(e){
+                                document.getElementById("div_id_" + s[i]).removeAttribute("class");
+                                e.remove();
+                            }
                         }
+                    }
 
-                    },
+                },
               
                 //display form errors
-                displayErrors:function(errors){
-                      for(var e in errors)
-                      {
-                          $("#id_" + e).attr("class","form-control is-invalid")
-                          var str='<span id=id_errors_'+ e +' class="text-danger">';
-                          
-                          for(var i in errors[e])
-                          {
-                              str +=errors[e][i] + '<br>';
-                          }
-
-                          str+='</span>';
-                          $("#div_id_" + e).append(str); 
-
-                      }
-                  },
+                displayErrors(errors){
+                    for(var e in errors)
+                        {
+                            //e = document.getElementById("id_" + e).getAttribute("class", "form-control is-invalid")
+                            var str='<span id=id_errors_'+ e +' class="text-danger">';
+                            
+                            for(var i in errors[e])
+                            {
+                                str +=errors[e][i] + '<br>';
+                            }
+        
+                            str+='</span>';
+        
+                            document.getElementById("div_id_" + e).insertAdjacentHTML('beforeend', str);
+                            document.getElementById("div_id_" + e).setAttribute("class","form-control is-invalid");
+        
+                            document.getElementById("div_id_" + e).scrollIntoView(); 
+                        
+                        }
+                },
 
               
           },            

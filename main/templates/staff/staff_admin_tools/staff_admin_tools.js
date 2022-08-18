@@ -44,7 +44,7 @@ var app = Vue.createApp({
         sendMessage(messageType,messageText) {
             //send socket message to server
 
-            app.$data.chatSocket.send(JSON.stringify({
+            app.chatSocket.send(JSON.stringify({
                     'messageType': messageType,
                     'messageText': messageText,
                 }));
@@ -53,10 +53,10 @@ var app = Vue.createApp({
         /**upload legacy parameter file
         */
         sendUploadParameters(){
-            app.$data.parameter_upload_status="";
-            app.$data.working=true;
+            app.parameter_upload_status="";
+            app.working=true;
 
-            app.sendMessage("upload_parameters",{ini_text : app.$data.parameters_text});
+            app.sendMessage("upload_parameters",{ini_text : app.parameters_text});
             
         },
 
@@ -68,22 +68,22 @@ var app = Vue.createApp({
             
             if(result.status == "success")
             {
-                app.$data.parameter_upload_status="Parameters have been uploaded: <a href='/staff-session/" + result.message.session + "/'>View Session</a>";
-                app.$data.parameters_text = "";
+                app.parameter_upload_status="Parameters have been uploaded: <a href='/staff-session/" + result.message.session + "/'>View Session</a>";
+                app.parameters_text = "";
             }
             else
             {
-                app.$data.parameter_upload_status="Invalid parameter file"
+                app.parameter_upload_status="Invalid parameter file"
             }            
         }, 
 
         /**upload legacy parameter file
         */
         sendUploadDatafile(){
-            app.$data.datafile_upload_status="";
-            app.$data.working=true;
+            app.datafile_upload_status="";
+            app.working=true;
 
-            app.sendMessage("upload_datafile", {ini_text : app.$data.datafile_text});
+            app.sendMessage("upload_datafile", {ini_text : app.datafile_text});
             
         },
 
@@ -95,12 +95,12 @@ var app = Vue.createApp({
             
             if(result.status == "success")
             {
-                app.$data.datafile_upload_status="Datafile has been uploaded: <a href='/staff-session/" + result.message.session + "/'>View Session</a>";
-                app.$data.datafile_text = "";
+                app.datafile_upload_status="Datafile has been uploaded: <a href='/staff-session/" + result.message.session + "/'>View Session</a>";
+                app.datafile_text = "";
             }
             else
             {
-                app.$data.datafile_upload_status="Invalid data file"
+                app.datafile_upload_status="Invalid data file"
             }            
         },
     },

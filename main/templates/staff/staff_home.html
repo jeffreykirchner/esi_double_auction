@@ -4,7 +4,7 @@
 {%block head%}
 <script type="text/javascript">
 
-    $(document).ready(function(){
+    document.addEventListener("DOMContentLoaded", function(){
         {%include "staff/staff_home/staff_home.js"%}
     });
 
@@ -20,6 +20,10 @@
 {%endblock head%}
 
 {% block content %}
+<!-- modals -->
+{%include "help_modal.html"%}
+
+<!-- cards -->
 <div class="row justify-content-lg-center mb-4" v-cloak>
     <div class="col col-md-8">
         {%include "staff/staff_home/sessions_card.html"%}                   

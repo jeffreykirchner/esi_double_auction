@@ -2,12 +2,12 @@
 */
 update_sdgraph_canvas:function(){
 
-    var el = $('#sd_graph');
-    el.attr('width', parseInt(el.css('width')));
-    el.attr('height', parseInt(el.css('height')));
+    var el = document.getElementById('sd_graph');
+    el.setAttribute('width', el.clientWidth);
+    el.setAttribute('height', el.clientHeight);
 
-    period = app.$data.session.parameter_set.periods[app.$data.current_visible_period-1];  //parameter set period
-    period_result = app.$data.session.session_periods[app.$data.current_visible_period-1]; //session results period
+    period = app.session.parameter_set.periods[app.current_visible_period-1];  //parameter set period
+    period_result = app.session.session_periods[app.current_visible_period-1]; //session results period
 
     value_list = period.demand;
     cost_list = period.supply;
@@ -23,13 +23,13 @@ update_sdgraph_canvas:function(){
     app.clear_canvas();
 
     //gains from trade fill
-    if (app.$data.session.started && app.$data.show_gains_from_trade_graph)
+    if (app.session.started && app.show_gains_from_trade_graph)
     {
         app.draw_gain_from_trade_fill("sd_graph", marginY, marginX, marginTopAndRight, 0, y_max, 0, x_max, period, period_result.realized_gains_from_trade);
     }
 
     //playback gains fill
-    if (app.$data.playback_enabled)
+    if (app.playback_enabled)
     {
         app.draw_playback("sd_graph", marginY, marginX, marginTopAndRight, 0, y_max, 0, x_max, 3);
     }
@@ -38,12 +38,12 @@ update_sdgraph_canvas:function(){
     app.draw_axis("sd_graph", marginY, marginX, marginTopAndRight, 0, y_max, y_max, 0, x_max, x_max, "Price ($)", "Units Traded");
 
     //bids and offers
-    if (app.$data.session.started && app.$data.show_bids_offers_graph)
+    if (app.session.started && app.show_bids_offers_graph)
     {
         app.draw_bids_and_offers("sd_graph", marginY, marginX, marginTopAndRight, 0, y_max, 0, x_max, period_result);
     }
 
-    if (app.$data.show_supply_demand_graph)
+    if (app.show_supply_demand_graph)
     {
         //supply
         app.draw_sd_line("sd_graph", marginY, marginX, marginTopAndRight, 0, y_max, 0, x_max, 3, value_list, "cornflowerblue");
@@ -53,25 +53,25 @@ update_sdgraph_canvas:function(){
     }
 
     //equilibrium
-    if (app.$data.show_equilibrium_price_graph)
+    if (app.show_equilibrium_price_graph)
     {
         app.draw_eq_lines("sd_graph", marginY, marginX, marginTopAndRight, 0, y_max, 0, x_max, period);
     }
 
     //trade line
-    if (app.$data.show_trade_line_graph)
+    if (app.show_trade_line_graph)
     {
         app.draw_trade_line("sd_graph", marginY, marginX, marginTopAndRight, 0, y_max, 0, x_max, period_result);
     }
 
     //key
-    if (!app.$data.session.finished)
+    if (!app.session.finished)
     {
         app.draw_key("sd_graph", marginTopAndRight, period_result);
     }
 
     //gains from trade key
-    if (app.$data.show_gains_from_trade_graph)
+    if (app.show_gains_from_trade_graph)
     {
         app.draw_grains_from_trade("sd_graph", marginTopAndRight, period_result);
     }
@@ -231,9 +231,9 @@ draw_playback: function(chartID, marginY, marginX, marginTopAndRight, yMin, yMax
 
     ctx.translate(marginY, h-marginX);
 
-    current_visible_period=app.$data.current_visible_period-1;
-    session_period = app.$data.session.session_periods[current_visible_period];
-    playback_trade = app.$data.playback_trade;
+    current_visible_period=app.current_visible_period-1;
+    session_period = app.session.session_periods[current_visible_period];
+    playback_trade = app.playback_trade;
 
     if(playback_trade == session_period.trade_list.length)
     {
@@ -437,7 +437,7 @@ draw_bids_and_offers:function(chartID, marginY, marginX, marginTopAndRight, yMin
 
     ctx.translate(marginY, h-marginX);
 
-    //current_period = app.$data.session.current_period;
+    //current_period = app.session.current_period;
     bids = period_result.bid_list;
     offers = period_result.offer_list;
 
@@ -532,7 +532,7 @@ draw_key:function(chartID, marginTopAndRight, session_period){
     var w = 300;
     var h = 100;
 
-    //session_period = app.$data.session.session_periods[app.$data.session.current_period-1];
+    //session_period = app.session.session_periods[app.session.current_period-1];
 
     base_width = 1369;
     base_height = 600;
@@ -569,13 +569,13 @@ draw_key:function(chartID, marginTopAndRight, session_period){
     ctx.textBaseline = "bottom";
     ctx.fillText("Offer to Sell:", x, y - 2);
     ctx.textAlign = "left";
-    if (app.$data.session.started) ctx.fillText(session_period.current_best_offer, x, y - 2);
+    if (app.session.started) ctx.fillText(session_period.current_best_offer, x, y - 2);
 
     ctx.textAlign = "right";
     ctx.textBaseline = "top";
     ctx.fillText("Bid to Buy:", x, y + 2);
     ctx.textAlign = "left";
-    if (app.$data.session.started) ctx.fillText(session_period.current_best_bid, x, y + 2);
+    if (app.session.started) ctx.fillText(session_period.current_best_bid, x, y + 2);
     
     ctx.restore();
 },
@@ -590,7 +590,7 @@ draw_grains_from_trade(chartID, marginTopAndRight, session_period){
     var w = 300;
     var h = 100;
 
-    //session_period = app.$data.session.session_periods[app.$data.session.current_period-1];
+    //session_period = app.session.session_periods[app.session.current_period-1];
 
     base_width = 1369;
     base_height = 600;
@@ -600,7 +600,7 @@ draw_grains_from_trade(chartID, marginTopAndRight, session_period){
     
     ctx.save();
 
-    if(app.$data.session.finished)
+    if(app.session.finished)
         ctx.translate(1059 * w_fraction, marginTopAndRight);
     else
         ctx.translate((1059 - w - marginTopAndRight) * w_fraction, marginTopAndRight);
@@ -647,7 +647,7 @@ draw_grains_from_trade(chartID, marginTopAndRight, session_period){
     x =  w / 2 * w_fraction;
     y = 55 * w_fraction;
 
-    if (app.$data.session.started)
+    if (app.session.started)
         ctx.fillText(session_period.realized_gains_from_trade
                     + "/" 
                     + session_period.possible_gains_from_trade  

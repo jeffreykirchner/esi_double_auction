@@ -343,17 +343,17 @@ def take_update_session_form(data):
     logger.info(f'take_update_session_form: {data}')
 
     session_id = data["sessionID"]
-    form_data = data["formData"]
+    # form_data = data["formData"]
 
     try:        
         session = Session.objects.get(id=session_id)
     except ObjectDoesNotExist:
         logger.warning(f"take_update_session_form session, not found: {session_id}")
     
-    form_data_dict = {}
+    form_data_dict = data["formData"]
 
-    for field in form_data:            
-        form_data_dict[field["name"]] = field["value"]
+    # for field in form_data:            
+    #     form_data_dict[field["name"]] = field["value"]
 
     form = SessionForm(form_data_dict, instance=session)
 
@@ -435,17 +435,17 @@ def take_update_valuecost(data):
     session_id = data["sessionID"]
     id = data["id"]
 
-    form_data = data["formData"]
+    # form_data = data["formData"]
 
     try:        
         valuecost = ParameterSetPeriodSubjectValuecost.objects.get(id=id)
     except ObjectDoesNotExist:
         logger.warning(f"take_update_valuecost session, not found ID: {id}")
     
-    form_data_dict = {}
+    form_data_dict = data["formData"]
 
-    for field in form_data:            
-        form_data_dict[field["name"]] = field["value"]
+    # for field in form_data:            
+    #     form_data_dict[field["name"]] = field["value"]
 
     form = ValuecostForm(form_data_dict, instance=valuecost)
 
@@ -513,17 +513,17 @@ def take_update_period(data):
     session_id = data["sessionID"]
     period_id = data["periodID"]
 
-    form_data = data["formData"]
+    # form_data = data["formData"]
 
     try:        
         session_period = ParameterSetPeriod.objects.get(id=period_id)
     except ObjectDoesNotExist:
         logger.warning(f"take_update_period session period, not found ID: {period_id}")
     
-    form_data_dict = {}
+    form_data_dict = data["formData"]
 
-    for field in form_data:            
-        form_data_dict[field["name"]] = field["value"]
+    # for field in form_data:            
+    #     form_data_dict[field["name"]] = field["value"]
 
     form = PeriodForm(form_data_dict, instance=session_period)
 
@@ -544,12 +544,15 @@ def take_import_parameters(data):
     logger.info(f"Import parameters: {data}")
 
     session_id = data["sessionID"]
-    form_data = data["formData"]
+    # form_data = data["formData"]
     
-    form_data_dict = {}
+    form_data_dict = data["formData"]
 
-    for field in form_data:            
-        form_data_dict[field["name"]] = field["value"]
+    # for field in form_data:            
+    #     form_data_dict[field["name"]] = field["value"]
+
+    if not form_data_dict["session"]:
+        return {"status" : "fail", "message" :  "No session specified."}
 
     source_session = Session.objects.get(id=form_data_dict["session"])
     target_session = Session.objects.get(id=session_id)
