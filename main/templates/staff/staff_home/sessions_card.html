@@ -55,7 +55,7 @@
                         <a :href="'/staff-session/' + s.id + '/' ">[[s.title]]</span></a>                                        
                     </td>
                     <td class="text-center"> 
-                        [[formatDate(s.start_date)]]                                
+                        [[s.start_date]]                                
                     </td>
                     <td class="text-center">
                         <div v-if="s.locked">
