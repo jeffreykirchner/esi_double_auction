@@ -71,7 +71,7 @@ class TestParameterSet(TestCase):
 
 
         result = main.consumers.take_import_parameters({'sessionID': session.id,
-                                                        'formData': [{'name': 'session', 'value':str(self.new_session.id)}]})
+                                                        'formData': {'session':str(self.new_session.id)}})
         self.assertEqual("success", result["status"])
 
         session = main.models.Session.objects.get(id=self.start_session.id)
@@ -90,7 +90,7 @@ class TestParameterSet(TestCase):
         #change to 10
         result = main.consumers.take_update_valuecost({'sessionID': session.id,
                                                        'id': value_cost_id,
-                                                       'formData': [{'name': 'value_cost', 'value': '10'}, {'name': 'enabled', 'value': 'True'}]})
+                                                       'formData': {'value_cost': '10', 'enabled': 'True'}})
 
         self.assertEqual("success", result["value"])
         self.assertEqual(Decimal('10'),  main.models.ParameterSetPeriodSubjectValuecost.objects.get(id=value_cost_id).value_cost)
@@ -98,21 +98,21 @@ class TestParameterSet(TestCase):
         #enter invalid amount
         result = main.consumers.take_update_valuecost({'sessionID': session.id,
                                                        'id': value_cost_id,
-                                                       'formData': [{'name': 'value_cost', 'value': '-1'}, {'name': 'enabled', 'value': 'True'}]})
+                                                       'formData': {'value_cost': '-1', 'enabled': 'True'}})
 
         self.assertEqual("fail", result["value"])
         self.assertEqual(Decimal('10'),  main.models.ParameterSetPeriodSubjectValuecost.objects.get(id=value_cost_id).value_cost)
 
         result = main.consumers.take_update_valuecost({'sessionID': session.id,
                                                        'id': value_cost_id,
-                                                       'formData': [{'name': 'value_cost', 'value': 'a'}, {'name': 'enabled', 'value': 'True'}]})
+                                                       'formData': {'value_cost': 'a', 'enabled': 'True'}})
 
         self.assertEqual("fail", result["value"])
         self.assertEqual(Decimal('10'),  main.models.ParameterSetPeriodSubjectValuecost.objects.get(id=value_cost_id).value_cost)
         
         result = main.consumers.take_update_valuecost({'sessionID': session.id,
                                                        'id': value_cost_id,
-                                                       'formData': [{'name': 'value_cost', 'value': '5'}, {'name': 'enabled', 'value': 'a'}]})
+                                                       'formData': {'value_cost': '5', 'enabled': 'a'}})
 
         self.assertEqual("fail", result["value"])
         self.assertEqual(Decimal('10'),  main.models.ParameterSetPeriodSubjectValuecost.objects.get(id=value_cost_id).value_cost)
@@ -339,66 +339,67 @@ class TestParameterSet(TestCase):
 
         result = main.consumers.take_update_period({'sessionID': session.id,
                                                     'periodID': parameter_set_period.id,
-                                                    'formData': [{'name': 'price_cap', 'value': '0.00'},
-                                                                 {'name': 'price_cap_enabled', 'value': 'False'},
-                                                                 {'name': 'price_cap_type', 'value' : 'Ceiling'},
-                                                                 {'name': 'y_scale_max', 'value': '1'},
-                                                                 {'name': 'x_scale_max', 'value': '11'}]})
+                                                    'formData': {'price_cap': '0.00',
+                                                                 'price_cap_enabled': 'False',
+                                                                 'price_cap_type' : 'Ceiling',
+                                                                 'y_scale_max': '1',
+                                                                 'x_scale_max': '11'}})
         
         self.assertEqual("success", result["value"])
 
         # invalid price cap
         result = main.consumers.take_update_period({'sessionID': session.id,
                                                     'periodID': parameter_set_period.id,
-                                                    'formData': [{'name': 'price_cap', 'value': '-1'},
-                                                                 {'name': 'price_cap_enabled', 'value': 'False'},
-                                                                 {'name': 'price_cap_type', 'value' : 'Ceiling'},
-                                                                 {'name': 'y_scale_max', 'value': '1'},
-                                                                 {'name': 'x_scale_max', 'value': '11'}]})
+                                                    'formData': {'price_cap': '-1',
+                                                                 'price_cap_enabled': 'False',
+                                                                 'price_cap_type' : 'Ceiling',
+                                                                 'y_scale_max': '1',
+                                                                 'x_scale_max': '11'}})
         
         self.assertEqual("fail", result["value"])
 
         # invalid price cap
         result = main.consumers.take_update_period({'sessionID': session.id,
                                                     'periodID': parameter_set_period.id,
-                                                    'formData': [{'name': 'price_cap', 'value': '0.00'},
-                                                                 {'name': 'price_cap_enabled', 'value': 'a'},
-                                                                 {'name': 'price_cap_type', 'value' : 'Ceiling'},
-                                                                 {'name': 'y_scale_max', 'value': '1'},
-                                                                 {'name': 'x_scale_max', 'value': '11'}]})
+                                                    'formData': {'price_cap': '0.00',
+                                                                 'price_cap_enabled': 'a',
+                                                                 'price_cap_type' : 'Ceiling',
+                                                                 'y_scale_max': '1',
+                                                                 'x_scale_max': '11'}})
+                                                    
         
         self.assertEqual("fail", result["value"])
 
         #invalid price cap
         result = main.consumers.take_update_period({'sessionID': session.id,
                                                     'periodID': parameter_set_period.id,
-                                                    'formData': [{'name': 'price_cap', 'value': '0.00'},
-                                                                 {'name': 'price_cap_enabled', 'value': 'False'},
-                                                                 {'name': 'price_cap_type', 'value' : 'asdf'},
-                                                                 {'name': 'y_scale_max', 'value': '1'},
-                                                                 {'name': 'x_scale_max', 'value': '11'}]})
+                                                    'formData': {'price_cap': '0.00',
+                                                                 'price_cap_enabled': 'False',
+                                                                 'price_cap_type' : 'asdf',
+                                                                 'y_scale_max': '1',
+                                                                 'x_scale_max': '11'}})
         
         self.assertEqual("fail", result["value"])
 
         #invalid y scale max
         result = main.consumers.take_update_period({'sessionID': session.id,
                                                     'periodID': parameter_set_period.id,
-                                                    'formData': [{'name': 'price_cap', 'value': '0.00'},
-                                                                 {'name': 'price_cap_enabled', 'value': 'False'},
-                                                                 {'name': 'price_cap_type', 'value' : 'Ceiling'},
-                                                                 {'name': 'y_scale_max', 'value': '0'},
-                                                                 {'name': 'x_scale_max', 'value': '11'}]})
+                                                    'formData': {'price_cap': '0.00',
+                                                                 'price_cap_enabled': 'False',
+                                                                 'price_cap_type' : 'Ceiling',
+                                                                 'y_scale_max': '0',
+                                                                 'x_scale_max': '11'}})
         
         self.assertEqual("fail", result["value"])
 
         # invalid x scale max
         result = main.consumers.take_update_period({'sessionID': session.id,
                                                     'periodID': parameter_set_period.id,
-                                                    'formData': [{'name': 'price_cap', 'value': '0.00'},
-                                                                 {'name': 'price_cap_enabled', 'value': 'False'},
-                                                                 {'name': 'price_cap_type', 'value' : 'Ceiling'},
-                                                                 {'name': 'y_scale_max', 'value': '1'},
-                                                                 {'name': 'x_scale_max', 'value': '0'}]})
+                                                    'formData': {'price_cap': '0.00',
+                                                                 'price_cap_enabled': 'False',
+                                                                 'price_cap_type' : 'Ceiling',
+                                                                 'y_scale_max': '1',
+                                                                 'x_scale_max': '0'}})
         
         self.assertEqual("fail", result["value"])
 
