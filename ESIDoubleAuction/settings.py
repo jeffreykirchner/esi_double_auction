@@ -29,14 +29,16 @@ except ImportError:
 
 # Application definition
 INSTALLED_APPS = [    
+    'daphne',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
-    'crispy_forms',
     'main',
+    'crispy_forms',
+    'crispy_bootstrap5',
     'django.contrib.admin',
     'channels',
     'tinymce',
@@ -55,7 +57,9 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'ESIDoubleAuction.urls'
 ADMIN_SITE_HEADER = 'ESI Administration'
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 TEMPLATES = [
     {

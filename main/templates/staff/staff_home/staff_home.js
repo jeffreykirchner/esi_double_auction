@@ -18,7 +18,9 @@ var app = Vue.createApp({
     methods: {
         handleSocketConnected(){
             //fire when socket connects
+            Vue.nextTick(() => {
             app.sendGetSessions();
+            });
         },
 
         takeMessage(data) {
