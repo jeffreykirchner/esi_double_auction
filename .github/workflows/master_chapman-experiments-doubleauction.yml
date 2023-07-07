@@ -17,9 +17,9 @@ jobs:
     - uses: actions/checkout@master
 
     - name: Set up Python version
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@v4
       with:
-        python-version: '3.9'
+        python-version: '3.11'
 
     - name: Build using AppService-Build
       env:
@@ -44,7 +44,7 @@ jobs:
       uses: azure/appservice-build@v2
       with:
         platform: python
-        platform-version: '3.9'
+        platform-version: '3.11'
 
     - name: 'Deploy to Azure Web App'
       uses: azure/webapps-deploy@v2
