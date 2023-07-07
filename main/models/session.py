@@ -77,7 +77,7 @@ class Session(models.Model):
         '''
         get a formatted string of start date
         '''
-        return  self.start_date.strftime("%#m/%#d/%Y")
+        return  self.start_date.strftime("%-m/%-d/%Y")
 
     def start_experiment(self):
         '''

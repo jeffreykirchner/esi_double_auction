@@ -82,16 +82,6 @@ var app = Vue.createApp({
             app.sendMessage("delete_session",{"id" : id});
         },
 
-        formatDate: function(value){
-            if (value) {        
-                //console.log(value);                    
-                return moment(String(value)).local().format('MM/DD/YYYY');
-            }
-            else{
-                return "date format error";
-            }
-        },
-
         {%include "staff/staff_home/sessions_card_full_admin.js"%}
         {%include "staff/staff_home/sessions_card.js"%}
         {%include "js/help_doc.js"%}
