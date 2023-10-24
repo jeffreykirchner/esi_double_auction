@@ -11,7 +11,7 @@ DEBUG = os.environ.get('DEBUG', False)
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-ALLOWED_HOSTS = [os.environ['WEBSITE_HOSTNAME'],'esi-double-auction.chapman.edu'] if 'WEBSITE_HOSTNAME' in os.environ else ['esi-double-auction.chapman.edu']
+ALLOWED_HOSTS = [os.environ['WEBSITE_HOSTNAME'], os.environ['ALLOWED_HOSTS']] if 'WEBSITE_HOSTNAME' in os.environ else [os.environ['ALLOWED_HOSTS']]
 CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS').split()
 
 # Database
