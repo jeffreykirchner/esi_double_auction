@@ -1,4 +1,3 @@
-
 echo "*** Startup.sh ***"
 echo "Run Migrations:"
 python manage.py migrate
