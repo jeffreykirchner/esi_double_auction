@@ -6,6 +6,8 @@ import logging
 
 from channels.generic.websocket import AsyncWebsocketConsumer
 
+from main.models import Session
+
 class SocketConsumerMixin(AsyncWebsocketConsumer):
     '''
     core socket communication functions
@@ -36,6 +38,8 @@ class SocketConsumerMixin(AsyncWebsocketConsumer):
         logger = logging.getLogger(__name__) 
         logger.info(f"SocketConsumerMixin Connect {self.channel_name}")
 
+        session = await Session.objects.filter(channel_key=room_name).afirst()
+
         await self.accept()
 
     async def disconnect(self, close_code):
@@ -53,14 +57,17 @@ class SocketConsumerMixin(AsyncWebsocketConsumer):
         '''
         text_data_json = json.loads(text_data)
 
+        logger = logging.getLogger(__name__) 
+        logger.info(f"WS receive {text_data_json}")  
+
         message_type = text_data_json['messageType']   #name of child method to be called
         message_text = text_data_json['messageText']   #data passed to above method
 
         # Send message to room group
-        await self.channel_layer.group_send(
-            self.room_group_name,
-            {
-                'type': message_type,
-                'message_text': message_text
-            }
-        )
+        await self.channel_layer.send(
+                self.channel_name,
+                {
+                    'type': message_type,
+                    'message_text': message_text
+                }
+            )
