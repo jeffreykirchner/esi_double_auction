@@ -20,6 +20,7 @@ var app = Vue.createApp({
             //fire when socket connects
             Vue.nextTick(() => {
                 app.sendGetSessions();
+                app.sendGetSessions();
             });
         },
 

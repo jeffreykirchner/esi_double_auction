@@ -81,6 +81,7 @@ var app = Vue.createApp({
         */
         handleSocketConnected(){            
             app.sendGetSession();
+            app.sendGetSession();
         },
 
         /** take websocket message from server

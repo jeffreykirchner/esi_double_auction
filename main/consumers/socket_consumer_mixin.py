@@ -3,6 +3,7 @@ core socket communication mixin
 '''
 import json
 import logging
+import sys
 
 from channels.generic.websocket import AsyncWebsocketConsumer
 
@@ -21,13 +22,18 @@ class SocketConsumerMixin(AsyncWebsocketConsumer):
         '''
         inital connection from websocket
         '''
+        self.thread_sensitive = True if hasattr(sys, '_called_from_test') else False
+
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         
         kwargs = self.scope['url_route']['kwargs']
         room_name =  kwargs.get('room_name')
         page_key =  kwargs.get('page_key',"")
+        
+        self.player_key =  kwargs.get('player_key',"")
 
-        self.room_group_name = room_name + page_key
+        #self.room_group_name = room_name + page_key
+        self.room_group_name = f'{page_key}-{room_name}'
 
         # Join room group
         await self.channel_layer.group_add(
@@ -35,10 +41,10 @@ class SocketConsumerMixin(AsyncWebsocketConsumer):
             self.channel_name
         )
 
-        logger = logging.getLogger(__name__) 
-        logger.info(f"SocketConsumerMixin Connect {self.channel_name}")
-
         session = await Session.objects.filter(channel_key=room_name).afirst()
+
+        logger = logging.getLogger(__name__) 
+        logger.info(f"SocketConsumerMixin Connect channel name: {self.channel_name}, room group name: {self.room_group_name}")
 
         await self.accept()
 
