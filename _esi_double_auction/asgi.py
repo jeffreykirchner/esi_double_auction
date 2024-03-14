@@ -1,5 +1,5 @@
 # """
-# ASGI config for ESIDoubleAuction project.
+# ASGI config for _esi_double_auction project.
 
 # It exposes the ASGI callable as a module-level variable named ``application``.
 
@@ -10,7 +10,7 @@
 import os
 from django.core.asgi import get_asgi_application
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ESIDoubleAuction.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "_esi_double_auction.settings")
 django_asgi_app = get_asgi_application()
 
 from channels.auth import AuthMiddlewareStack

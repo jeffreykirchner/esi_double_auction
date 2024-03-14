@@ -1,5 +1,5 @@
 logs/*
-ESIDoubleAuctionEnv/*
+_esi_double_auctionEnv/*
 .vscode/*
 *.pyc
 setup.sh
