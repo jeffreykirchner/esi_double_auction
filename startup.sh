@@ -6,4 +6,4 @@ apt-get -y install htop
 echo "Install redis"
 apt-get -y install redis
 echo "Start Daphne:"
-redis-server & daphne -b 0.0.0.0 ESIDoubleAuction.asgi:application
+redis-server & daphne -b 0.0.0.0 _esi_double_auction.asgi:application
