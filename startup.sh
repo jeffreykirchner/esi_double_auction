@@ -1,6 +1,7 @@
 echo "*** Startup.sh ***"
 echo "Run Migrations:"
 python manage.py migrate
+apt-get update
 echo "Install htop:"
 apt-get -y install htop
 echo "Install redis"
