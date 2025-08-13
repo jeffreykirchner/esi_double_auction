@@ -12,9 +12,11 @@ doWebSockets = function()
         };
     
         app.chatSocket.onclose = function(e) {
-            console.error('Socket closed, trying to connect ... ');
-            app.reconnecting=true;
-            window.setTimeout(doWebSockets(), randomNumber(500,1500));            
+            if (!e.wasClean) {
+                console.error('Socket closed, trying to connect ... ');
+                app.reconnecting=true;
+                window.setTimeout(doWebSockets(), randomNumber(500,1500));     
+            }       
         }; 
 
         app.chatSocket.onopen = function(e) {
