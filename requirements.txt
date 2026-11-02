@@ -1,7 +1,7 @@
 asgiref==3.8.1
 async-timeout==5.0.1
 attrs==25.3.0
-autobahn==26.7.1
+autobahn==26.10.2
 Automat==25.4.16
 certifi==2026.10.18
 cffi==2.0.0
@@ -10,7 +10,7 @@ channels_redis==4.2.1
 charset-normalizer==3.4.2
 constantly==23.10.4
 crispy-bootstrap5==2025.4
-cryptography==46.0.5
+cryptography==50.0.2
 daphne==4.2.1
 Django==5.2.18
 django-crispy-forms==2.4
